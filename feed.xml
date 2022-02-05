@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-02-04T15:11:48+08:00</updated>
+  <updated>2022-02-05T11:02:28+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -20,23 +20,23 @@
 
   
   <entry>
-    <title>Enable Google Page Views</title>
-    <link href="http://0.0.0.0:4000/posts/enable-google-pv/" rel="alternate" type="text/html" title="Enable Google Page Views" />
-    <published>2021-01-04T07:32:00+08:00</published>
+    <title>git如何合并分支</title>
+    <link href="http://0.0.0.0:4000/posts/%E5%88%86%E6%94%AF%E5%90%88%E5%B9%B6/" rel="alternate" type="text/html" title="git如何合并分支" />
+    <published>2022-01-26T13:49:37+08:00</published>
   
-    <updated>2022-01-23T04:04:38+08:00</updated>
+    <updated>2022-01-26T13:49:37+08:00</updated>
   
-    <id>http://0.0.0.0:4000/posts/enable-google-pv/</id>
-    <content src="http://0.0.0.0:4000/posts/enable-google-pv/" />
+    <id>http://0.0.0.0:4000/posts/%E5%88%86%E6%94%AF%E5%90%88%E5%B9%B6/</id>
+    <content src="http://0.0.0.0:4000/posts/%E5%88%86%E6%94%AF%E5%90%88%E5%B9%B6/" />
     <author>
-      <name>{"name"=>"Dinesh Prasanth Moluguwan Krishnamoorthy", "link"=>"https://github.com/SilleBille"}</name>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
     </author>
 
   
     
-    <category term="Blogging" />
+    <category term="学习" />
     
-    <category term="Tutorial" />
+    <category term="git" />
     
   
 
@@ -48,199 +48,42 @@
 
 
 
-      This post is to enable Page Views on the Chirpy theme based blog that you just built. This requires technical knowledge and it’s recommended to keep the google_analytics.pv.* empty unless you have a good reason. If your website has low traffic, the page views count would discourage you to write more blogs. With that said, let’s start with the setup.
-
-Set up Google Analytics
-
-Create GA account a...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>Customize the Favicon</title>
-    <link href="http://0.0.0.0:4000/posts/customize-the-favicon/" rel="alternate" type="text/html" title="Customize the Favicon" />
-    <published>2019-08-11T00:34:00+08:00</published>
-  
-    <updated>2022-01-23T04:04:38+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/customize-the-favicon/</id>
-    <content src="http://0.0.0.0:4000/posts/customize-the-favicon/" />
-    <author>
-      <name>{"name"=>"Cotes Chung", "link"=>"https://github.com/cotes2020"}</name>
-    </author>
-
-  
-    
-    <category term="Blogging" />
-    
-    <category term="Tutorial" />
-    
-  
-
-  
-    <summary>
       
+  参考资料：Git 分支 - 分支的新建与合并
+
+
+合并过程
+
+快进(fast-forward)
 
 
 
+现在要将hotfix分支合并到master分支。
+
+$ git checkout master
+$ git merge hotfix
+Updating f42c576..3a0874c
+Fast-forward
+ index.html | 2 ++
+ 1 file changed, 2 insertions(+)
 
 
-      The favicons of Chirpy are placed in the directory assets/img/favicons/. You may want to replace them with your own. The following sections will guide you to create and replace the default favicons.
-
-Generate the favicon
-
-Prepare a square image (PNG, JPG, or SVG) with a size of 512x512 or more, and then go to the online tool Real Favicon Generator and click the button Select your Favicon image ...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>Getting Started</title>
-    <link href="http://0.0.0.0:4000/posts/getting-started/" rel="alternate" type="text/html" title="Getting Started" />
-    <published>2019-08-09T20:55:00+08:00</published>
-  
-    <updated>2022-01-23T04:04:38+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/getting-started/</id>
-    <content src="http://0.0.0.0:4000/posts/getting-started/" />
-    <author>
-      <name>{"name"=>"Cotes Chung", "link"=>"https://github.com/cotes2020"}</name>
-    </author>
-
-  
-    
-    <category term="Blogging" />
-    
-    <category term="Tutorial" />
-    
-  
-
-  
-    <summary>
-      
+合并后如下图：
 
 
 
+当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。
+
+随后可以删除hotfix分支。
+
+$ git branch -d hotfix
 
 
-      Prerequisites
-
-Follow the instructions in the Jekyll Docs to complete the installation of Ruby, RubyGems, Jekyll, and Bundler. In addition, Git is also required to be installed.
-
-Installation
-
-Creating a New Site
-
-There are two ways to create a new repository for this theme:
-
-
-  Using the Chirpy Starter - Easy to upgrade, isolates irrelevant project files so you can focus on writing.
-  Forking ...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>Writing a New Post</title>
-    <link href="http://0.0.0.0:4000/posts/write-a-new-post/" rel="alternate" type="text/html" title="Writing a New Post" />
-    <published>2019-08-08T14:10:00+08:00</published>
-  
-    <updated>2022-01-23T04:04:38+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/write-a-new-post/</id>
-    <content src="http://0.0.0.0:4000/posts/write-a-new-post/" />
-    <author>
-      <name>{"name"=>"Cotes Chung", "link"=>"https://github.com/cotes2020"}</name>
-    </author>
-
-  
-    
-    <category term="Blogging" />
-    
-    <category term="Tutorial" />
-    
-  
-
-  
-    <summary>
-      
+三方合并
 
 
 
-
-
-      This post will guide you how to write a post on Chirpy theme. Even if you have previous experience with Jekyll, this article is worth reading, because many features require specific variables to be set.
-
-Naming and Path
-
-Create a new file named YYYY-MM-DD-TITLE.EXTENSION and put it in the _posts of the root directory. Please note that the EXTENSION must be one of md and markdown. If you want to...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>Text and Typography</title>
-    <link href="http://0.0.0.0:4000/posts/text-and-typography/" rel="alternate" type="text/html" title="Text and Typography" />
-    <published>2019-08-08T11:33:00+08:00</published>
-  
-    <updated>2022-01-23T04:04:38+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/text-and-typography/</id>
-    <content src="http://0.0.0.0:4000/posts/text-and-typography/" />
-    <author>
-      <name>{"name"=>"Cotes Chung", "link"=>"https://github.com/cotes2020"}</name>
-    </author>
-
-  
-    
-    <category term="Blogging" />
-    
-    <category term="Demo" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      This post is to show Markdown syntax rendering on Chirpy, you can also use it as an example of writing. Now, let’s start looking at text and typography.
-
-Titles
-
-H1 - heading
-
-H2 - heading
-
-H3 - heading
-
-H4 - heading
-
-
-
-Paragraph
-
-I wandered lonely as a cloud
-
-That floats on high o’er vales and hills,
-
-When all at once I saw a crowd,
-
-A host, of golden daffodils;
-
-Beside the lake, beneath the t...
+现在要...
     </summary>
   
 
