@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-02-05T14:16:07+08:00</updated>
+  <updated>2022-02-05T15:16:12+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,55 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>Jekyll Chirpy theme + Github搭建个人博客</title>
+    <link href="http://0.0.0.0:4000/posts/Jekyll-Chirpy-theme-+-Github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" rel="alternate" type="text/html" title="Jekyll Chirpy theme + Github搭建个人博客" />
+    <published>2022-02-05T14:43:00+08:00</published>
+  
+    <updated>2022-02-05T14:43:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/Jekyll-Chirpy-theme-+-Github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</id>
+    <content src="http://0.0.0.0:4000/posts/Jekyll-Chirpy-theme-+-Github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="学习" />
+    
+    <category term="杂知识" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法，说不定以后就有了。
+
+安装博客生成器
+
+由于kali环境齐全，所以直接在kali下安装本地博客
+
+# 安装jekyll
+sudo gem install jekyll
+
+# 安装chirpy主题
+git clone git@github.com:cotes2020/jekyll-theme-chirpy.git
+
+# 在jekyll-theme-chirpy目录下安装依赖
+# 不需要sudo，命...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
