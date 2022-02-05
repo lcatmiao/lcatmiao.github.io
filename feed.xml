@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-02-05T11:02:28+08:00</updated>
+  <updated>2022-02-05T12:50:39+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -21,13 +21,13 @@
   
   <entry>
     <title>git如何合并分支</title>
-    <link href="http://0.0.0.0:4000/posts/%E5%88%86%E6%94%AF%E5%90%88%E5%B9%B6/" rel="alternate" type="text/html" title="git如何合并分支" />
+    <link href="http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/" rel="alternate" type="text/html" title="git如何合并分支" />
     <published>2022-01-26T13:49:37+08:00</published>
   
     <updated>2022-01-26T13:49:37+08:00</updated>
   
-    <id>http://0.0.0.0:4000/posts/%E5%88%86%E6%94%AF%E5%90%88%E5%B9%B6/</id>
-    <content src="http://0.0.0.0:4000/posts/%E5%88%86%E6%94%AF%E5%90%88%E5%B9%B6/" />
+    <id>http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/</id>
+    <content src="http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/" />
     <author>
       <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
     </author>
@@ -48,7 +48,9 @@
 
 
 
-      
+      复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。
+
+
   参考资料：Git 分支 - 分支的新建与合并
 
 
@@ -72,18 +74,7 @@ Fast-forward
 
 
 
-当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。
-
-随后可以删除hotfix分支。
-
-$ git branch -d hotfix
-
-
-三方合并
-
-
-
-现在要...
+当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forwar...
     </summary>
   
 
