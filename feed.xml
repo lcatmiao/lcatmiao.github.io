@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-02-05T15:48:48+08:00</updated>
+  <updated>2022-02-05T21:50:06+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -176,6 +176,64 @@ Fast-forward
 
 
 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forwar...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>手动搭建Web服务器环境</title>
+    <link href="http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" rel="alternate" type="text/html" title="手动搭建Web服务器环境" />
+    <published>2020-07-25T16:30:00+08:00</published>
+  
+    <updated>2020-07-25T16:30:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/</id>
+    <content src="http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="学习" />
+    
+    <category term="杂知识" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。
+
+
+  本文采用Apache+PHP+MySQL进行配置，版本如下：
+
+  Apache 2.4.43
+
+  PHP 7.4.8 Thread Safe
+
+  MySQL 8.0.21
+
+
+
+  配置期间若出现“缺少VC环境”或“缺少.NET Framework”，自行百度，微软官网安装
+
+
+Apache配置
+
+首先下载安装包https://www.apachelounge.com/download/，是一个压缩包。
+
+然后创建一个文件夹放置Web服务环境资源，我这里是D:\Server
+
+随后解压...
     </summary>
   
 

@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html lang="zh-CN"
+  
+>
+
+  <!--
+  The Head
+-->
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Allow having a localized datetime different from the appearance language -->
+  
+
+  
+
+    
+
+    
+
+  
+
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="手动搭建Web服务器环境" />
+<meta name="author" content="小黑猫" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。 本文采用Apache+PHP+MySQL进行配置，版本如下： Apache 2.4.43 PHP 7.4.8 Thread Safe MySQL 8.0.21 配置期间若出现“缺少VC环境”或“缺少.NET Framework”，自行百度，微软官网安装 Apache配置 首先下载安装包https://www.apachelounge.com/download/，是一个压缩包。 然后创建一个文件夹放置Web服务环境资源，我这里是D:\Server 随后解压到Server文件夹下，这里解压后文件夹的名字叫做Apache24 附一张全部搭建完后的Server文件夹的图，其中的PHP，MySQL，www文件夹会在后面创建。 开始配置 用记事本打开D:\Server\Apache24\conf\httpd.conf，这是Apache的配置文件。 修改以下条目，可按Ctrl+F查找 ServerRoot（Apache的根目录）：d:/Server/Apache24，这里更改SRVROOT变量即可 1 2 3 4 5 6 7 Define SRVROOT &quot;c:/Apache24&quot; ServerRoot &quot;${SRVROOT}&quot; 改为 Define SRVROOT &quot;d:/Server/Apache24&quot; ServerRoot &quot;${SRVROOT}&quot; ServerName（主机名）：localhost:80，去掉#才能让设置生效 1 2 3 4 5 6 7 # If your host doesn&#39;t have a registered DNS name, enter its IP address here. # #ServerName www.example.com:80 改为 # If your host doesn&#39;t have a registered DNS name, enter its IP address here. # ServerName localhost:80 DocumentRoot（Apache默认的网页目录）：d:/Server/www 原先默认的网页目录是d:\Server\Apache24\htdocs， 我这里更改了，新建了d:\Server\www文件夹以存放网页，所以要更改DocumentRoot 把d:\Server\Apache24\htdocs下的index.html复制到d:\Server\www下，以备后续测试 1 2 3 4 5 6 7 8 9 10 11 12 13 # DocumentRoot: The directory out of which you will serve your # documents. By default, all requests are taken from this directory, but # symbolic links and aliases may be used to point to other locations. # DocumentRoot &quot;${SRVROOT}/htdocs&quot; &lt;Directory &quot;${SRVROOT}/htdocs&quot;&gt; 改为 # DocumentRoot: The directory out of which you will serve your # documents. By default, all requests are taken from this directory, but # symbolic links and aliases may be used to point to other locations. # DocumentRoot &quot;d:/Server/www&quot; &lt;Directory &quot;d:/Server/www&quot;&gt; DirectoryIndex（Apache默认的入口网页）：这里没做更改，就用的默认的index.html 1 2 3 4 5 6 7 8 9 10 11 12 13 没做更改 &lt;IfModule dir_module&gt; DirectoryIndex index.html &lt;/IfModule&gt; 如果要更改，可以改为 &lt;IfModule dir_module&gt; DirectoryIndex index.php index.html index.htm &lt;/IfModule&gt; index.php index.html index.htm三个文件是有优先关系的，例： 若同时有index.php index.html，则默认访问index.php 若只有index.html，则默认访问index.html ScriptAlias（没研究过，反正是个路径）：这里没做更改 之前设置ServerRoot的时候，更改过SRVROOT变量为d:/Server/Apache24，而cgi-bin是Apache24下的一个文件夹，这里只要符合cgi-bin的路径即可。我已经符合，故不修改。 1 2 3 4 5 6 7 8 没做更改 ScriptAlias /cgi-bin/ &quot;${SRVROOT}/cgi-bin/&quot; 往下几行还有这个，也没改 &lt;Directory &quot;${SRVROOT}/cgi-bin&quot;&gt; AllowOverride None Options None Require all granted &lt;/Directory&gt; 接下来双击运行D:\Server\Apache24\bin\httpd.exe，出现了一个没有任何输出的黑窗体，且不会闪退。 这其实意味着打开了Apache服务器，不要关闭黑窗体，下面测试： 在虚拟机中打开Google Chrome，地址栏输入localhost，可以访问到如下页面 在物理机的浏览器中输入虚拟机IP地址也可访问到相同页面（cmd里ipconfig命令可查询IP） 若是没在虚拟机里安装，全部安在物理机也一样，打开浏览器输入localhost，可以访问到上述页面 出现It works!说明应该没什么大问题了，关闭黑窗体，接下来把httpd.exe装到Windows服务里。 打开cmd，进入httpd.exe所在目录，输入httpd -k install安装服务。 若想删除服务，可以以管理员身份运行cmd用sc delete Apache2.4命令删除 安装成功后，在桌面的“计算机”上右键–管理–服务和应用程序–服务，可以查看所有服务，其中就有Apache2.4服务。在该服务上右键-属性，有一个启动类型选项，默认是自动（开机自启），由于只是学习使用，所以我改成了手动，以后可以在该服务上右键-启动来自行控制它。方便起见，我将D:\Server\Apache24\bin下的ApacheMonitor添加到了开始菜单中，这是一个操控Apache服务的图形化界面，打开后在电脑右下角的小图标里找到它，右键-open，界面如下： PHP配置 下载安装包https://windows.php.net/download#php-7.4 下载Thread Safe版本，否则后期可能缺少php7apache2_4.dll 将zip压缩包解压为D:\Server\PHP 在D:\Server\PHP下有这样两个文件：php.ini-development和php.ini-production 两个都是PHP的配置文件，https://www.php.net/manual/zh/migration53.ini.php php.ini-development包含在开发环境中推荐使用的设置 php.ini-production包含在生产环境中推荐使用的设置 这里使用php.ini-production，复制更名为php.ini放在同一目录下，以记事本打开 开始配置 extension_dir（PHP扩展包目录）： 1 2 3 4 5 ; On windows: ;extension_dir = &quot;ext&quot; 改为 ; On windows: extension_dir = &quot;D:\Server\PHP\ext&quot; date.timezone（设置时区）： 1 2 3 ;date.timezone = 改为 date.timezone = PRC default_charset（设置编码）：没有更改，就用默认的UTF-8 1 default_charset = &quot;UTF-8&quot; 开启扩展：网上搜了几个常用的扩展，去掉分号开启，功能可查官方文档 php_curl.dll https://www.php.net/manual/zh/book.curl.php php_gd2.dll https://www.php.net/manual/zh/book.image.php php_fileinfo.dll https://www.php.net/manual/zh/book.fileinfo.php php_mbstring.dll https://www.php.net/manual/zh/book.mbstring.php php_pdo_mysql.dll https://www.php.net/manual/zh/ref.pdo-mysql.php php_mysqli.dll https://www.php.net/manual/zh/book.mysqli.php 1 2 3 4 5 6 7 8 9 10 11 12 13 ;extension=curl ;extension=gd2 ;extension=fileinfo ;extension=mbstring ;extension=pdo_mysql ;extension=mysqli 改为 extension=curl extension=gd2 extension=fileinfo extension=mbstring extension=pdo_mysql extension=mysqli 为Apache服务添加PHP支持： 在此前的httpd.conf文件的最下面添加如下代码： 1 2 3 4 5 6 # php7 support LoadModule php7_module &quot;D:/Server/PHP/php7apache2_4.dll&quot; AddType application/x-httpd-php .php .html .htm # configure the path to php.ini PHPIniDir &quot;D:/Server/PHP&quot; 在D:\Server\www下新建index.txt文件，输入如下代码 1 2 3 &lt;?php phpinfo(); ?&gt; 更改扩展名为.php，重启先前的Apache服务 用浏览器访问localhost/index.php，可得PHP详细信息页面 至此就基本没有大问题了 下面配置PHP环境变量，这是为了方便在cmd里直接使用PHP，也可以不配置 计算机右键-属性-高级系统设置-环境变量，新建系统变量 再打开Path系统变量，在后面加上%PHP_HOME% 随后在cmd中测试，输入php -version，会显示版本信息，说明配置成功 MySQL配置 直接下载的离线安装包https://dev.mysql.com/downloads/installer/，跟着下一步下一步，感觉没啥特殊的配置 新建MySQL文件夹，D:\Server\MySQL 选择custom自定义安装，根据需要选择相应组件，我选择装了 MySQL Server 8.0；MySQL Shell 8.0；MySQL Notifier 1.1；MySQL Workbench 8.0 CE； Connector ODBC 8.0；Connector C++ 8.0；Connector J 8.0；Connector NET 8.0； MySQL Documentation 8.0； 后面就一直“下一步”，除了让你设置密码的时候要设置一下 MySQL卸载可能有点麻烦，这里不赘述，最好一遍成功，下面是遇到的一些坑： 安装组件时，右下角有个Advanced Options选项，很容易忽略，里面可以设置自定义安装路径，且每个组件都要单独设置一遍，不清楚的可以看这个https://blog.csdn.net/qq_40764966/article/details/96702490 安装前确保磁盘空间足够，因为我是在虚拟机里安装，一开始又错装到了C盘，碰巧C盘剩余1G不到，所以提示Fail了 正常安装完后，在计算机右键-管理-服务中可以看到名为MySQL80的服务，可以选择设为手动启动 另外，MySQLNotifier就是一个跟ApacheMonitor差不多的东西，也可以通过它开启服务 下面测试： 在D:\Server\www下新建testmysql.txt文件，写上如下代码： 1 2 3 4 5 6 7 &lt;?php $conn=mysqli_connect(&quot;localhost&quot;,&quot;root&quot;,&quot;root密码&quot;); if($conn) echo &quot;连接success&quot;; else echo &quot;连接fail&quot;; ?&gt; 将txt文件另存为UTF-8编码的文件（要与PHP设置的默认编码一致，否则中文会乱码） 更改扩展名为.php，启动Apache服务和MySQL服务，浏览器localhost/testmysql.php访问可得 测试成功，至此环境就搭建完了 下面配置MySQL环境变量，这是为了方便在cmd里直接使用MySQL，也可以不配置 新建系统变量MYSQL_HOME 在Path中添加%MYSQL_HOME%\MySQL Server 8.0\bin 开启MySQL服务，在cmd中输入mysql -h localhost -u root -p，输入密码，若能成功登录，说明配置成功" />
+<meta property="og:description" content="看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。 本文采用Apache+PHP+MySQL进行配置，版本如下： Apache 2.4.43 PHP 7.4.8 Thread Safe MySQL 8.0.21 配置期间若出现“缺少VC环境”或“缺少.NET Framework”，自行百度，微软官网安装 Apache配置 首先下载安装包https://www.apachelounge.com/download/，是一个压缩包。 然后创建一个文件夹放置Web服务环境资源，我这里是D:\Server 随后解压到Server文件夹下，这里解压后文件夹的名字叫做Apache24 附一张全部搭建完后的Server文件夹的图，其中的PHP，MySQL，www文件夹会在后面创建。 开始配置 用记事本打开D:\Server\Apache24\conf\httpd.conf，这是Apache的配置文件。 修改以下条目，可按Ctrl+F查找 ServerRoot（Apache的根目录）：d:/Server/Apache24，这里更改SRVROOT变量即可 1 2 3 4 5 6 7 Define SRVROOT &quot;c:/Apache24&quot; ServerRoot &quot;${SRVROOT}&quot; 改为 Define SRVROOT &quot;d:/Server/Apache24&quot; ServerRoot &quot;${SRVROOT}&quot; ServerName（主机名）：localhost:80，去掉#才能让设置生效 1 2 3 4 5 6 7 # If your host doesn&#39;t have a registered DNS name, enter its IP address here. # #ServerName www.example.com:80 改为 # If your host doesn&#39;t have a registered DNS name, enter its IP address here. # ServerName localhost:80 DocumentRoot（Apache默认的网页目录）：d:/Server/www 原先默认的网页目录是d:\Server\Apache24\htdocs， 我这里更改了，新建了d:\Server\www文件夹以存放网页，所以要更改DocumentRoot 把d:\Server\Apache24\htdocs下的index.html复制到d:\Server\www下，以备后续测试 1 2 3 4 5 6 7 8 9 10 11 12 13 # DocumentRoot: The directory out of which you will serve your # documents. By default, all requests are taken from this directory, but # symbolic links and aliases may be used to point to other locations. # DocumentRoot &quot;${SRVROOT}/htdocs&quot; &lt;Directory &quot;${SRVROOT}/htdocs&quot;&gt; 改为 # DocumentRoot: The directory out of which you will serve your # documents. By default, all requests are taken from this directory, but # symbolic links and aliases may be used to point to other locations. # DocumentRoot &quot;d:/Server/www&quot; &lt;Directory &quot;d:/Server/www&quot;&gt; DirectoryIndex（Apache默认的入口网页）：这里没做更改，就用的默认的index.html 1 2 3 4 5 6 7 8 9 10 11 12 13 没做更改 &lt;IfModule dir_module&gt; DirectoryIndex index.html &lt;/IfModule&gt; 如果要更改，可以改为 &lt;IfModule dir_module&gt; DirectoryIndex index.php index.html index.htm &lt;/IfModule&gt; index.php index.html index.htm三个文件是有优先关系的，例： 若同时有index.php index.html，则默认访问index.php 若只有index.html，则默认访问index.html ScriptAlias（没研究过，反正是个路径）：这里没做更改 之前设置ServerRoot的时候，更改过SRVROOT变量为d:/Server/Apache24，而cgi-bin是Apache24下的一个文件夹，这里只要符合cgi-bin的路径即可。我已经符合，故不修改。 1 2 3 4 5 6 7 8 没做更改 ScriptAlias /cgi-bin/ &quot;${SRVROOT}/cgi-bin/&quot; 往下几行还有这个，也没改 &lt;Directory &quot;${SRVROOT}/cgi-bin&quot;&gt; AllowOverride None Options None Require all granted &lt;/Directory&gt; 接下来双击运行D:\Server\Apache24\bin\httpd.exe，出现了一个没有任何输出的黑窗体，且不会闪退。 这其实意味着打开了Apache服务器，不要关闭黑窗体，下面测试： 在虚拟机中打开Google Chrome，地址栏输入localhost，可以访问到如下页面 在物理机的浏览器中输入虚拟机IP地址也可访问到相同页面（cmd里ipconfig命令可查询IP） 若是没在虚拟机里安装，全部安在物理机也一样，打开浏览器输入localhost，可以访问到上述页面 出现It works!说明应该没什么大问题了，关闭黑窗体，接下来把httpd.exe装到Windows服务里。 打开cmd，进入httpd.exe所在目录，输入httpd -k install安装服务。 若想删除服务，可以以管理员身份运行cmd用sc delete Apache2.4命令删除 安装成功后，在桌面的“计算机”上右键–管理–服务和应用程序–服务，可以查看所有服务，其中就有Apache2.4服务。在该服务上右键-属性，有一个启动类型选项，默认是自动（开机自启），由于只是学习使用，所以我改成了手动，以后可以在该服务上右键-启动来自行控制它。方便起见，我将D:\Server\Apache24\bin下的ApacheMonitor添加到了开始菜单中，这是一个操控Apache服务的图形化界面，打开后在电脑右下角的小图标里找到它，右键-open，界面如下： PHP配置 下载安装包https://windows.php.net/download#php-7.4 下载Thread Safe版本，否则后期可能缺少php7apache2_4.dll 将zip压缩包解压为D:\Server\PHP 在D:\Server\PHP下有这样两个文件：php.ini-development和php.ini-production 两个都是PHP的配置文件，https://www.php.net/manual/zh/migration53.ini.php php.ini-development包含在开发环境中推荐使用的设置 php.ini-production包含在生产环境中推荐使用的设置 这里使用php.ini-production，复制更名为php.ini放在同一目录下，以记事本打开 开始配置 extension_dir（PHP扩展包目录）： 1 2 3 4 5 ; On windows: ;extension_dir = &quot;ext&quot; 改为 ; On windows: extension_dir = &quot;D:\Server\PHP\ext&quot; date.timezone（设置时区）： 1 2 3 ;date.timezone = 改为 date.timezone = PRC default_charset（设置编码）：没有更改，就用默认的UTF-8 1 default_charset = &quot;UTF-8&quot; 开启扩展：网上搜了几个常用的扩展，去掉分号开启，功能可查官方文档 php_curl.dll https://www.php.net/manual/zh/book.curl.php php_gd2.dll https://www.php.net/manual/zh/book.image.php php_fileinfo.dll https://www.php.net/manual/zh/book.fileinfo.php php_mbstring.dll https://www.php.net/manual/zh/book.mbstring.php php_pdo_mysql.dll https://www.php.net/manual/zh/ref.pdo-mysql.php php_mysqli.dll https://www.php.net/manual/zh/book.mysqli.php 1 2 3 4 5 6 7 8 9 10 11 12 13 ;extension=curl ;extension=gd2 ;extension=fileinfo ;extension=mbstring ;extension=pdo_mysql ;extension=mysqli 改为 extension=curl extension=gd2 extension=fileinfo extension=mbstring extension=pdo_mysql extension=mysqli 为Apache服务添加PHP支持： 在此前的httpd.conf文件的最下面添加如下代码： 1 2 3 4 5 6 # php7 support LoadModule php7_module &quot;D:/Server/PHP/php7apache2_4.dll&quot; AddType application/x-httpd-php .php .html .htm # configure the path to php.ini PHPIniDir &quot;D:/Server/PHP&quot; 在D:\Server\www下新建index.txt文件，输入如下代码 1 2 3 &lt;?php phpinfo(); ?&gt; 更改扩展名为.php，重启先前的Apache服务 用浏览器访问localhost/index.php，可得PHP详细信息页面 至此就基本没有大问题了 下面配置PHP环境变量，这是为了方便在cmd里直接使用PHP，也可以不配置 计算机右键-属性-高级系统设置-环境变量，新建系统变量 再打开Path系统变量，在后面加上%PHP_HOME% 随后在cmd中测试，输入php -version，会显示版本信息，说明配置成功 MySQL配置 直接下载的离线安装包https://dev.mysql.com/downloads/installer/，跟着下一步下一步，感觉没啥特殊的配置 新建MySQL文件夹，D:\Server\MySQL 选择custom自定义安装，根据需要选择相应组件，我选择装了 MySQL Server 8.0；MySQL Shell 8.0；MySQL Notifier 1.1；MySQL Workbench 8.0 CE； Connector ODBC 8.0；Connector C++ 8.0；Connector J 8.0；Connector NET 8.0； MySQL Documentation 8.0； 后面就一直“下一步”，除了让你设置密码的时候要设置一下 MySQL卸载可能有点麻烦，这里不赘述，最好一遍成功，下面是遇到的一些坑： 安装组件时，右下角有个Advanced Options选项，很容易忽略，里面可以设置自定义安装路径，且每个组件都要单独设置一遍，不清楚的可以看这个https://blog.csdn.net/qq_40764966/article/details/96702490 安装前确保磁盘空间足够，因为我是在虚拟机里安装，一开始又错装到了C盘，碰巧C盘剩余1G不到，所以提示Fail了 正常安装完后，在计算机右键-管理-服务中可以看到名为MySQL80的服务，可以选择设为手动启动 另外，MySQLNotifier就是一个跟ApacheMonitor差不多的东西，也可以通过它开启服务 下面测试： 在D:\Server\www下新建testmysql.txt文件，写上如下代码： 1 2 3 4 5 6 7 &lt;?php $conn=mysqli_connect(&quot;localhost&quot;,&quot;root&quot;,&quot;root密码&quot;); if($conn) echo &quot;连接success&quot;; else echo &quot;连接fail&quot;; ?&gt; 将txt文件另存为UTF-8编码的文件（要与PHP设置的默认编码一致，否则中文会乱码） 更改扩展名为.php，启动Apache服务和MySQL服务，浏览器localhost/testmysql.php访问可得 测试成功，至此环境就搭建完了 下面配置MySQL环境变量，这是为了方便在cmd里直接使用MySQL，也可以不配置 新建系统变量MYSQL_HOME 在Path中添加%MYSQL_HOME%\MySQL Server 8.0\bin 开启MySQL服务，在cmd中输入mysql -h localhost -u root -p，输入密码，若能成功登录，说明配置成功" />
+<link rel="canonical" href="http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" />
+<meta property="og:url" content="http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" />
+<meta property="og:site_name" content="小黑猫" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-25T16:30:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="手动搭建Web服务器环境" />
+<meta name="twitter:site" content="@twitter_username" />
+<meta name="twitter:creator" content="@小黑猫" />
+<script type="application/ld+json">
+{"headline":"手动搭建Web服务器环境","dateModified":"2020-07-25T16:30:00+08:00","datePublished":"2020-07-25T16:30:00+08:00","url":"http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。 本文采用Apache+PHP+MySQL进行配置，版本如下： Apache 2.4.43 PHP 7.4.8 Thread Safe MySQL 8.0.21 配置期间若出现“缺少VC环境”或“缺少.NET Framework”，自行百度，微软官网安装 Apache配置 首先下载安装包https://www.apachelounge.com/download/，是一个压缩包。 然后创建一个文件夹放置Web服务环境资源，我这里是D:\\Server 随后解压到Server文件夹下，这里解压后文件夹的名字叫做Apache24 附一张全部搭建完后的Server文件夹的图，其中的PHP，MySQL，www文件夹会在后面创建。 开始配置 用记事本打开D:\\Server\\Apache24\\conf\\httpd.conf，这是Apache的配置文件。 修改以下条目，可按Ctrl+F查找 ServerRoot（Apache的根目录）：d:/Server/Apache24，这里更改SRVROOT变量即可 1 2 3 4 5 6 7 Define SRVROOT &quot;c:/Apache24&quot; ServerRoot &quot;${SRVROOT}&quot; 改为 Define SRVROOT &quot;d:/Server/Apache24&quot; ServerRoot &quot;${SRVROOT}&quot; ServerName（主机名）：localhost:80，去掉#才能让设置生效 1 2 3 4 5 6 7 # If your host doesn&#39;t have a registered DNS name, enter its IP address here. # #ServerName www.example.com:80 改为 # If your host doesn&#39;t have a registered DNS name, enter its IP address here. # ServerName localhost:80 DocumentRoot（Apache默认的网页目录）：d:/Server/www 原先默认的网页目录是d:\\Server\\Apache24\\htdocs， 我这里更改了，新建了d:\\Server\\www文件夹以存放网页，所以要更改DocumentRoot 把d:\\Server\\Apache24\\htdocs下的index.html复制到d:\\Server\\www下，以备后续测试 1 2 3 4 5 6 7 8 9 10 11 12 13 # DocumentRoot: The directory out of which you will serve your # documents. By default, all requests are taken from this directory, but # symbolic links and aliases may be used to point to other locations. # DocumentRoot &quot;${SRVROOT}/htdocs&quot; &lt;Directory &quot;${SRVROOT}/htdocs&quot;&gt; 改为 # DocumentRoot: The directory out of which you will serve your # documents. By default, all requests are taken from this directory, but # symbolic links and aliases may be used to point to other locations. # DocumentRoot &quot;d:/Server/www&quot; &lt;Directory &quot;d:/Server/www&quot;&gt; DirectoryIndex（Apache默认的入口网页）：这里没做更改，就用的默认的index.html 1 2 3 4 5 6 7 8 9 10 11 12 13 没做更改 &lt;IfModule dir_module&gt; DirectoryIndex index.html &lt;/IfModule&gt; 如果要更改，可以改为 &lt;IfModule dir_module&gt; DirectoryIndex index.php index.html index.htm &lt;/IfModule&gt; index.php index.html index.htm三个文件是有优先关系的，例： 若同时有index.php index.html，则默认访问index.php 若只有index.html，则默认访问index.html ScriptAlias（没研究过，反正是个路径）：这里没做更改 之前设置ServerRoot的时候，更改过SRVROOT变量为d:/Server/Apache24，而cgi-bin是Apache24下的一个文件夹，这里只要符合cgi-bin的路径即可。我已经符合，故不修改。 1 2 3 4 5 6 7 8 没做更改 ScriptAlias /cgi-bin/ &quot;${SRVROOT}/cgi-bin/&quot; 往下几行还有这个，也没改 &lt;Directory &quot;${SRVROOT}/cgi-bin&quot;&gt; AllowOverride None Options None Require all granted &lt;/Directory&gt; 接下来双击运行D:\\Server\\Apache24\\bin\\httpd.exe，出现了一个没有任何输出的黑窗体，且不会闪退。 这其实意味着打开了Apache服务器，不要关闭黑窗体，下面测试： 在虚拟机中打开Google Chrome，地址栏输入localhost，可以访问到如下页面 在物理机的浏览器中输入虚拟机IP地址也可访问到相同页面（cmd里ipconfig命令可查询IP） 若是没在虚拟机里安装，全部安在物理机也一样，打开浏览器输入localhost，可以访问到上述页面 出现It works!说明应该没什么大问题了，关闭黑窗体，接下来把httpd.exe装到Windows服务里。 打开cmd，进入httpd.exe所在目录，输入httpd -k install安装服务。 若想删除服务，可以以管理员身份运行cmd用sc delete Apache2.4命令删除 安装成功后，在桌面的“计算机”上右键–管理–服务和应用程序–服务，可以查看所有服务，其中就有Apache2.4服务。在该服务上右键-属性，有一个启动类型选项，默认是自动（开机自启），由于只是学习使用，所以我改成了手动，以后可以在该服务上右键-启动来自行控制它。方便起见，我将D:\\Server\\Apache24\\bin下的ApacheMonitor添加到了开始菜单中，这是一个操控Apache服务的图形化界面，打开后在电脑右下角的小图标里找到它，右键-open，界面如下： PHP配置 下载安装包https://windows.php.net/download#php-7.4 下载Thread Safe版本，否则后期可能缺少php7apache2_4.dll 将zip压缩包解压为D:\\Server\\PHP 在D:\\Server\\PHP下有这样两个文件：php.ini-development和php.ini-production 两个都是PHP的配置文件，https://www.php.net/manual/zh/migration53.ini.php php.ini-development包含在开发环境中推荐使用的设置 php.ini-production包含在生产环境中推荐使用的设置 这里使用php.ini-production，复制更名为php.ini放在同一目录下，以记事本打开 开始配置 extension_dir（PHP扩展包目录）： 1 2 3 4 5 ; On windows: ;extension_dir = &quot;ext&quot; 改为 ; On windows: extension_dir = &quot;D:\\Server\\PHP\\ext&quot; date.timezone（设置时区）： 1 2 3 ;date.timezone = 改为 date.timezone = PRC default_charset（设置编码）：没有更改，就用默认的UTF-8 1 default_charset = &quot;UTF-8&quot; 开启扩展：网上搜了几个常用的扩展，去掉分号开启，功能可查官方文档 php_curl.dll https://www.php.net/manual/zh/book.curl.php php_gd2.dll https://www.php.net/manual/zh/book.image.php php_fileinfo.dll https://www.php.net/manual/zh/book.fileinfo.php php_mbstring.dll https://www.php.net/manual/zh/book.mbstring.php php_pdo_mysql.dll https://www.php.net/manual/zh/ref.pdo-mysql.php php_mysqli.dll https://www.php.net/manual/zh/book.mysqli.php 1 2 3 4 5 6 7 8 9 10 11 12 13 ;extension=curl ;extension=gd2 ;extension=fileinfo ;extension=mbstring ;extension=pdo_mysql ;extension=mysqli 改为 extension=curl extension=gd2 extension=fileinfo extension=mbstring extension=pdo_mysql extension=mysqli 为Apache服务添加PHP支持： 在此前的httpd.conf文件的最下面添加如下代码： 1 2 3 4 5 6 # php7 support LoadModule php7_module &quot;D:/Server/PHP/php7apache2_4.dll&quot; AddType application/x-httpd-php .php .html .htm # configure the path to php.ini PHPIniDir &quot;D:/Server/PHP&quot; 在D:\\Server\\www下新建index.txt文件，输入如下代码 1 2 3 &lt;?php phpinfo(); ?&gt; 更改扩展名为.php，重启先前的Apache服务 用浏览器访问localhost/index.php，可得PHP详细信息页面 至此就基本没有大问题了 下面配置PHP环境变量，这是为了方便在cmd里直接使用PHP，也可以不配置 计算机右键-属性-高级系统设置-环境变量，新建系统变量 再打开Path系统变量，在后面加上%PHP_HOME% 随后在cmd中测试，输入php -version，会显示版本信息，说明配置成功 MySQL配置 直接下载的离线安装包https://dev.mysql.com/downloads/installer/，跟着下一步下一步，感觉没啥特殊的配置 新建MySQL文件夹，D:\\Server\\MySQL 选择custom自定义安装，根据需要选择相应组件，我选择装了 MySQL Server 8.0；MySQL Shell 8.0；MySQL Notifier 1.1；MySQL Workbench 8.0 CE； Connector ODBC 8.0；Connector C++ 8.0；Connector J 8.0；Connector NET 8.0； MySQL Documentation 8.0； 后面就一直“下一步”，除了让你设置密码的时候要设置一下 MySQL卸载可能有点麻烦，这里不赘述，最好一遍成功，下面是遇到的一些坑： 安装组件时，右下角有个Advanced Options选项，很容易忽略，里面可以设置自定义安装路径，且每个组件都要单独设置一遍，不清楚的可以看这个https://blog.csdn.net/qq_40764966/article/details/96702490 安装前确保磁盘空间足够，因为我是在虚拟机里安装，一开始又错装到了C盘，碰巧C盘剩余1G不到，所以提示Fail了 正常安装完后，在计算机右键-管理-服务中可以看到名为MySQL80的服务，可以选择设为手动启动 另外，MySQLNotifier就是一个跟ApacheMonitor差不多的东西，也可以通过它开启服务 下面测试： 在D:\\Server\\www下新建testmysql.txt文件，写上如下代码： 1 2 3 4 5 6 7 &lt;?php $conn=mysqli_connect(&quot;localhost&quot;,&quot;root&quot;,&quot;root密码&quot;); if($conn) echo &quot;连接success&quot;; else echo &quot;连接fail&quot;; ?&gt; 将txt文件另存为UTF-8编码的文件（要与PHP设置的默认编码一致，否则中文会乱码） 更改扩展名为.php，启动Apache服务和MySQL服务，浏览器localhost/testmysql.php访问可得 测试成功，至此环境就搭建完了 下面配置MySQL环境变量，这是为了方便在cmd里直接使用MySQL，也可以不配置 新建系统变量MYSQL_HOME 在Path中添加%MYSQL_HOME%\\MySQL Server 8.0\\bin 开启MySQL服务，在cmd中输入mysql -h localhost -u root -p，输入密码，若能成功登录，说明配置成功","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <title>手动搭建Web服务器环境 | 小黑猫
+  </title>
+
+  <!--
+  The Favicons for Web, Android, Microsoft, and iOS (iPhone and iPad) Apps
+  Generated by: https://realfavicongenerator.net/
+-->
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png">
+<link rel="manifest" href="/assets/img/favicons/site.webmanifest">
+<link rel="shortcut icon" href="/assets/img/favicons/favicon.ico">
+<meta name="apple-mobile-web-app-title" content="小黑猫">
+<meta name="application-name" content="小黑猫">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+  <!-- GA -->
+  
+
+  <!-- jsDelivr CDN -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css">
+
+  <!--
+  CSS selector for site.
+-->
+
+<link rel="stylesheet" href="/assets/css/style.css">
+
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css">
+
+
+
+  <!-- Manific Popup -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.min.css">
+
+
+
+  <!-- JavaScript -->
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+
+</head>
+
+
+  
+    <!--
+  Switch the mode between dark and light.
+-->
+
+<script type="text/javascript">
+  class ModeToggle {
+    static get MODE_KEY() { return "mode"; }
+    static get MODE_ATTR() { return "data-mode"; }
+    static get DARK_MODE() { return "dark"; }
+    static get LIGHT_MODE() { return "light"; }
+    static get ID() { return "mode-toggle"; }
+
+    constructor() {
+      if (this.hasMode) {
+        if (this.isDarkMode) {
+          if (!this.isSysDarkPrefer) {
+            this.setDark();
+          }
+        } else {
+          if (this.isSysDarkPrefer) {
+            this.setLight();
+          }
+        }
+      }
+
+      let self = this;
+
+      /* always follow the system prefers */
+      this.sysDarkPrefers.addEventListener("change", () => {
+        if (self.hasMode) {
+          if (self.isDarkMode) {
+            if (!self.isSysDarkPrefer) {
+              self.setDark();
+            }
+
+          } else {
+            if (self.isSysDarkPrefer) {
+              self.setLight();
+            }
+          }
+
+          self.clearMode();
+        }
+
+        self.notify();
+
+      });
+
+    } /* constructor() */
+
+    get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); }
+
+    get isSysDarkPrefer() { return this.sysDarkPrefers.matches; }
+
+    get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; }
+
+    get isLightMode() { return this.mode === ModeToggle.LIGHT_MODE; }
+
+    get hasMode() { return this.mode != null; }
+
+    get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); }
+
+    /* get the current mode on screen */
+    get modeStatus() {
+      if (this.isDarkMode
+        || (!this.hasMode && this.isSysDarkPrefer)) {
+        return ModeToggle.DARK_MODE;
+      } else {
+        return ModeToggle.LIGHT_MODE;
+      }
+    }
+
+    setDark() {
+      $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE);
+      sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE);
+    }
+
+    setLight() {
+      $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE);
+      sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE);
+    }
+
+    clearMode() {
+      $('html').removeAttr(ModeToggle.MODE_ATTR);
+      sessionStorage.removeItem(ModeToggle.MODE_KEY);
+    }
+
+    /* Notify another plugins that the theme mode has changed */
+    notify() {
+      window.postMessage({
+        direction: ModeToggle.ID,
+        message: this.modeStatus
+      }, "*");
+    }
+
+  } /* ModeToggle */
+
+  const toggle = new ModeToggle();
+
+  function flipMode() {
+    if (toggle.hasMode) {
+      if (toggle.isSysDarkPrefer) {
+        if (toggle.isLightMode) {
+          toggle.clearMode();
+        } else {
+          toggle.setLight();
+        }
+
+      } else {
+        if (toggle.isDarkMode) {
+          toggle.clearMode();
+        } else {
+          toggle.setDark();
+        }
+      }
+
+    } else {
+      if (toggle.isSysDarkPrefer) {
+        toggle.setLight();
+      } else {
+        toggle.setDark();
+      }
+    }
+
+    toggle.notify();
+
+  } /* flipMode() */
+
+</script>
+
+  
+
+  <body data-spy="scroll" data-target="#toc" data-topbar-visible="true">
+
+    <!--
+  The Side Bar
+-->
+
+<div id="sidebar" class="d-flex flex-column align-items-end" lang="zh-CN">
+  <div class="profile-wrapper text-center">
+    <div id="avatar">
+      <a href="/" alt="avatar" class="mx-auto">
+        
+          
+          <img src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202021358647.png" alt="avatar" onerror="this.style.display='none'">
+        
+      </a>
+    </div>
+
+    <div class="site-title mt-3">
+      <a href="/">小黑猫</a>
+    </div>
+    <div class="site-subtitle font-italic">喵～</div>
+
+  </div><!-- .profile-wrapper -->
+
+  <ul class="w-100">
+
+    <!-- home -->
+    <li class="nav-item">
+      <a href="/" class="nav-link">
+        <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i>
+        <span>首页</span>
+      </a>
+    </li>
+    <!-- the real tabs -->
+    
+    <li class="nav-item">
+      <a href="/categories/" class="nav-link">
+        <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i>
+        
+
+        <span>分类</span>
+      </a>
+    </li> <!-- .nav-item -->
+    
+    <li class="nav-item">
+      <a href="/tags/" class="nav-link">
+        <i class="fa-fw fas fa-tag ml-xl-3 mr-xl-3 unloaded"></i>
+        
+
+        <span>标签</span>
+      </a>
+    </li> <!-- .nav-item -->
+    
+    <li class="nav-item">
+      <a href="/archives/" class="nav-link">
+        <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i>
+        
+
+        <span>归档</span>
+      </a>
+    </li> <!-- .nav-item -->
+    
+    <li class="nav-item">
+      <a href="/about/" class="nav-link">
+        <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i>
+        
+
+        <span>关于</span>
+      </a>
+    </li> <!-- .nav-item -->
+    
+
+  </ul> <!-- ul.nav.flex-column -->
+
+  <div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center">
+
+    
+      <button class="mode-toggle btn" aria-label="Switch Mode">
+        <i class="fas fa-adjust"></i>
+      </button>
+
+      
+        <span class="icon-border"></span>
+      
+    
+
+    
+      
+
+      
+      <a href="https://github.com/lcatmiao" aria-label="github"
+        target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+      
+
+    
+      
+
+      
+      <a href="https://twitter.com/twitter_username" aria-label="twitter"
+        target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+      
+
+    
+      
+
+      
+      <a href="
+          javascript:location.href = 'mailto:' + ['example','doamin.com'].join('@')" aria-label="email"
+        >
+        <i class="fas fa-envelope"></i>
+      </a>
+      
+
+    
+      
+
+      
+      <a href="/feed.xml" aria-label="rss"
+        >
+        <i class="fas fa-rss"></i>
+      </a>
+      
+
+    
+
+  </div> <!-- .sidebar-bottom -->
+
+</div><!-- #sidebar -->
+
+
+    <!--
+  The Top Bar
+-->
+
+<div id="topbar-wrapper" class="row justify-content-center">
+  <div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between">
+    <span id="breadcrumb">
+
+    
+
+    
+
+      
+
+        
+          <span>
+            <a href="/">
+              首页
+            </a>
+          </span>
+
+        
+
+      
+
+        
+
+      
+
+        
+
+          
+            <span>手动搭建Web服务器环境</span>
+          
+
+        
+
+      
+
+    
+
+    </span><!-- endof #breadcrumb -->
+
+    <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i>
+
+    <div id="topbar-title">
+      文章
+    </div>
+
+    <i id="search-trigger" class="fas fa-search fa-fw"></i>
+    <span id="search-wrapper" class="align-items-center">
+      <i class="fas fa-search fa-fw"></i>
+      <input class="form-control" id="search-input" type="search"
+        aria-label="search" autocomplete="off" placeholder="搜索...">
+      <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i>
+    </span>
+    <span id="search-cancel" >取消</span>
+  </div>
+
+</div>
+
+
+    <div id="main-wrapper">
+      <div id="main">
+
+        
+
+
+
+<div class="row">
+
+  <!-- core -->
+  <div id="core-wrapper" class="col-12 col-lg-11 col-xl-8">
+    <div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4">
+
+    
+
+    
+      
+      
+        <!--
+  Refactor the HTML structure.
+-->
+
+
+
+<!--
+  In order to allow a wide table to scroll horizontally,
+  we suround the markdown table with `<div class="table-wrapper">` and `</div>`
+-->
+
+
+
+<!--
+  Fixed kramdown code highlight rendering:
+  https://github.com/penibelst/jekyll-compress-html/issues/101
+  https://github.com/penibelst/jekyll-compress-html/issues/71#issuecomment-188144901
+-->
+
+
+
+<!-- Add attribute 'hide-bullet' to the checkbox list -->
+
+
+
+<!-- images -->
+
+
+
+
+  
+  
+
+  
+    
+      
+      
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+
+  
+
+
+
+<!-- Add header for code snippets -->
+
+
+
+<!-- Create heading anchors -->
+
+
+
+
+
+  
+  
+
+  
+    
+    
+
+    
+      
+        
+        
+      
+
+      
+      
+
+      
+      
+      
+      
+
+      
+
+    
+      
+
+      
+      
+
+      
+      
+      
+      
+
+      
+
+    
+      
+
+      
+      
+
+      
+      
+      
+      
+
+      
+
+    
+
+    
+
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+
+
+
+<!-- Wrap prompt element of blockquote with the <div> tag -->
+
+
+
+
+
+
+
+  
+  
+
+  
+
+    
+      
+      
+
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+        
+        
+
+    
+
+    
+    
+
+    
+
+  
+
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+        
+        
+
+    
+
+    
+    
+
+    
+
+  
+
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+        
+        
+
+    
+
+    
+    
+
+    
+
+  
+
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+        
+        
+
+    
+
+    
+    
+
+    
+
+  
+
+  
+
+
+
+<!-- return -->
+
+
+
+
+
+
+
+<h1 data-toc-skip>手动搭建Web服务器环境</h1>
+
+<div class="post-meta text-muted">
+
+  <!-- author -->
+  <div>
+    
+    
+
+    
+
+    作者
+    <em>
+      
+        <a href="https://github.com/lcatmiao">小黑猫</a>
+      
+    </em>
+  </div>
+
+  <div class="d-flex">
+    <div>
+      <!-- published date -->
+      <span>
+        发表于
+        <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago"
+    data-ts="1595665800"
+    
+      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
+    
+    >
+  2020-07-25
+</em>
+
+      </span>
+
+      <!-- lastmod date -->
+      
+
+      <!-- read time -->
+      <!--
+  Calculate the post's reading time, and display the word count in tooltip
+ -->
+
+
+
+<!-- words per minute  -->
+
+
+
+
+
+
+
+
+
+
+<!-- return element -->
+<span class="readtime" data-toggle="tooltip" data-placement="bottom"
+  title="2171 字">
+  <em>12 分钟</em>阅读</span>
+
+
+      <!-- page views -->
+      
+    </div>
+
+  </div> <!-- .d-flex -->
+
+</div> <!-- .post-meta -->
+
+<div class="post-content">
+  <p>看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。</p>
+
+<blockquote>
+  <p>本文采用Apache+PHP+MySQL进行配置，版本如下：</p>
+
+  <p>Apache 2.4.43</p>
+
+  <p>PHP 7.4.8 Thread Safe</p>
+
+  <p>MySQL 8.0.21</p>
+</blockquote>
+
+<blockquote class="prompt-warning"><div>
+  <p>配置期间若出现“缺少VC环境”或“缺少.NET Framework”，自行百度，微软官网安装</p>
+</div></blockquote>
+
+<h2 id="apache配置">Apache配置 <a href="#apache配置" class="anchor"><i class="fas fa-hashtag"></i></a></h2></h2>
+
+<p>首先下载安装包<a href="https://www.apachelounge.com/download/">https://www.apachelounge.com/download/</a>，是一个压缩包。</p>
+
+<p>然后创建一个文件夹放置Web服务环境资源，我这里是D:\Server</p>
+
+<p>随后解压到Server文件夹下，这里解压后文件夹的名字叫做Apache24</p>
+
+<p>附一张全部搭建完后的Server文件夹的图，其中的PHP，MySQL，www文件夹会在后面创建。</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825449.jpg" alt="" data-proofer-ignore></p>
+
+<p><strong>开始配置</strong></p>
+
+<p>用记事本打开D:\Server\Apache24\conf\httpd.conf，这是Apache的配置文件。</p>
+
+<p>修改以下条目，可按Ctrl+F查找</p>
+
+<p><strong>ServerRoot</strong>（Apache的根目录）：d:/Server/Apache24，这里更改SRVROOT变量即可</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>Define SRVROOT "c:/Apache24"
+
+ServerRoot "${SRVROOT}"
+改为
+Define SRVROOT "d:/Server/Apache24"
+
+ServerRoot "${SRVROOT}"
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>ServerName</strong>（主机名）：localhost:80，去掉#才能让设置生效</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre># If your host doesn't have a registered DNS name, enter its IP address here.
+#
+#ServerName www.example.com:80
+改为
+# If your host doesn't have a registered DNS name, enter its IP address here.
+#
+ServerName localhost:80
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>DocumentRoot</strong>（Apache默认的网页目录）：d:/Server/www</p>
+
+<p>原先默认的网页目录是d:\Server\Apache24\htdocs，</p>
+
+<p>我这里更改了，新建了d:\Server\www文件夹以存放网页，所以要更改DocumentRoot</p>
+
+<p>把d:\Server\Apache24\htdocs下的index.html复制到d:\Server\www下，以备后续测试</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre># DocumentRoot: The directory out of which you will serve your
+# documents. By default, all requests are taken from this directory, but
+# symbolic links and aliases may be used to point to other locations.
+#
+DocumentRoot "${SRVROOT}/htdocs"
+&lt;Directory "${SRVROOT}/htdocs"&gt;
+改为
+# DocumentRoot: The directory out of which you will serve your
+# documents. By default, all requests are taken from this directory, but
+# symbolic links and aliases may be used to point to other locations.
+#
+DocumentRoot "d:/Server/www"
+&lt;Directory "d:/Server/www"&gt;
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>DirectoryIndex</strong>（Apache默认的入口网页）：这里没做更改，就用的默认的index.html</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre>没做更改
+&lt;IfModule dir_module&gt;
+    DirectoryIndex index.html
+&lt;/IfModule&gt;
+
+如果要更改，可以改为
+&lt;IfModule dir_module&gt;
+ DirectoryIndex index.php index.html index.htm
+&lt;/IfModule&gt;
+
+index.php index.html index.htm三个文件是有优先关系的，例：
+若同时有index.php index.html，则默认访问index.php
+若只有index.html，则默认访问index.html
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>ScriptAlias</strong>（没研究过，反正是个路径）：这里没做更改</p>
+
+<p>之前设置ServerRoot的时候，更改过SRVROOT变量为d:/Server/Apache24，而cgi-bin是Apache24下的一个文件夹，这里只要符合cgi-bin的路径即可。我已经符合，故不修改。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre>没做更改
+ScriptAlias /cgi-bin/ "${SRVROOT}/cgi-bin/"
+往下几行还有这个，也没改
+&lt;Directory "${SRVROOT}/cgi-bin"&gt;
+    AllowOverride None
+    Options None
+    Require all granted
+&lt;/Directory&gt;
+</pre></td></tr></tbody></table></code></div></div>
+
+<hr />
+
+<p>接下来双击运行D:\Server\Apache24\bin\httpd.exe，出现了一个没有任何输出的黑窗体，且不会闪退。</p>
+
+<p>这其实意味着打开了Apache服务器，不要关闭黑窗体，下面测试：</p>
+
+<p>在虚拟机中打开Google Chrome，地址栏输入localhost，可以访问到如下页面</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825451.jpg" alt="" data-proofer-ignore></p>
+
+<p>在物理机的浏览器中输入虚拟机IP地址也可访问到相同页面（cmd里ipconfig命令可查询IP）</p>
+
+<blockquote class="prompt-note"><div>
+  <p>若是没在虚拟机里安装，全部安在物理机也一样，打开浏览器输入localhost，可以访问到上述页面</p>
+</div></blockquote>
+
+<p>出现It works!说明应该没什么大问题了，关闭黑窗体，接下来把httpd.exe装到Windows服务里。</p>
+
+<p>打开cmd，进入httpd.exe所在目录，输入httpd -k install安装服务。</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825452.jpg" alt="" data-proofer-ignore></p>
+
+<blockquote class="prompt-note"><div>
+  <p>若想删除服务，可以以管理员身份运行cmd用sc delete Apache2.4命令删除</p>
+</div></blockquote>
+
+<p>安装成功后，在桌面的“计算机”上右键–管理–服务和应用程序–服务，可以查看所有服务，其中就有Apache2.4服务。在该服务上右键-属性，有一个启动类型选项，默认是自动（开机自启），由于只是学习使用，所以我改成了手动，以后可以在该服务上右键-启动来自行控制它。方便起见，我将D:\Server\Apache24\bin下的ApacheMonitor添加到了开始菜单中，这是一个操控Apache服务的图形化界面，打开后在电脑右下角的小图标里找到它，右键-open，界面如下：</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825453.jpg" alt="" data-proofer-ignore></p>
+
+<h2 id="php配置">PHP配置 <a href="#php配置" class="anchor"><i class="fas fa-hashtag"></i></a></h2></h2>
+
+<p>下载安装包<a href="https://windows.php.net/download#php-7.4">https://windows.php.net/download#php-7.4</a></p>
+
+<p>下载<strong>Thread Safe</strong>版本，否则后期可能缺少php7apache2_4.dll</p>
+
+<p>将zip压缩包解压为D:\Server\PHP</p>
+
+<p>在D:\Server\PHP下有这样两个文件：php.ini-development和php.ini-production</p>
+
+<p>两个都是PHP的配置文件，<a href="https://www.php.net/manual/zh/migration53.ini.php">https://www.php.net/manual/zh/migration53.ini.php</a></p>
+
+<p><em>php.ini-development包含在开发环境中推荐使用的设置</em></p>
+
+<p><em>php.ini-production包含在生产环境中推荐使用的设置</em></p>
+
+<p>这里使用php.ini-production，复制更名为php.ini放在同一目录下，以记事本打开</p>
+
+<p><strong>开始配置</strong></p>
+
+<p><strong>extension_dir</strong>（PHP扩展包目录）：</p>
+
+<div class="language-ini highlighter-rouge"><div class="code-header">
+        <span data-label-text="Ini"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="c">; On windows:
+;extension_dir = "ext"
+</span><span class="err">改为</span>
+<span class="c">; On windows:
+</span><span class="py">extension_dir</span> <span class="p">=</span> <span class="s">"D:</span><span class="se">\S</span><span class="s">erver</span><span class="se">\P</span><span class="s">HP</span><span class="se">\e</span><span class="s">xt"</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>date.timezone</strong>（设置时区）：</p>
+
+<div class="language-ini highlighter-rouge"><div class="code-header">
+        <span data-label-text="Ini"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="c">;date.timezone =
+</span><span class="err">改为</span>
+<span class="py">date.timezone</span> <span class="p">=</span> <span class="s">PRC</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>default_charset</strong>（设置编码）：没有更改，就用默认的UTF-8</p>
+
+<div class="language-ini highlighter-rouge"><div class="code-header">
+        <span data-label-text="Ini"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="py">default_charset</span> <span class="p">=</span> <span class="s">"UTF-8"</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>开启扩展</strong>：网上搜了几个常用的扩展，去掉分号开启，功能可查官方文档</p>
+
+<p>php_curl.dll                <a href="https://www.php.net/manual/zh/book.curl.php">https://www.php.net/manual/zh/book.curl.php</a>
+php_gd2.dll                <a href="https://www.php.net/manual/zh/book.image.php">https://www.php.net/manual/zh/book.image.php</a>
+php_fileinfo.dll          <a href="https://www.php.net/manual/zh/book.fileinfo.php">https://www.php.net/manual/zh/book.fileinfo.php</a>
+php_mbstring.dll      <a href="https://www.php.net/manual/zh/book.mbstring.php">https://www.php.net/manual/zh/book.mbstring.php</a>
+php_pdo_mysql.dll   <a href="https://www.php.net/manual/zh/ref.pdo-mysql.php">https://www.php.net/manual/zh/ref.pdo-mysql.php</a>
+php_mysqli.dll           <a href="https://www.php.net/manual/zh/book.mysqli.php">https://www.php.net/manual/zh/book.mysqli.php</a></p>
+
+<div class="language-ini highlighter-rouge"><div class="code-header">
+        <span data-label-text="Ini"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre><span class="c">;extension=curl
+;extension=gd2
+;extension=fileinfo
+;extension=mbstring
+;extension=pdo_mysql
+;extension=mysqli
+</span><span class="err">改为</span>
+<span class="py">extension</span><span class="p">=</span><span class="s">curl</span>
+<span class="py">extension</span><span class="p">=</span><span class="s">gd2</span>
+<span class="py">extension</span><span class="p">=</span><span class="s">fileinfo</span>
+<span class="py">extension</span><span class="p">=</span><span class="s">mbstring</span>
+<span class="py">extension</span><span class="p">=</span><span class="s">pdo_mysql</span>
+<span class="py">extension</span><span class="p">=</span><span class="s">mysqli</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>为Apache服务添加PHP支持</strong>：</p>
+
+<p>在此前的httpd.conf文件的最下面添加如下代码：</p>
+
+<div class="language-ini highlighter-rouge"><div class="code-header">
+        <span data-label-text="Ini"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="c"># php7 support
+</span><span class="err">LoadModule</span> <span class="err">php7_module</span> <span class="err">"D:/Server/PHP/php7apache2_4.dll"</span>
+<span class="err">AddType</span> <span class="err">application/x-httpd-php</span> <span class="err">.php</span> <span class="err">.html</span> <span class="err">.htm</span>
+
+<span class="c"># configure the path to php.ini
+</span><span class="err">PHPIniDir</span> <span class="err">"D:/Server/PHP"</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825454.jpg" alt="" data-proofer-ignore></p>
+
+<hr />
+
+<p>在D:\Server\www下新建index.txt文件，输入如下代码</p>
+
+<div class="language-php highlighter-rouge"><div class="code-header">
+        <span data-label-text="PHP"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="cp">&lt;?php</span>
+    <span class="nb">phpinfo</span><span class="p">();</span>
+<span class="cp">?&gt;</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>更改扩展名为.php，重启先前的Apache服务</p>
+
+<p>用浏览器访问localhost/index.php，可得PHP详细信息页面</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825455.jpg" alt="" data-proofer-ignore></p>
+
+<p>至此就基本没有大问题了</p>
+
+<hr />
+
+<p>下面配置PHP环境变量，这是为了方便在cmd里直接使用PHP，也可以不配置</p>
+
+<p>计算机右键-属性-高级系统设置-环境变量，新建系统变量</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825456.JPG" alt="" data-proofer-ignore></p>
+
+<p>再打开Path系统变量，在后面加上%PHP_HOME%</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825457.jpg" alt="" data-proofer-ignore></p>
+
+<p>随后在cmd中测试，输入php -version，会显示版本信息，说明配置成功</p>
+
+<h2 id="mysql配置">MySQL配置 <a href="#mysql配置" class="anchor"><i class="fas fa-hashtag"></i></a></h2></h2>
+
+<p>直接下载的离线安装包<a href="https://dev.mysql.com/downloads/installer/">https://dev.mysql.com/downloads/installer/</a>，跟着下一步下一步，感觉没啥特殊的配置</p>
+
+<p>新建MySQL文件夹，D:\Server\MySQL</p>
+
+<p>选择custom自定义安装，根据需要选择相应组件，我选择装了</p>
+
+<p>MySQL Server 8.0；MySQL Shell 8.0；MySQL Notifier 1.1；MySQL Workbench 8.0 CE；</p>
+
+<p>Connector ODBC 8.0；Connector C++ 8.0；Connector J 8.0；Connector NET 8.0；</p>
+
+<p>MySQL Documentation 8.0；</p>
+
+<p>后面就一直“下一步”，除了让你设置密码的时候要设置一下</p>
+
+<blockquote class="prompt-note"><div>
+  <p>MySQL卸载可能有点麻烦，这里不赘述，最好一遍成功，下面是<strong>遇到的一些坑</strong>：</p>
+
+  <ul>
+    <li>安装组件时，右下角有个Advanced Options选项，很容易忽略，里面可以设置自定义安装路径，且每个组件都要单独设置一遍，不清楚的可以看这个<a href="https://blog.csdn.net/qq_40764966/article/details/96702490">https://blog.csdn.net/qq_40764966/article/details/96702490</a></li>
+    <li>安装前确保磁盘空间足够，因为我是在虚拟机里安装，一开始又错装到了C盘，碰巧C盘剩余1G不到，所以提示Fail了</li>
+  </ul>
+</div></blockquote>
+
+<p>正常安装完后，在计算机右键-管理-服务中可以看到名为MySQL80的服务，可以选择设为手动启动</p>
+
+<p>另外，MySQLNotifier就是一个跟ApacheMonitor差不多的东西，也可以通过它开启服务</p>
+
+<hr />
+
+<p>下面测试：</p>
+
+<p>在D:\Server\www下新建testmysql.txt文件，写上如下代码：</p>
+
+<div class="language-php highlighter-rouge"><div class="code-header">
+        <span data-label-text="PHP"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="cp">&lt;?php</span>
+    <span class="nv">$conn</span><span class="o">=</span><span class="nb">mysqli_connect</span><span class="p">(</span><span class="s2">"localhost"</span><span class="p">,</span><span class="s2">"root"</span><span class="p">,</span><span class="s2">"root密码"</span><span class="p">);</span>
+	<span class="k">if</span><span class="p">(</span><span class="nv">$conn</span><span class="p">)</span>
+  		<span class="k">echo</span> <span class="s2">"连接success"</span><span class="p">;</span>
+ 	<span class="k">else</span>
+  		<span class="k">echo</span> <span class="s2">"连接fail"</span><span class="p">;</span>
+<span class="cp">?&gt;</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>将txt文件另存为UTF-8编码的文件（要与PHP设置的默认编码一致，否则中文会乱码）</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825458.jpg" alt="" data-proofer-ignore></p>
+
+<p>更改扩展名为.php，启动Apache服务和MySQL服务，浏览器localhost/testmysql.php访问可得</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825459.jpg" alt="" data-proofer-ignore></p>
+
+<p>测试成功，至此环境就搭建完了</p>
+
+<hr />
+
+<p>下面配置MySQL环境变量，这是为了方便在cmd里直接使用MySQL，也可以不配置</p>
+
+<p>新建系统变量MYSQL_HOME</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825460.jpg" alt="" data-proofer-ignore></p>
+
+<p>在Path中添加%MYSQL_HOME%\MySQL Server 8.0\bin</p>
+
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202020825461.jpg" alt="" data-proofer-ignore></p>
+
+<p>开启MySQL服务，在cmd中输入mysql -h localhost -u root -p，输入密码，若能成功登录，说明配置成功</p>
+
+
+</div>
+
+<div class="post-tail-wrapper text-muted">
+
+  <!-- categories -->
+  
+  <div class="post-meta mb-3">
+    <i class="far fa-folder-open fa-fw mr-1"></i>
+    
+      <a href='/categories/%E5%AD%A6%E4%B9%A0/'>学习</a>,
+      <a href='/categories/%E6%9D%82%E7%9F%A5%E8%AF%86/'>杂知识</a>
+  </div>
+  
+
+  <!-- tags -->
+  
+
+  <div class="post-tail-bottom
+    d-flex justify-content-between align-items-center mt-3 pt-5 pb-2">
+    <div class="license-wrapper">
+
+      
+
+        
+
+        本文由作者按照 
+        <a href="https://creativecommons.org/licenses/by/4.0/">
+          CC BY 4.0
+        </a>
+         进行授权
+
+      
+    </div>
+
+    <!--
+ Post sharing snippet
+-->
+
+<div class="share-wrapper">
+  <span class="share-label text-muted mr-1">分享</span>
+  <span class="share-icons">
+    
+    
+
+    
+      
+        <a href="https://twitter.com/intent/tweet?text=手动搭建Web服务器环境 - 小黑猫&amp;url=http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" data-toggle="tooltip" data-placement="top"
+          title="Twitter" target="_blank" rel="noopener" aria-label="Twitter">
+          <i class="fa-fw fab fa-twitter"></i>
+        </a>
+    
+      
+        <a href="https://www.facebook.com/sharer/sharer.php?title=手动搭建Web服务器环境 - 小黑猫&amp;u=http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" data-toggle="tooltip" data-placement="top"
+          title="Facebook" target="_blank" rel="noopener" aria-label="Facebook">
+          <i class="fa-fw fab fa-facebook-square"></i>
+        </a>
+    
+      
+        <a href="https://t.me/share/url?url=http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/&amp;text=手动搭建Web服务器环境 - 小黑猫" data-toggle="tooltip" data-placement="top"
+          title="Telegram" target="_blank" rel="noopener" aria-label="Telegram">
+          <i class="fa-fw fab fa-telegram"></i>
+        </a>
+    
+
+    <i id="copy-link" class="fa-fw fas fa-link small"
+        data-toggle="tooltip" data-placement="top"
+        title="分享链接"
+        data-title-succeed="链接已复制！">
+    </i>
+
+  </span>
+</div>
+
+
+  </div><!-- .post-tail-bottom -->
+
+</div><!-- div.post-tail-wrapper -->
+
+
+      
+    
+    
+
+    </div>
+  </div> <!-- #core-wrapper -->
+
+  <!-- pannel -->
+  <div id="panel-wrapper" class="col-xl-3 pl-2 text-muted">
+
+    <div class="access">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+
+
+  <div id="access-tags">
+    <div class="panel-heading">热门标签</div>
+    <div class="d-flex flex-wrap mt-3 mb-1 mr-3">
+
+    
+      
+      <a class="post-tag" href="/tags/git/">git</a>
+    
+      
+      <a class="post-tag" href="/tags/jekyll/">Jekyll</a>
+    
+
+    </div>
+  </div>
+
+
+    </div>
+
+    
+      
+      
+
+
+
+<!-- BS-toc.js will be loaded at medium priority -->
+<script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script>
+
+<div id="toc-wrapper" class="pl-0 pr-4 mb-5">
+  <div class="panel-heading pl-3 pt-2 mb-2">文章内容</div>
+  <nav id="toc" data-toggle="toc"></nav>
+</div>
+
+
+    
+  </div>
+
+</div>
+
+<!-- tail -->
+
+<div class="row">
+  <div class="col-12 col-lg-11 col-xl-8">
+    <div id="tail-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4">
+      
+        
+        <!--
+ Recommend the other 3 posts according to the tags and categories of the current post,
+ if the number is not enough, use the other latest posts to supplement.
+-->
+
+<!-- The total size of related posts  -->
+
+
+<!-- An random integer that bigger than 0  -->
+
+
+<!-- Equals to TAG_SCORE / {max_categories_hierarchy}  -->
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+    
+
+
+
+
+
+
+<!-- Fill with the other newlest posts  -->
+
+
+
+
+
+
+  <div id="related-posts" class="mt-5 mb-2 mb-sm-4">
+    <h3 class="pt-2 mt-1 mb-4 ml-1"
+      data-toc-skip>相关文章</h3>
+    <div class="card-deck mb-4">
+    
+      
+      
+      <div class="card">
+        <a href="/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1643448670"
+    
+    >
+  2022-01-29
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>关于域名的各种名词叫法</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                关于域名有一些名词，比如域名、顶级域名、二级域名、三级域名、子域名、主机名等。自己总是搞不清这些名词具体指代什么，因为网上的资料总是有各种差别，同一个名词在不同的资料里有不同的解释，属实是迷惑。在查阅了很多资料后，决定做一个总结，尽可能涵盖各种说法，做一个自己理解的标准，以期在遇到这些说法时心里有底。
+
+资料
+
+基本概念 (aliyun.com)
+
+Domain name - Wikiped...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/Jekyll-Chirpy-theme-+-Github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1644043380"
+    
+    >
+  2022-02-05
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>Jekyll Chirpy theme + Github搭建个人博客</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1643176177"
+    
+    >
+  2022-01-26
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>git如何合并分支</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。
+
+
+  参考资料：Git 分支 - 分支的新建与合并
+
+
+合并过程
+
+快进(fast-forward)
+
+
+
+现在要将hotfix分支合并到master分支。
+
+1
+2
+3
+4
+5
+6
+$ git checkout master
+$ git merge hotfix
+Updat...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+    </div> <!-- .card-deck -->
+  </div> <!-- #related-posts -->
+
+
+      
+        
+        <!--
+  Navigation buttons at the bottom of the post.
+-->
+
+<div class="post-navigation d-flex justify-content-between">
+  
+  <span class="btn btn-outline-primary disabled"
+    prompt="上一篇">
+    <p>-</p>
+  </span>
+  
+
+  
+  <a href="/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/" class="btn btn-outline-primary"
+    prompt="下一篇">
+    <p>git如何合并分支</p>
+  </a>
+  
+
+</div>
+
+      
+        
+        <!--  The comments switcher -->
+
+
+      
+    </div>
+  </div>
+</div> <!-- .row -->
+
+
+
+        <!--
+  The Footer
+-->
+
+<footer class="d-flex w-100 justify-content-center">
+  <div class="d-flex justify-content-between align-items-center text-muted">
+    <div class="footer-left">
+      <p class="mb-0">
+        © 2022
+        <a href="https://github.com/lcatmiao">小黑猫</a>.
+        
+        <span data-toggle="tooltip" data-placement="top"
+          title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。">保留部分权利。</span>
+        
+      </p>
+    </div>
+
+    <div class="footer-right">
+      <p class="mb-0">
+        
+
+        
+
+        本站由 
+          <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>
+         生成，采用 
+          <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a>
+         主题。
+
+      </p>
+    </div>
+
+  </div> <!-- div.d-flex -->
+</footer>
+
+
+      </div>
+
+      <!--
+  The Search results
+-->
+<div id="search-result-wrapper" class="d-flex justify-content-center unloaded">
+  <div class="col-12 col-sm-11 post-content">
+    <div id="search-hints">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+
+
+  <div id="access-tags">
+    <div class="panel-heading">热门标签</div>
+    <div class="d-flex flex-wrap mt-3 mb-1 mr-3">
+
+    
+      
+      <a class="post-tag" href="/tags/git/">git</a>
+    
+      
+      <a class="post-tag" href="/tags/jekyll/">Jekyll</a>
+    
+
+    </div>
+  </div>
+
+
+    </div>
+    <div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div>
+  </div>
+</div>
+
+
+    </div> <!-- #main-wrapper -->
+
+    
+
+    <div id="mask"></div>
+
+    <a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!--
+  Jekyll Simple Search loader
+  See: <https://github.com/christian-fei/Simple-Jekyll-Search>
+-->
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+  searchInput: document.getElementById('search-input'),
+  resultsContainer: document.getElementById('search-results'),
+  json: '/assets/js/data/search.json',
+  searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0">  <a href="{url}">{title}</a>  <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">    {categories}    {tags}  </div>  <p>{snippet}</p></div>',
+  noResultsText: '<p class="mt-5">搜索结果为空</p>',
+  templateMiddleware: function(prop, value, template) {
+    if (prop === 'categories') {
+      if (value === '') {
+        return `${value}`;
+      } else {
+        return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`;
+      }
+    }
+
+    if (prop === 'tags') {
+      if (value === '') {
+        return `${value}`;
+      } else {
+        return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`;
+      }
+    }
+  }
+});
+</script>
+
+
+    <!--
+  JS selector for site.
+-->
+
+<!-- layout specified -->
+
+
+  
+
+
+
+  <!-- image lazy-loading & popup -->
+  <script src="https://cdn.jsdelivr.net/combine/npm/lozad/dist/lozad.min.js,npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/clipboard@2/dist/clipboard.min.js"></script>
+
+
+
+
+  
+
+  <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1,npm/dayjs@1/locale/zh.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script>
+
+
+
+
+
+<script defer src="/assets/js/dist/post.min.js"></script>
+
+
+
+<!-- commons -->
+
+<script src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.16.1,npm/bootstrap@4/dist/js/bootstrap.min.js"></script>
+
+
+
+
+  </body>
+
+</html>
+
