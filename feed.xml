@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-02-06T21:56:02+08:00</updated>
+  <updated>2022-02-12T08:20:03+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,64 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>MySQL数据类型转换</title>
+    <link href="http://0.0.0.0:4000/posts/MySQL%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" rel="alternate" type="text/html" title="MySQL数据类型转换" />
+    <published>2022-02-11T21:35:00+08:00</published>
+  
+    <updated>2022-02-11T21:35:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/MySQL%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</id>
+    <content src="http://0.0.0.0:4000/posts/MySQL%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="学习" />
+    
+    <category term="SQL" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      关于MySQL的数据类型转换问题大概两年前就研究过了，只是那时候没有发博客的习惯，笔记记得也很简单。最近又遇到了这个问题，打开以往的笔记发现记得太简单了，自己看完了还是有好多疑问😭，故有了这篇文章。
+
+
+  参考资料：
+
+  MySQL :: MySQL 8.0 Reference Manual :: 12.11 Cast Functions and Operators
+
+  MySQL :: MySQL 8.0 Reference Manual :: 12.3 Type Conversion in Expression Evaluation
+
+  mysql 类型自动化转换问题 - whendream - 博客园
+
+  谈谈MySQL隐式类型转换 - 知乎
+
+  测试版本：
+
+  MySQL 8.0.18
+
+
+显式转换
+
+cast()
+
+CAST(expr AS type [ARR...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -222,64 +280,6 @@ Fast-forward
 反码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆  -0.127~+0.127
 
 补码：-128~+127        $-1.0$~$\frac{127}{128}$    ...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>手动搭建Web服务器环境</title>
-    <link href="http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" rel="alternate" type="text/html" title="手动搭建Web服务器环境" />
-    <published>2020-07-25T16:30:00+08:00</published>
-  
-    <updated>2020-07-25T16:30:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/</id>
-    <content src="http://0.0.0.0:4000/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="学习" />
-    
-    <category term="杂知识" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。
-
-
-  本文采用Apache+PHP+MySQL进行配置，版本如下：
-
-  Apache 2.4.43
-
-  PHP 7.4.8 Thread Safe
-
-  MySQL 8.0.21
-
-
-
-  配置期间若出现“缺少VC环境”或“缺少.NET Framework”，自行百度，微软官网安装
-
-
-Apache配置
-
-首先下载安装包https://www.apachelounge.com/download/，是一个压缩包。
-
-然后创建一个文件夹放置Web服务环境资源，我这里是D:\Server
-
-随后解压...
     </summary>
   
 
