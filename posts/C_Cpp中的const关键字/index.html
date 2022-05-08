@@ -1091,6 +1091,8 @@
 
 <p>稍微扯远了点，现在我们回来，总之，在C语言中，<code class="language-plaintext highlighter-rouge">const</code> 全局变量和普通全局变量一样，作用域都是整个工程，只不过需要用 <code class="language-plaintext highlighter-rouge">extern</code> 声明一下才能在其它文件中使用。</p>
 
+<p><br /></p>
+
 <p><strong><u>在C++中，`const` 全局变量的作用域仅是单个文件。</u></strong> 见如下代码：</p>
 
 <p><code class="language-plaintext highlighter-rouge">test1.cpp</code></p>
@@ -1226,6 +1228,8 @@ collect2.exe: error: ld returned 1 exit status
 <p>当我在 <code class="language-plaintext highlighter-rouge">func()</code> 中时，只能看见 <code class="language-plaintext highlighter-rouge">test2.cpp</code> 中定义的 <code class="language-plaintext highlighter-rouge">m</code>，从全局区读取了 <code class="language-plaintext highlighter-rouge">test2.cpp</code> 中定义的 <code class="language-plaintext highlighter-rouge">m</code> 为 <code class="language-plaintext highlighter-rouge">40</code>。</p>
 
 <p>总之，这样的代码在C中就不能成立，会出现重复定义全局变量的错误。</p>
+
+<p><br /></p>
 
 <p><strong><u>C++中，在定义 `const` 全局变量时加上 `extern` 关键字可以将作用域从单个文件扩展到整个工程，此方法仅 `g++` 支持。</u></strong> 见如下代码：</p>
 
