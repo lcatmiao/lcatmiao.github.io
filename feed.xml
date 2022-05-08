@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-02-12T08:20:03+08:00</updated>
+  <updated>2022-05-08T22:11:55+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,69 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>C和C++中的const关键字</title>
+    <link href="http://0.0.0.0:4000/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" rel="alternate" type="text/html" title="C和C++中的const关键字" />
+    <published>2022-05-08T21:30:00+08:00</published>
+  
+    <updated>2022-05-08T21:30:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/</id>
+    <content src="http://0.0.0.0:4000/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="学习" />
+    
+    <category term="C/C++" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      记录一波 const 关键字的知识点。
+
+概述
+
+const 意为不可修改。
+
+const 修饰的变量不可被修改， 是只读变量，也称这样的变量为常量。const 修饰的变量不可修改这一点是语法层面的限制，通过一些刻意构造的操作仍然可以修改变量的值，只是一般不会这样做。
+
+const 也可以修饰指针，既可以限制指针指向的数据，又可以限制指针本身。
+
+const 修饰变量
+
+const int VexNum = 20;
+int const VexNum = 20;
+
+
+上述两种写法的效果是一样的。我们一般使用第一种。const 修饰变量，即定义了常量 VexNum。
+
+
+  const 定义的常量一般单词首字母大写。
+
+
+这个时候企图修改常量是不行的。
+
+VexNum = 30; // error: assignment of read-only variable 'VexNum'
+
+
+...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -234,52 +297,6 @@ Fast-forward
 
 
 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forwar...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>原码、反码、补码范围及特殊情况</title>
-    <link href="http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/" rel="alternate" type="text/html" title="原码、反码、补码范围及特殊情况" />
-    <published>2021-08-24T15:40:00+08:00</published>
-  
-    <updated>2021-08-24T15:40:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/</id>
-    <content src="http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="学习" />
-    
-    <category term="杂知识" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。
-
-
-
-一个字节：
-
-原码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆  -0.127~+0.127
-
-反码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆  -0.127~+0.127
-
-补码：-128~+127        $-1.0$~$\frac{127}{128}$    ...
     </summary>
   
 
