@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-11-27T12:08:06+08:00</updated>
+  <updated>2022-11-27T23:42:12+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,69 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>函数传参</title>
+    <link href="http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/" rel="alternate" type="text/html" title="函数传参" />
+    <published>2022-11-27T23:30:00+08:00</published>
+  
+    <updated>2022-11-27T23:30:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/</id>
+    <content src="http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="学习" />
+    
+    <category term="C_Cpp" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      传参分类
+
+从传参类型上看
+
+传参分为传值和传指针。
+
+
+  传指针本质上也是传值，只不过传的是指针值。由于传一般值和传指针值还是有点区别，所以分成两种说法。传值一般就指传一般值，传指针专门用于描述传指针值。
+
+
+从传参行为上看
+
+传参分为值复制和传自己。
+
+
+  传自己本质上也是值复制，只不过是取地址传无名指针，形参直接接上；而不是直接传有名指针。例如：
+
+
+// 函数调用
+func1(id, index, flag, &amp;amp;count);
+func2(arr);
+
+// 函数定义头
+func1(int id, int index, int flag, int *p_count)
+func2(int *arr)
+
+
+其中，id，index，flag 是值复制，这毫无疑义。arr 是数组名，这里退化为指针，直接进行了传参，也就是我说的“直接传有名指针”，所以我将其归为值复制。&amp;a...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -229,58 +292,6 @@ git clone git@github.com:cotes2020/jekyll-theme-chirpy.git
 
 # 在jekyll-theme-chirpy目录下安装依赖
 # 不需要sudo，命...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>关于域名的各种名词叫法</title>
-    <link href="http://0.0.0.0:4000/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/" rel="alternate" type="text/html" title="关于域名的各种名词叫法" />
-    <published>2022-01-29T17:31:10+08:00</published>
-  
-    <updated>2022-01-29T17:31:10+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/</id>
-    <content src="http://0.0.0.0:4000/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="学习" />
-    
-    <category term="杂知识" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      关于域名有一些名词，比如域名、顶级域名、二级域名、三级域名、子域名、主机名等。自己总是搞不清这些名词具体指代什么，因为网上的资料总是有各种差别，同一个名词在不同的资料里有不同的解释，属实是迷惑。在查阅了很多资料后，决定做一个总结，尽可能涵盖各种说法，做一个自己理解的标准，以期在遇到这些说法时心里有底。
-
-资料
-
-基本概念 (aliyun.com)
-
-Domain name - Wikipedia
-
-What’s in a Domain Name? All About Domain Levels - Hover Blog
-
-下面贴两段我认为有帮助的描述
-
-阿里云产品文档
-
-基本概念 (aliyun.com)
-
-互联网名称与数字地址分配机构（ICANN）负责管理和协调国际互联网络域名系统。根据ICANN的定义，一个完整的域名至少有两个部分，各部分之间用“.”来分隔，最后一个“.”的右边部...
     </summary>
   
 
