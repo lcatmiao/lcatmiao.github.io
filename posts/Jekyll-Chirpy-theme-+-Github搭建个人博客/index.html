@@ -1414,7 +1414,7 @@ jekyll serve <span class="nt">--detach</span>
 
     
       
-      <a class="post-tag" href="/tags/c-c/">C/C++</a>
+      <a class="post-tag" href="/tags/c-cpp/">C_Cpp</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
@@ -1673,7 +1673,7 @@ jekyll serve <span class="nt">--detach</span>
       
       
       <div class="card">
-        <a href="/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/">
+        <a href="/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/">
           <div class="card-body">
             <!--
   Date format snippet
@@ -1681,13 +1681,13 @@ jekyll serve <span class="nt">--detach</span>
 -->
 
 <em class="timeago small"
-    data-ts="1643448670"
+    data-ts="1643176177"
     
     >
-  2022-01-29
+  2022-01-26
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>关于域名的各种名词叫法</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>git如何合并分支</h3>
             <div class="text-muted small">
               <p>
                 
@@ -1696,13 +1696,23 @@ jekyll serve <span class="nt">--detach</span>
 
 
 
-                关于域名有一些名词，比如域名、顶级域名、二级域名、三级域名、子域名、主机名等。自己总是搞不清这些名词具体指代什么，因为网上的资料总是有各种差别，同一个名词在不同的资料里有不同的解释，属实是迷惑。在查阅了很多资料后，决定做一个总结，尽可能涵盖各种说法，做一个自己理解的标准，以期在遇到这些说法时心里有底。
+                复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。
 
-资料
 
-基本概念 (aliyun.com)
+  参考资料：Git 分支 - 分支的新建与合并
 
-Domain name - Wikiped...
+
+合并过程
+
+快进(fast-forward)
+
+
+
+现在要将hotfix分支合并到master分支。
+
+$ git checkout master
+$ git merge hotfix
+Updating f42c576....
               </p>
             </div>
           </div>
@@ -1888,7 +1898,7 @@ Domain name - Wikiped...
 
     
       
-      <a class="post-tag" href="/tags/c-c/">C/C++</a>
+      <a class="post-tag" href="/tags/c-cpp/">C_Cpp</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>

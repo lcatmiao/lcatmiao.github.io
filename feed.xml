@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-11-27T11:48:32+08:00</updated>
+  <updated>2022-11-27T12:08:06+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -36,7 +36,7 @@
     
     <category term="学习" />
     
-    <category term="C/C++" />
+    <category term="C_Cpp" />
     
   
 
@@ -66,8 +66,8 @@
 
   
   <entry>
-    <title>C和C++中的const关键字</title>
-    <link href="http://0.0.0.0:4000/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" rel="alternate" type="text/html" title="C和C++中的const关键字" />
+    <title>C_Cpp中的const关键字</title>
+    <link href="http://0.0.0.0:4000/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" rel="alternate" type="text/html" title="C_Cpp中的const关键字" />
     <published>2022-05-08T21:30:00+08:00</published>
   
     <updated>2022-05-08T21:30:00+08:00</updated>
@@ -82,7 +82,7 @@
     
     <category term="学习" />
     
-    <category term="C/C++" />
+    <category term="C_Cpp" />
     
   
 
