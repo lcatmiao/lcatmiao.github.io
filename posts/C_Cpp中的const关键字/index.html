@@ -1412,6 +1412,25 @@ collect2.exe: error: ld returned 1 exit status
     
     
     
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
       
     
   
@@ -1427,31 +1446,6 @@ collect2.exe: error: ld returned 1 exit status
     
     
     
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
     
   
     
@@ -1547,6 +1541,19 @@ collect2.exe: error: ld returned 1 exit status
 
 
 
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
 
   
@@ -1652,6 +1659,43 @@ collect2.exe: error: ld returned 1 exit status
       
       
       <div class="card">
+        <a href="/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1669434000"
+    
+    >
+  2022-11-26
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>记一次指针强转导致脏数据写入问题</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。
+
+问题描述
+
+时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
         <a href="/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/">
           <div class="card-body">
             <!--
@@ -1727,55 +1771,6 @@ collect2.exe: error: ld returned 1 exit status
         </a>
       </div>
     
-      
-      
-      <div class="card">
-        <a href="/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1643176177"
-    
-    >
-  2022-01-26
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>git如何合并分支</h3>
-            <div class="text-muted small">
-              <p>
-                
-
-
-
-
-
-                复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。
-
-
-  参考资料：Git 分支 - 分支的新建与合并
-
-
-合并过程
-
-快进(fast-forward)
-
-
-
-现在要将hotfix分支合并到master分支。
-
-$ git checkout master
-$ git merge hotfix
-Updating f42c576....
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
     </div> <!-- .card-deck -->
   </div> <!-- #related-posts -->
 
@@ -1795,10 +1790,10 @@ Updating f42c576....
   
 
   
-  <span class="btn btn-outline-primary disabled"
+  <a href="/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/" class="btn btn-outline-primary"
     prompt="下一篇">
-    <p>-</p>
-  </span>
+    <p>记一次指针强转导致脏数据写入问题</p>
+  </a>
   
 
 </div>
@@ -1889,6 +1884,25 @@ Updating f42c576....
     
     
     
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
       
     
   
@@ -1904,31 +1918,6 @@ Updating f42c576....
     
     
     
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-      
     
   
     

@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-05-08T23:13:51+08:00</updated>
+  <updated>2022-11-27T11:48:32+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,52 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>记一次指针强转导致脏数据写入问题</title>
+    <link href="http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/" rel="alternate" type="text/html" title="记一次指针强转导致脏数据写入问题" />
+    <published>2022-11-26T11:40:00+08:00</published>
+  
+    <updated>2022-11-26T11:40:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/</id>
+    <content src="http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="学习" />
+    
+    <category term="C/C++" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。
+
+问题描述
+
+时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据写入了，也就是说，我们更改变量 policy_id 的同时把 vsys_id 也给改了，从而导致了问题。
+
+
+
+问题分析
+
+根据结构体内存对齐画出结构，可以发现 vsys_id 和 policy_id 是紧挨着的。原先指向 policy_id 的指针是 u16 * ，原代码对其进行了一个强转成 u32 * 的操作，这样一来，这个指针就指向了 policy_id 加 vsys_id 的4个字节，然后...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -235,68 +281,6 @@ What’s in a Domain Name? All About Domain Levels - Hover Blog
 基本概念 (aliyun.com)
 
 互联网名称与数字地址分配机构（ICANN）负责管理和协调国际互联网络域名系统。根据ICANN的定义，一个完整的域名至少有两个部分，各部分之间用“.”来分隔，最后一个“.”的右边部...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>git如何合并分支</title>
-    <link href="http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/" rel="alternate" type="text/html" title="git如何合并分支" />
-    <published>2022-01-26T13:49:37+08:00</published>
-  
-    <updated>2022-01-26T13:49:37+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/</id>
-    <content src="http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="学习" />
-    
-    <category term="git" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。
-
-
-  参考资料：Git 分支 - 分支的新建与合并
-
-
-合并过程
-
-快进(fast-forward)
-
-
-
-现在要将hotfix分支合并到master分支。
-
-$ git checkout master
-$ git merge hotfix
-Updating f42c576..3a0874c
-Fast-forward
- index.html | 2 ++
- 1 file changed, 2 insertions(+)
-
-
-合并后如下图：
-
-
-
-当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forwar...
     </summary>
   
 

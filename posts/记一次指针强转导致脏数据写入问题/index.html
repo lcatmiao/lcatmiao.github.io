@@ -31,26 +31,26 @@
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
 <meta name="generator" content="Jekyll v4.2.1" />
-<meta property="og:title" content="原码、反码、补码范围及特殊情况" />
+<meta property="og:title" content="记一次指针强转导致脏数据写入问题" />
 <meta name="author" content="小黑猫" />
 <meta property="og:locale" content="zh_CN" />
-<meta name="description" content="这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。 一个字节： 原码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆 -0.127~+0.127 反码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆 -0.127~+0.127 补码：-128~+127        $-1.0$~$\frac{127}{128}$        $-1.0$~$1-2^{-7}$        方便记忆 -0.128~+0.127 原码反码区分±0，±0.0 $[+0]_补=[-0]_补=0,000\ 0000$ $[+0.0]_补=[-0.0]_补=0.000\ 0000$ $[-128]_补=1,000\ 0000$ $[-1.0]_补=1.000\ 0000$ $[+0]_补 \ \&amp;\ [-0]_补$ $[+0]_原=0,000\ 0000$ $[+0]_补=0,000\ 0000$ $[-0]_原=1,000\ 0000$ $[-0]_反=1,111\ 1111$ $[-0]_补=10,000\ 0000 \xlongequal{溢出丢弃}0,000\ 0000$ $[+0]_补=[-0]_补=0,000\ 0000$ $[+0.0]_补 \ \&amp;\ [-0.0]_补$ $[+0.0]_原=0.000\ 0000$ $[+0.0]_补=0.000\ 0000$ $[-0.0]_原=1.000\ 0000$ $[-0.0]_反=1.111\ 1111$ $[-0.0]_补=10.000\ 0000 \xlongequal{溢出丢弃}0.000\ 0000$ $[+0.0]_补=[-0.0]_补=0.000\ 0000$ $[-128]_补$ $[-128]_{伪原}=1,1000\ 0000$ $[-128]_{伪反}=1,0111\ 1111$ $[-128]_补=1,1000\ 0000 \xlongequal{溢出丢弃}1,000\ 0000$ $[-1.0]_补$ $-1.0\rightarrow-0.128$ $[-1.0]_{伪原}=1.1000\ 0000$ $[-1.0]_{伪反}=1.0111\ 1111$ $[-1.0]_补=1.1000\ 0000 \xlongequal{溢出丢弃}1.000\ 0000$" />
-<meta property="og:description" content="这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。 一个字节： 原码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆 -0.127~+0.127 反码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆 -0.127~+0.127 补码：-128~+127        $-1.0$~$\frac{127}{128}$        $-1.0$~$1-2^{-7}$        方便记忆 -0.128~+0.127 原码反码区分±0，±0.0 $[+0]_补=[-0]_补=0,000\ 0000$ $[+0.0]_补=[-0.0]_补=0.000\ 0000$ $[-128]_补=1,000\ 0000$ $[-1.0]_补=1.000\ 0000$ $[+0]_补 \ \&amp;\ [-0]_补$ $[+0]_原=0,000\ 0000$ $[+0]_补=0,000\ 0000$ $[-0]_原=1,000\ 0000$ $[-0]_反=1,111\ 1111$ $[-0]_补=10,000\ 0000 \xlongequal{溢出丢弃}0,000\ 0000$ $[+0]_补=[-0]_补=0,000\ 0000$ $[+0.0]_补 \ \&amp;\ [-0.0]_补$ $[+0.0]_原=0.000\ 0000$ $[+0.0]_补=0.000\ 0000$ $[-0.0]_原=1.000\ 0000$ $[-0.0]_反=1.111\ 1111$ $[-0.0]_补=10.000\ 0000 \xlongequal{溢出丢弃}0.000\ 0000$ $[+0.0]_补=[-0.0]_补=0.000\ 0000$ $[-128]_补$ $[-128]_{伪原}=1,1000\ 0000$ $[-128]_{伪反}=1,0111\ 1111$ $[-128]_补=1,1000\ 0000 \xlongequal{溢出丢弃}1,000\ 0000$ $[-1.0]_补$ $-1.0\rightarrow-0.128$ $[-1.0]_{伪原}=1.1000\ 0000$ $[-1.0]_{伪反}=1.0111\ 1111$ $[-1.0]_补=1.1000\ 0000 \xlongequal{溢出丢弃}1.000\ 0000$" />
-<link rel="canonical" href="http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/" />
-<meta property="og:url" content="http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/" />
+<meta name="description" content="交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。 问题描述 时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据写入了，也就是说，我们更改变量 policy_id 的同时把 vsys_id 也给改了，从而导致了问题。 问题分析 根据结构体内存对齐画出结构，可以发现 vsys_id 和 policy_id 是紧挨着的。原先指向 policy_id 的指针是 u16 * ，原代码对其进行了一个强转成 u32 * 的操作，这样一来，这个指针就指向了 policy_id 加 vsys_id 的4个字节，然后原代码对该指针取值赋值1，相当于把这4个字节当成一个变量赋值了。这里似乎是由于传参的时候类型不匹配，于是使用了强转，具体为什么要强转也记不太清了。总之按照正常的逻辑，代码其实是要对 policy_id 赋值成1。强转后赋值的情况如图所示，在X86架构下，的确只是对 policy_id 赋值成1，没什么不对的，所以测试的时候X86架构没啥问题；在MIPS架构下，由于字节序相反，1反而是写给了 vsys_id ，从而引发了问题。 结构体内存对齐这里不赘述，简单来说就是： 成员的偏移量要是自身大小的整数倍， 结构体总大小要是最大成员大小的整数倍。 至于字节序，图中描述已经很清楚。 本来是给 policy_id 赋值，却同时改掉了相邻的 vsys_id 的值，也难怪乍一看定位不了问题。最后理解了问题成因，也就顺利解决了。本文对导致该问题的原因做一个记录。" />
+<meta property="og:description" content="交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。 问题描述 时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据写入了，也就是说，我们更改变量 policy_id 的同时把 vsys_id 也给改了，从而导致了问题。 问题分析 根据结构体内存对齐画出结构，可以发现 vsys_id 和 policy_id 是紧挨着的。原先指向 policy_id 的指针是 u16 * ，原代码对其进行了一个强转成 u32 * 的操作，这样一来，这个指针就指向了 policy_id 加 vsys_id 的4个字节，然后原代码对该指针取值赋值1，相当于把这4个字节当成一个变量赋值了。这里似乎是由于传参的时候类型不匹配，于是使用了强转，具体为什么要强转也记不太清了。总之按照正常的逻辑，代码其实是要对 policy_id 赋值成1。强转后赋值的情况如图所示，在X86架构下，的确只是对 policy_id 赋值成1，没什么不对的，所以测试的时候X86架构没啥问题；在MIPS架构下，由于字节序相反，1反而是写给了 vsys_id ，从而引发了问题。 结构体内存对齐这里不赘述，简单来说就是： 成员的偏移量要是自身大小的整数倍， 结构体总大小要是最大成员大小的整数倍。 至于字节序，图中描述已经很清楚。 本来是给 policy_id 赋值，却同时改掉了相邻的 vsys_id 的值，也难怪乍一看定位不了问题。最后理解了问题成因，也就顺利解决了。本文对导致该问题的原因做一个记录。" />
+<link rel="canonical" href="http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/" />
+<meta property="og:url" content="http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/" />
 <meta property="og:site_name" content="小黑猫" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2021-08-24T15:40:00+08:00" />
+<meta property="article:published_time" content="2022-11-26T11:40:00+08:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="原码、反码、补码范围及特殊情况" />
+<meta property="twitter:title" content="记一次指针强转导致脏数据写入问题" />
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/"},"datePublished":"2021-08-24T15:40:00+08:00","url":"http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/","description":"这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。 一个字节： 原码：-127~+127        $-\\frac{127}{128}$~$\\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆 -0.127~+0.127 反码：-127~+127        $-\\frac{127}{128}$~$\\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆 -0.127~+0.127 补码：-128~+127        $-1.0$~$\\frac{127}{128}$        $-1.0$~$1-2^{-7}$        方便记忆 -0.128~+0.127 原码反码区分±0，±0.0 $[+0]_补=[-0]_补=0,000\\ 0000$ $[+0.0]_补=[-0.0]_补=0.000\\ 0000$ $[-128]_补=1,000\\ 0000$ $[-1.0]_补=1.000\\ 0000$ $[+0]_补 \\ \\&amp;\\ [-0]_补$ $[+0]_原=0,000\\ 0000$ $[+0]_补=0,000\\ 0000$ $[-0]_原=1,000\\ 0000$ $[-0]_反=1,111\\ 1111$ $[-0]_补=10,000\\ 0000 \\xlongequal{溢出丢弃}0,000\\ 0000$ $[+0]_补=[-0]_补=0,000\\ 0000$ $[+0.0]_补 \\ \\&amp;\\ [-0.0]_补$ $[+0.0]_原=0.000\\ 0000$ $[+0.0]_补=0.000\\ 0000$ $[-0.0]_原=1.000\\ 0000$ $[-0.0]_反=1.111\\ 1111$ $[-0.0]_补=10.000\\ 0000 \\xlongequal{溢出丢弃}0.000\\ 0000$ $[+0.0]_补=[-0.0]_补=0.000\\ 0000$ $[-128]_补$ $[-128]_{伪原}=1,1000\\ 0000$ $[-128]_{伪反}=1,0111\\ 1111$ $[-128]_补=1,1000\\ 0000 \\xlongequal{溢出丢弃}1,000\\ 0000$ $[-1.0]_补$ $-1.0\\rightarrow-0.128$ $[-1.0]_{伪原}=1.1000\\ 0000$ $[-1.0]_{伪反}=1.0111\\ 1111$ $[-1.0]_补=1.1000\\ 0000 \\xlongequal{溢出丢弃}1.000\\ 0000$","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"原码、反码、补码范围及特殊情况","dateModified":"2021-08-24T15:40:00+08:00","@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/"},"datePublished":"2022-11-26T11:40:00+08:00","url":"http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/","description":"交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。 问题描述 时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据写入了，也就是说，我们更改变量 policy_id 的同时把 vsys_id 也给改了，从而导致了问题。 问题分析 根据结构体内存对齐画出结构，可以发现 vsys_id 和 policy_id 是紧挨着的。原先指向 policy_id 的指针是 u16 * ，原代码对其进行了一个强转成 u32 * 的操作，这样一来，这个指针就指向了 policy_id 加 vsys_id 的4个字节，然后原代码对该指针取值赋值1，相当于把这4个字节当成一个变量赋值了。这里似乎是由于传参的时候类型不匹配，于是使用了强转，具体为什么要强转也记不太清了。总之按照正常的逻辑，代码其实是要对 policy_id 赋值成1。强转后赋值的情况如图所示，在X86架构下，的确只是对 policy_id 赋值成1，没什么不对的，所以测试的时候X86架构没啥问题；在MIPS架构下，由于字节序相反，1反而是写给了 vsys_id ，从而引发了问题。 结构体内存对齐这里不赘述，简单来说就是： 成员的偏移量要是自身大小的整数倍， 结构体总大小要是最大成员大小的整数倍。 至于字节序，图中描述已经很清楚。 本来是给 policy_id 赋值，却同时改掉了相邻的 vsys_id 的值，也难怪乍一看定位不了问题。最后理解了问题成因，也就顺利解决了。本文对导致该问题的原因做一个记录。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"记一次指针强转导致脏数据写入问题","dateModified":"2022-11-26T11:40:00+08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
-  <title>原码、反码、补码范围及特殊情况 | 小黑猫
+  <title>记一次指针强转导致脏数据写入问题 | 小黑猫
   </title>
 
   <!--
@@ -412,7 +412,7 @@
         
 
           
-            <span>原码、反码、补码范围及特殊情况</span>
+            <span>记一次指针强转导致脏数据写入问题</span>
           
 
         
@@ -490,6 +490,71 @@
 
 
 
+  
+  
+
+  
+    
+      
+      
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+
+      
+    
+
+    
+      
+
+      <!-- lazy-load images <https://github.com/ApoorvSaxena/lozad.js#usage> -->
+
+      
+
+    
+
+    <!-- Add SVG placehoder to prevent layout reflow -->
+
+    
+
+    <!-- Bypass the HTML-proofer test -->
+    
+
+    
+
+  
+
+  
+
+
 
 <!-- Add header for code snippets -->
 
@@ -503,6 +568,43 @@
 
   
   
+
+  
+    
+    
+
+    
+      
+        
+        
+      
+
+      
+      
+
+      
+      
+      
+      
+
+      
+
+    
+      
+
+      
+      
+
+      
+      
+      
+      
+
+      
+
+    
+
+    
 
   
 
@@ -540,7 +642,7 @@
 
 
 
-<h1 data-toc-skip>原码、反码、补码范围及特殊情况</h1>
+<h1 data-toc-skip>记一次指针强转导致脏数据写入问题</h1>
 
 <div class="post-meta text-muted">
 
@@ -570,12 +672,12 @@
 -->
 
 <em class="timeago"
-    data-ts="1629790800"
+    data-ts="1669434000"
     
       data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
     
     >
-  2021-08-24
+  2022-11-26
 </em>
 
       </span>
@@ -603,8 +705,8 @@
 
 <!-- return element -->
 <span class="readtime" data-toggle="tooltip" data-placement="bottom"
-  title="289 字">
-  <em>1 分钟</em>阅读</span>
+  title="605 字">
+  <em>3 分钟</em>阅读</span>
 
 
       <!-- page views -->
@@ -616,84 +718,31 @@
 </div> <!-- .post-meta -->
 
 <div class="post-content">
-  <p>这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。</p>
+  <p>交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。</p>
 
-<p><br /></p>
+<h2 id="问题描述">问题描述 <a href="#问题描述" class="anchor"><i class="fas fa-hashtag"></i></a></h2></h2>
 
-<p>一个字节：</p>
+<p>时间有些久远了，结合下图来讲，总之，就是变量 <code class="language-plaintext highlighter-rouge">vsys_id</code> 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 <code class="language-plaintext highlighter-rouge">vsys_id</code> 变量名都没有出现，以至于一直没能定位问题。最后发现 <code class="language-plaintext highlighter-rouge">vsys_id</code> 被脏数据写入了，也就是说，我们更改变量 <code class="language-plaintext highlighter-rouge">policy_id</code> 的同时把 <code class="language-plaintext highlighter-rouge">vsys_id</code> 也给改了，从而导致了问题。</p>
 
-<p>原码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆  -0.127~+0.127</p>
+<p><img data-src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202211261141272.png" alt="记一次指针强转导致脏数据写入问题" data-proofer-ignore></p>
 
-<p>反码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2^{-7}$        方便记忆  -0.127~+0.127</p>
+<h2 id="问题分析">问题分析 <a href="#问题分析" class="anchor"><i class="fas fa-hashtag"></i></a></h2></h2>
 
-<p>补码：-128~+127        $-1.0$~$\frac{127}{128}$        $-1.0$~$1-2^{-7}$        方便记忆  -0.128~+0.127</p>
+<p>根据结构体内存对齐画出结构，可以发现 <code class="language-plaintext highlighter-rouge">vsys_id</code> 和 <code class="language-plaintext highlighter-rouge">policy_id</code> 是紧挨着的。原先指向 <code class="language-plaintext highlighter-rouge">policy_id</code> 的指针是 <code class="language-plaintext highlighter-rouge">u16 *</code> ，原代码对其进行了一个强转成 <code class="language-plaintext highlighter-rouge">u32 *</code> 的操作，这样一来，这个指针就指向了 <code class="language-plaintext highlighter-rouge">policy_id</code> 加 <code class="language-plaintext highlighter-rouge">vsys_id</code> 的4个字节，然后原代码对该指针取值赋值1，相当于把这4个字节当成一个变量赋值了。这里似乎是由于传参的时候类型不匹配，于是使用了强转，具体为什么要强转也记不太清了。总之按照正常的逻辑，代码其实是要对 <code class="language-plaintext highlighter-rouge">policy_id</code> 赋值成1。强转后赋值的情况如图所示，在X86架构下，的确只是对 <code class="language-plaintext highlighter-rouge">policy_id</code> 赋值成1，没什么不对的，所以测试的时候X86架构没啥问题；在MIPS架构下，由于字节序相反，1反而是写给了 <code class="language-plaintext highlighter-rouge">vsys_id</code> ，从而引发了问题。</p>
 
-<p><br /></p>
+<blockquote>
+  <p>结构体内存对齐这里不赘述，简单来说就是：</p>
 
-<p>原码反码区分±0，±0.0</p>
+  <p>成员的偏移量要是自身大小的整数倍，</p>
 
-<p>$[+0]_补=[-0]_补=0,000\ 0000$</p>
+  <p>结构体总大小要是最大成员大小的整数倍。</p>
 
-<p>$[+0.0]_补=[-0.0]_补=0.000\ 0000$</p>
+  <p><br /></p>
 
-<p>$[-128]_补=1,000\ 0000$</p>
+  <p>至于字节序，图中描述已经很清楚。</p>
+</blockquote>
 
-<p>$[-1.0]_补=1.000\ 0000$</p>
-
-<p><br /></p>
-
-<ul>
-  <li>
-    <p>$[+0]_补 \ \&amp;\  [-0]_补$</p>
-
-    <p>$[+0]_原=0,000\ 0000$</p>
-
-    <p>$[+0]_补=0,000\ 0000$</p>
-
-    <p>$[-0]_原=1,000\ 0000$</p>
-
-    <p>$[-0]_反=1,111\ 1111$</p>
-
-    <p>$[-0]_补=10,000\ 0000 \xlongequal{溢出丢弃}0,000\ 0000$</p>
-
-    <p>$[+0]_补=[-0]_补=0,000\ 0000$</p>
-  </li>
-  <li>
-    <p>$[+0.0]_补 \ \&amp;\ [-0.0]_补$</p>
-
-    <p>$[+0.0]_原=0.000\ 0000$</p>
-
-    <p>$[+0.0]_补=0.000\ 0000$</p>
-
-    <p>$[-0.0]_原=1.000\ 0000$</p>
-
-    <p>$[-0.0]_反=1.111\ 1111$</p>
-
-    <p>$[-0.0]_补=10.000\ 0000 \xlongequal{溢出丢弃}0.000\ 0000$</p>
-
-    <p>$[+0.0]_补=[-0.0]_补=0.000\ 0000$</p>
-  </li>
-  <li>
-    <p>$[-128]_补$</p>
-
-    <p>$[-128]_{伪原}=1,1000\ 0000$</p>
-
-    <p>$[-128]_{伪反}=1,0111\ 1111$</p>
-
-    <p>$[-128]_补=1,1000\ 0000 \xlongequal{溢出丢弃}1,000\ 0000$</p>
-  </li>
-  <li>
-    <p>$[-1.0]_补$</p>
-
-    <p>$-1.0\rightarrow-0.128$</p>
-
-    <p>$[-1.0]_{伪原}=1.1000\ 0000$</p>
-
-    <p>$[-1.0]_{伪反}=1.0111\ 1111$</p>
-
-    <p>$[-1.0]_补=1.1000\ 0000 \xlongequal{溢出丢弃}1.000\ 0000$</p>
-  </li>
-</ul>
+<p>本来是给 <code class="language-plaintext highlighter-rouge">policy_id</code> 赋值，却同时改掉了相邻的 <code class="language-plaintext highlighter-rouge">vsys_id</code> 的值，也难怪乍一看定位不了问题。最后理解了问题成因，也就顺利解决了。本文对导致该问题的原因做一个记录。</p>
 
 </div>
 
@@ -705,11 +754,19 @@
     <i class="far fa-folder-open fa-fw mr-1"></i>
     
       <a href='/categories/%E5%AD%A6%E4%B9%A0/'>学习</a>,
-      <a href='/categories/%E6%9D%82%E7%9F%A5%E8%AF%86/'>杂知识</a>
+      <a href='/categories/c-c/'>C/C++</a>
   </div>
   
 
   <!-- tags -->
+  
+  <div class="post-tags">
+    <i class="fa fa-tags fa-fw mr-1"></i>
+      
+      <a href="/tags/c-c/"
+          class="post-tag no-text-decoration" >C/C++</a>
+      
+  </div>
   
 
   <div class="post-tail-bottom
@@ -741,19 +798,19 @@
 
     
       
-        <a href="https://twitter.com/intent/tweet?text=原码、反码、补码范围及特殊情况 - 小黑猫&amp;url=http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/" data-toggle="tooltip" data-placement="top"
+        <a href="https://twitter.com/intent/tweet?text=记一次指针强转导致脏数据写入问题 - 小黑猫&amp;url=http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/" data-toggle="tooltip" data-placement="top"
           title="Twitter" target="_blank" rel="noopener" aria-label="Twitter">
           <i class="fa-fw fab fa-twitter"></i>
         </a>
     
       
-        <a href="https://www.facebook.com/sharer/sharer.php?title=原码、反码、补码范围及特殊情况 - 小黑猫&amp;u=http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/" data-toggle="tooltip" data-placement="top"
+        <a href="https://www.facebook.com/sharer/sharer.php?title=记一次指针强转导致脏数据写入问题 - 小黑猫&amp;u=http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/" data-toggle="tooltip" data-placement="top"
           title="Facebook" target="_blank" rel="noopener" aria-label="Facebook">
           <i class="fa-fw fab fa-facebook-square"></i>
         </a>
     
       
-        <a href="https://t.me/share/url?url=http://0.0.0.0:4000/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/&amp;text=原码、反码、补码范围及特殊情况 - 小黑猫" data-toggle="tooltip" data-placement="top"
+        <a href="https://t.me/share/url?url=http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/&amp;text=记一次指针强转导致脏数据写入问题 - 小黑猫" data-toggle="tooltip" data-placement="top"
           title="Telegram" target="_blank" rel="noopener" aria-label="Telegram">
           <i class="fa-fw fab fa-telegram"></i>
         </a>
@@ -905,6 +962,14 @@
 
 
 
+<!-- BS-toc.js will be loaded at medium priority -->
+<script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script>
+
+<div id="toc-wrapper" class="pl-0 pr-4 mb-5">
+  <div class="panel-heading pl-3 pt-2 mb-2">文章内容</div>
+  <nav id="toc" data-toggle="toc"></nav>
+</div>
+
 
     
   </div>
@@ -941,85 +1006,85 @@
   
 
   
-
-  
-
-  
-
-  
-
-  
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-  
-
-  
     
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
   
 
   
@@ -1050,6 +1115,51 @@
     <h3 class="pt-2 mt-1 mb-4 ml-1"
       data-toc-skip>相关文章</h3>
     <div class="card-deck mb-4">
+    
+      
+      
+      <div class="card">
+        <a href="/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1652016600"
+    
+    >
+  2022-05-08
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>C和C++中的const关键字</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                记录一波 const 关键字的知识点。
+
+概述
+
+const 意为不可修改。
+
+const 修饰的变量不可被修改， 是只读变量，也称这样的变量为常量。const 修饰的变量不可修改这一点是语法层面的限制，通过一些刻意构造的操作仍然可以修改变量的值，只是一般不会这样做。
+
+const 也可以修饰指针，既可以限制指针指向的数据，又可以限制指针本身。
+
+const 修饰变量
+
+const int ...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
     
       
       
@@ -1093,7 +1203,7 @@
       
       
       <div class="card">
-        <a href="/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/">
+        <a href="/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/">
           <div class="card-body">
             <!--
   Date format snippet
@@ -1101,13 +1211,13 @@
 -->
 
 <em class="timeago small"
-    data-ts="1643448670"
+    data-ts="1629790800"
     
     >
-  2022-01-29
+  2021-08-24
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>关于域名的各种名词叫法</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>原码、反码、补码范围及特殊情况</h3>
             <div class="text-muted small">
               <p>
                 
@@ -1116,46 +1226,13 @@
 
 
 
-                关于域名有一些名词，比如域名、顶级域名、二级域名、三级域名、子域名、主机名等。自己总是搞不清这些名词具体指代什么，因为网上的资料总是有各种差别，同一个名词在不同的资料里有不同的解释，属实是迷惑。在查阅了很多资料后，决定做一个总结，尽可能涵盖各种说法，做一个自己理解的标准，以期在遇到这些说法时心里有底。
-
-资料
-
-基本概念 (aliyun.com)
-
-Domain name - Wikiped...
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
-      
-      
-      <div class="card">
-        <a href="/posts/Jekyll-Chirpy-theme-+-Github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1644043380"
-    
-    >
-  2022-02-05
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>Jekyll Chirpy theme + Github搭建个人博客</h3>
-            <div class="text-muted small">
-              <p>
-                
+                这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。
 
 
 
+一个字节：
 
-
-                本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法...
+原码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2...
               </p>
             </div>
           </div>
@@ -1174,17 +1251,17 @@ Domain name - Wikiped...
 
 <div class="post-navigation d-flex justify-content-between">
   
-  <a href="/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/" class="btn btn-outline-primary"
+  <a href="/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" class="btn btn-outline-primary"
     prompt="上一篇">
-    <p>手动搭建Web服务器环境</p>
+    <p>C和C++中的const关键字</p>
   </a>
   
 
   
-  <a href="/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/" class="btn btn-outline-primary"
+  <span class="btn btn-outline-primary disabled"
     prompt="下一篇">
-    <p>git如何合并分支</p>
-  </a>
+    <p>-</p>
+  </span>
   
 
 </div>
@@ -1439,27 +1516,6 @@ SimpleJekyllSearch({
 
 <script defer src="/assets/js/dist/post.min.js"></script>
 
-
-  <!-- MathJax -->
-  <script>
-  /* see: <https://docs.mathjax.org/en/latest/options/input/tex.html#tex-options> */
-  MathJax = {
-    tex: {
-      inlineMath: [              /* start/end delimiter pairs for in-line math */
-        ['$','$'],
-        ['\\(','\\)']
-      ],
-      displayMath: [             /* start/end delimiter pairs for display math */
-        ['$$', '$$'],
-        ['\\[', '\\]']
-      ]
-    }
-  };
-  </script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script type="text/javascript" id="MathJax-script" async
-    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
 
 
 <!-- commons -->
