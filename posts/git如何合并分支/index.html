@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"headline":"git如何合并分支","dateModified":"2022-01-26T13:49:37+08:00","datePublished":"2022-01-26T13:49:37+08:00","url":"http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。 参考资料：Git 分支 - 分支的新建与合并 合并过程 快进(fast-forward) 现在要将hotfix分支合并到master分支。 1 2 3 4 5 6 $ git checkout master $ git merge hotfix Updating f42c576..3a0874c Fast-forward index.html | 2 ++ 1 file changed, 2 insertions(+) 合并后如下图： 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。 随后可以删除hotfix分支。 1 $ git branch -d hotfix 三方合并 现在要将iss53分支合并到master分支。 1 2 3 4 5 6 $ git checkout master Switched to branch &#39;master&#39; $ git merge iss53 Merge made by the &#39;recursive&#39; strategy. index.html | 1 + 1 file changed, 1 insertion(+) 合并后如下图： 在这种情况下，你的开发历史从一个更早的地方开始分叉开来（diverged）。 因为，master 分支所在提交并不是 iss53 分支所在提交的直接祖先，Git 不得不做一些额外的工作。 出现这种情况的时候，Git 会使用两个分支的末端所指的快照（C4 和 C5）以及这两个分支的公共祖先（C2），做一个简单的三方合并。 Git 将此次三方合并的结果做了一个新的快照并且自动创建一个新的提交指向它。 这个被称作一次合并提交，它的特别之处在于他有不止一个父提交。 随后可以删除iss53分支。 1 $ git branch -d iss53 合并冲突 如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们，即会产生合并冲突。 fast-forward 一定不会产生合并冲突。 三方合并可能产生合并冲突。 合并冲突的发生有点玄学，不必过于纠结，按照第一段话理解即可。具体会不会发生冲突，老老实实听git的就行，它说冲突那就是冲突了。 附上一些实测例子： git版本：git version 2.34.1.windows.1 例一 直接fast-forward 例二 1 2 3 4 5 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt Merge made by the &#39;ort&#39; strategy. merge.txt | 2 +- 1 file changed, 1 insertion(+), 1 deletion(-) 我的理解： master对第一行做了修改，但hotfix没有对第一行做修改，无冲突；两分支都没有对第二行做修改，无冲突；master没有对第三行做修改，但hotfix对第三行做了修改，无冲突。最后合并成功，没有冲突。 例三 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 8 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe222 qwe ======= qwe qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix qwe 我的理解： 这个居然会发生冲突，我是没有想到的。原本应该像例二一样理解，第一行只有master改了，第二行只有hotfix改了，第三行两个分支都没改，应该不会出现冲突。然而却出现了冲突，说明冲突的判定没有想象得那么简单，与git的具体实现有关。这里贴出了git插入的冲突标记。按我的理解，根据冲突标记，git认为两个分支对merge.txt的红框处做了不同修改，产生了冲突；蓝框处两者都没有修改，无冲突；所以最终发生了合并冲突。 例四 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 8 qwe &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe222 qwe ======= qwe qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix 同例三。 例五 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe666 ======= qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix qwe333 qwe555 我的理解： 这个好理解。两个分支对第二行、第三行做了相同的修改，没有冲突；两个分支分别对第一行做了不同的修改，有冲突；最终发生合并冲突。 例六 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 qwe444 qwe333 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe ======= qwe555 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix 我的理解： 我迷惑了。。。按照之前的理解，两分支对第一行、第二行做了相同的修改，不冲突；master分支没有对第三行做出修改，hotfix分支对第三行做了修改，不冲突；最终应该不冲突才是。假如将这里master分支对第三行的修改看成是“不变的修改”，那么确实可以说两个分支对第三行做了不同的修改，进而发生冲突。但是这样的说法在例二中就站不住脚，按照这个“不变的修改”的假设，例二应该发生冲突才是。想想也是，这个想法是我凭空想象出来的，多半不可能。 总结 关于合并冲突的判定没有搞懂，不过我认为继续纠结这个问题没有更多的意义了，除非阅读git实现的源码。 总而言之，git官方文档的book中有如下描述：Git 分支 - 分支的新建与合并 如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们。 以这句话为标准即可，具体看git的合并结果就行。","@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/"},"datePublished":"2022-01-26T13:49:37+08:00","url":"http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/","description":"复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。 参考资料：Git 分支 - 分支的新建与合并 合并过程 快进(fast-forward) 现在要将hotfix分支合并到master分支。 1 2 3 4 5 6 $ git checkout master $ git merge hotfix Updating f42c576..3a0874c Fast-forward index.html | 2 ++ 1 file changed, 2 insertions(+) 合并后如下图： 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。 随后可以删除hotfix分支。 1 $ git branch -d hotfix 三方合并 现在要将iss53分支合并到master分支。 1 2 3 4 5 6 $ git checkout master Switched to branch &#39;master&#39; $ git merge iss53 Merge made by the &#39;recursive&#39; strategy. index.html | 1 + 1 file changed, 1 insertion(+) 合并后如下图： 在这种情况下，你的开发历史从一个更早的地方开始分叉开来（diverged）。 因为，master 分支所在提交并不是 iss53 分支所在提交的直接祖先，Git 不得不做一些额外的工作。 出现这种情况的时候，Git 会使用两个分支的末端所指的快照（C4 和 C5）以及这两个分支的公共祖先（C2），做一个简单的三方合并。 Git 将此次三方合并的结果做了一个新的快照并且自动创建一个新的提交指向它。 这个被称作一次合并提交，它的特别之处在于他有不止一个父提交。 随后可以删除iss53分支。 1 $ git branch -d iss53 合并冲突 如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们，即会产生合并冲突。 fast-forward 一定不会产生合并冲突。 三方合并可能产生合并冲突。 合并冲突的发生有点玄学，不必过于纠结，按照第一段话理解即可。具体会不会发生冲突，老老实实听git的就行，它说冲突那就是冲突了。 附上一些实测例子： git版本：git version 2.34.1.windows.1 例一 直接fast-forward 例二 1 2 3 4 5 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt Merge made by the &#39;ort&#39; strategy. merge.txt | 2 +- 1 file changed, 1 insertion(+), 1 deletion(-) 我的理解： master对第一行做了修改，但hotfix没有对第一行做修改，无冲突；两分支都没有对第二行做修改，无冲突；master没有对第三行做修改，但hotfix对第三行做了修改，无冲突。最后合并成功，没有冲突。 例三 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 8 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe222 qwe ======= qwe qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix qwe 我的理解： 这个居然会发生冲突，我是没有想到的。原本应该像例二一样理解，第一行只有master改了，第二行只有hotfix改了，第三行两个分支都没改，应该不会出现冲突。然而却出现了冲突，说明冲突的判定没有想象得那么简单，与git的具体实现有关。这里贴出了git插入的冲突标记。按我的理解，根据冲突标记，git认为两个分支对merge.txt的红框处做了不同修改，产生了冲突；蓝框处两者都没有修改，无冲突；所以最终发生了合并冲突。 例四 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 8 qwe &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe222 qwe ======= qwe qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix 同例三。 例五 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe666 ======= qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix qwe333 qwe555 我的理解： 这个好理解。两个分支对第二行、第三行做了相同的修改，没有冲突；两个分支分别对第一行做了不同的修改，有冲突；最终发生合并冲突。 例六 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 qwe444 qwe333 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe ======= qwe555 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix 我的理解： 我迷惑了。。。按照之前的理解，两分支对第一行、第二行做了相同的修改，不冲突；master分支没有对第三行做出修改，hotfix分支对第三行做了修改，不冲突；最终应该不冲突才是。假如将这里master分支对第三行的修改看成是“不变的修改”，那么确实可以说两个分支对第三行做了不同的修改，进而发生冲突。但是这样的说法在例二中就站不住脚，按照这个“不变的修改”的假设，例二应该发生冲突才是。想想也是，这个想法是我凭空想象出来的，多半不可能。 总结 关于合并冲突的判定没有搞懂，不过我认为继续纠结这个问题没有更多的意义了，除非阅读git实现的源码。 总而言之，git官方文档的book中有如下描述：Git 分支 - 分支的新建与合并 如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们。 以这句话为标准即可，具体看git的合并结果就行。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"git如何合并分支","dateModified":"2022-01-26T13:49:37+08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -1689,8 +1689,8 @@ qwe555
   <div class="post-meta mb-3">
     <i class="far fa-folder-open fa-fw mr-1"></i>
     
-      <a href='/categories/%E5%AD%A6%E4%B9%A0/'>学习</a>,
-      <a href='/categories/%E6%9D%82%E7%9F%A5%E8%AF%86/'>杂知识</a>
+      <a href='/categories/tech/'>Tech</a>,
+      <a href='/categories/class/'>Class</a>
   </div>
   
 
@@ -1838,34 +1838,6 @@ qwe555
         
         
 
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
 
 
   <div id="access-tags">
@@ -1874,16 +1846,13 @@ qwe555
 
     
       
-      <a class="post-tag" href="/tags/c-cpp/">C_Cpp</a>
+      <a class="post-tag" href="/tags/c-cpp/">c-cpp</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/jekyll/">Jekyll</a>
-    
-      
-      <a class="post-tag" href="/tags/sql/">SQL</a>
+      <a class="post-tag" href="/tags/sql/">sql</a>
     
 
     </div>
@@ -2020,6 +1989,32 @@ qwe555
   
 
   
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
     
   
 
@@ -2068,45 +2063,6 @@ qwe555
       
       
       <div class="card">
-        <a href="/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1595665800"
-    
-    >
-  2020-07-25
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>手动搭建Web服务器环境</h3>
-            <div class="text-muted small">
-              <p>
-                
-
-
-
-
-
-                看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。
-
-
-  本文采用Apache+PHP+MySQL进行配置，版本如下：
-
-  Apache 2.4.43
-...
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
-      
-      
-      <div class="card">
         <a href="/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/">
           <div class="card-body">
             <!--
@@ -2121,7 +2077,7 @@ qwe555
   2021-08-24
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>原码、反码、补码范围及特殊情况</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>原码-反码-补码范围及特殊情况</h3>
             <div class="text-muted small">
               <p>
                 
@@ -2132,11 +2088,13 @@ qwe555
 
                 这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。
 
-
-
 一个字节：
 
-原码：-127~+127        $-\frac{127}{128}$~$\frac{127}{128}$        $-(1-2^{-7})$~$1-2...
+原码：
+
+$-127 \sim -0, +0 \sim +127$
+
+$-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
               </p>
             </div>
           </div>
@@ -2182,6 +2140,39 @@ Domain name - Wikiped...
         </a>
       </div>
     
+      
+      
+      <div class="card">
+        <a href="/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1644043380"
+    
+    >
+  2022-02-05
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>jekyll-chirpy-theme-github搭建个人博客</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
     </div> <!-- .card-deck -->
   </div> <!-- #related-posts -->
 
@@ -2196,7 +2187,7 @@ Domain name - Wikiped...
   
   <a href="/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/" class="btn btn-outline-primary"
     prompt="上一篇">
-    <p>原码、反码、补码范围及特殊情况</p>
+    <p>原码-反码-补码范围及特殊情况</p>
   </a>
   
 
@@ -2229,7 +2220,7 @@ Domain name - Wikiped...
   <div class="d-flex justify-content-between align-items-center text-muted">
     <div class="footer-left">
       <p class="mb-0">
-        © 2022
+        © 2024
         <a href="https://github.com/lcatmiao">小黑猫</a>.
         
         <span data-toggle="tooltip" data-placement="top"
@@ -2325,34 +2316,6 @@ Domain name - Wikiped...
         
         
 
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
 
 
   <div id="access-tags">
@@ -2361,16 +2324,13 @@ Domain name - Wikiped...
 
     
       
-      <a class="post-tag" href="/tags/c-cpp/">C_Cpp</a>
+      <a class="post-tag" href="/tags/c-cpp/">c-cpp</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/jekyll/">Jekyll</a>
-    
-      
-      <a class="post-tag" href="/tags/sql/">SQL</a>
+      <a class="post-tag" href="/tags/sql/">sql</a>
     
 
     </div>

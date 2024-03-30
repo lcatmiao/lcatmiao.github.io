@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2022-12-18T18:59:52+08:00</updated>
+  <updated>2024-03-30T18:04:45+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -13,10 +13,130 @@
   <link rel="alternate" type="text/html" hreflang="zh-CN"
     href="http://0.0.0.0:4000/"/>
   <generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator>
-  <rights> © 2022 小黑猫 </rights>
+  <rights> © 2024 小黑猫 </rights>
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>真值与内存的相互转换</title>
+    <link href="http://0.0.0.0:4000/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/" rel="alternate" type="text/html" title="真值与内存的相互转换" />
+    <published>2024-03-30T17:58:00+08:00</published>
+  
+    <updated>2024-03-30T17:58:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/</id>
+    <content src="http://0.0.0.0:4000/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="C-Cpp" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      总览
+
+一些自创的名词定义：
+
+
+  平时直接看到的数值，代码里直接书写的数值等，称为真值。
+  将内存中存储的值拿出来写成数值，称为内存数值。用二进制表示的内存数值称为内存二进制，用十六进制表示的内存数值称为内存十六进制。
+  在内存中实际存储的值称为内存值。
+
+
+转换过程一张图：
+
+
+
+一些说明：
+
+
+  不妨认为真值本身没有计算机中有符号和无符号的概念。你可以视之为有符号或者无符号，走不同的转换流程。
+  内存数值本身没有有符号和无符号的概念。你可以视之为有符号或者无符号，走不同的转换流程。
+  虽然认为真值本身没有计算机中有符号和无符号的概念，但是仍认为真值在数学上有正负零的概念。
+  负真值只能进行有符号转换；非负真值既可以进行有符号转换，又可以进行无符号转换。
+  打印值的内存十六进制和以无符号十六进制形式打印值差不多是一个意思。此处“打印值”指“打印内存值”。
+
+
+从真...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>C语言标准发展历史</title>
+    <link href="http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/" rel="alternate" type="text/html" title="C语言标准发展历史" />
+    <published>2024-02-24T16:53:37+08:00</published>
+  
+    <updated>2024-02-24T16:53:37+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/</id>
+    <content src="http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="C-Cpp" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      对各种 C 标准进行简述。
+
+参考资料：Standards (Using the GNU Compiler Collection (GCC))
+
+ANSI C，ISO C89/90
+
+ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。
+
+1990 年晚些时候，该标准成为了 ISO C89/90 标准。
+
+这两个标准之间没有技术上的差异，可以当作就是一个标准。
+
+C94/95 是这一标准的修订版本。
+
+ISO C99
+
+1999 年，ISO 发布了新的 C 标准，即 ISO C99。
+
+ISO C11，ISO C17
+
+2011 年，ISO 发布了新的 C 标准，即 ISO C11。
+
+2017 年，ISO 编制了一个修正版本，并于 2018 年发布，该版本成为了新的 C 标准，即 ISO C17。
+
+在 gcc 中，可通过 -std=c11 或 -st...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -34,9 +154,9 @@
 
   
     
-    <category term="学习" />
+    <category term="Tech" />
     
-    <category term="C_Cpp" />
+    <category term="C-Cpp" />
     
   
 
@@ -97,9 +217,9 @@ func2(int *arr)
 
   
     
-    <category term="学习" />
+    <category term="Tech" />
     
-    <category term="C_Cpp" />
+    <category term="C-Cpp" />
     
   
 
@@ -129,23 +249,23 @@ func2(int *arr)
 
   
   <entry>
-    <title>C_Cpp中的const关键字</title>
-    <link href="http://0.0.0.0:4000/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" rel="alternate" type="text/html" title="C_Cpp中的const关键字" />
+    <title>C-Cpp中的const关键字</title>
+    <link href="http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" rel="alternate" type="text/html" title="C-Cpp中的const关键字" />
     <published>2022-05-08T21:30:00+08:00</published>
   
     <updated>2022-05-08T21:30:00+08:00</updated>
   
-    <id>http://0.0.0.0:4000/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/</id>
-    <content src="http://0.0.0.0:4000/posts/C_Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" />
+    <id>http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/</id>
+    <content src="http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" />
     <author>
       <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
     </author>
 
   
     
-    <category term="学习" />
+    <category term="Tech" />
     
-    <category term="C_Cpp" />
+    <category term="C-Cpp" />
     
   
 
@@ -185,113 +305,6 @@ VexNum = 30; // error: assignment of read-only variable 'VexNum'
 
 
 ...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>MySQL数据类型转换</title>
-    <link href="http://0.0.0.0:4000/posts/MySQL%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" rel="alternate" type="text/html" title="MySQL数据类型转换" />
-    <published>2022-02-11T21:35:00+08:00</published>
-  
-    <updated>2022-02-11T21:35:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/MySQL%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</id>
-    <content src="http://0.0.0.0:4000/posts/MySQL%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="学习" />
-    
-    <category term="SQL" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      关于MySQL的数据类型转换问题大概两年前就研究过了，只是那时候没有发博客的习惯，笔记记得也很简单。最近又遇到了这个问题，打开以往的笔记发现记得太简单了，自己看完了还是有好多疑问😭，故有了这篇文章。
-
-
-  参考资料：
-
-  MySQL :: MySQL 8.0 Reference Manual :: 12.11 Cast Functions and Operators
-
-  MySQL :: MySQL 8.0 Reference Manual :: 12.3 Type Conversion in Expression Evaluation
-
-  mysql 类型自动化转换问题 - whendream - 博客园
-
-  谈谈MySQL隐式类型转换 - 知乎
-
-  测试版本：
-
-  MySQL 8.0.18
-
-
-显式转换
-
-cast()
-
-CAST(expr AS type [ARR...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>Jekyll Chirpy theme + Github搭建个人博客</title>
-    <link href="http://0.0.0.0:4000/posts/Jekyll-Chirpy-theme-+-Github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" rel="alternate" type="text/html" title="Jekyll Chirpy theme + Github搭建个人博客" />
-    <published>2022-02-05T14:43:00+08:00</published>
-  
-    <updated>2022-02-05T14:43:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/Jekyll-Chirpy-theme-+-Github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</id>
-    <content src="http://0.0.0.0:4000/posts/Jekyll-Chirpy-theme-+-Github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="学习" />
-    
-    <category term="杂知识" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法，说不定以后就有了。
-
-安装博客生成器
-
-由于kali环境齐全，所以直接在kali下安装本地博客
-
-# 安装jekyll
-sudo gem install jekyll
-
-# 安装chirpy主题
-git clone git@github.com:cotes2020/jekyll-theme-chirpy.git
-
-# 在jekyll-theme-chirpy目录下安装依赖
-# 不需要sudo，命...
     </summary>
   
 
