@@ -1083,19 +1083,11 @@
     <i class="far fa-folder-open fa-fw mr-1"></i>
     
       <a href='/categories/tech/'>Tech</a>,
-      <a href='/categories/c-cpp/'>C-Cpp</a>
+      <a href='/categories/misc/'>Misc</a>
   </div>
   
 
   <!-- tags -->
-  
-  <div class="post-tags">
-    <i class="fa fa-tags fa-fw mr-1"></i>
-      
-      <a href="/tags/c-cpp/"
-          class="post-tag no-text-decoration" >c-cpp</a>
-      
-  </div>
   
 
   <div class="post-tail-bottom
@@ -1231,6 +1223,34 @@
         
         
 
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
 
 
   <div id="access-tags">
@@ -1239,13 +1259,16 @@
 
     
       
-      <a class="post-tag" href="/tags/c-cpp/">c-cpp</a>
+      <a class="post-tag" href="/tags/c/">c</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
       <a class="post-tag" href="/tags/sql/">sql</a>
+    
+      
+      <a class="post-tag" href="/tags/tls/">tls</a>
     
 
     </div>
@@ -1291,6 +1314,19 @@
 
 
 
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
 
   
@@ -1448,7 +1484,7 @@
       
       
       <div class="card">
-        <a href="/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/">
+        <a href="/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/">
           <div class="card-body">
             <!--
   Date format snippet
@@ -1456,13 +1492,13 @@
 -->
 
 <em class="timeago small"
-    data-ts="1652016600"
+    data-ts="1643448670"
     
     >
-  2022-05-08
+  2022-01-29
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>C-Cpp中的const关键字</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>关于域名的各种名词叫法</h3>
             <div class="text-muted small">
               <p>
                 
@@ -1471,19 +1507,13 @@
 
 
 
-                记录一波 const 关键字的知识点。
+                关于域名有一些名词，比如域名、顶级域名、二级域名、三级域名、子域名、主机名等。自己总是搞不清这些名词具体指代什么，因为网上的资料总是有各种差别，同一个名词在不同的资料里有不同的解释，属实是迷惑。在查阅了很多资料后，决定做一个总结，尽可能涵盖各种说法，做一个自己理解的标准，以期在遇到这些说法时心里有底。
 
-概述
+资料
 
-const 意为不可修改。
+基本概念 (aliyun.com)
 
-const 修饰的变量不可被修改， 是只读变量，也称这样的变量为常量。const 修饰的变量不可修改这一点是语法层面的限制，通过一些刻意构造的操作仍然可以修改变量的值，只是一般不会这样做。
-
-const 也可以修饰指针，既可以限制指针指向的数据，又可以限制指针本身。
-
-const 修饰变量
-
-const int ...
+Domain name - Wikiped...
               </p>
             </div>
           </div>
@@ -1493,7 +1523,7 @@ const int ...
       
       
       <div class="card">
-        <a href="/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/">
+        <a href="/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">
           <div class="card-body">
             <!--
   Date format snippet
@@ -1501,13 +1531,13 @@ const int ...
 -->
 
 <em class="timeago small"
-    data-ts="1669434000"
+    data-ts="1644043380"
     
     >
-  2022-11-26
+  2022-02-05
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>记一次指针强转导致脏数据写入问题</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>jekyll-chirpy-theme-github搭建个人博客</h3>
             <div class="text-muted small">
               <p>
                 
@@ -1516,11 +1546,7 @@ const int ...
 
 
 
-                交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。
-
-问题描述
-
-时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据...
+                本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法...
               </p>
             </div>
           </div>
@@ -1530,7 +1556,7 @@ const int ...
       
       
       <div class="card">
-        <a href="/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/">
+        <a href="/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/">
           <div class="card-body">
             <!--
   Date format snippet
@@ -1538,13 +1564,13 @@ const int ...
 -->
 
 <em class="timeago small"
-    data-ts="1669563000"
+    data-ts="1595665800"
     
     >
-  2022-11-27
+  2020-07-25
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>函数传参</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>手动搭建Web服务器环境</h3>
             <div class="text-muted small">
               <p>
                 
@@ -1553,26 +1579,13 @@ const int ...
 
 
 
-                传参分类
-
-从传参类型上看
-
-传参分为传值和传指针。
+                看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。
 
 
-  传指针本质上也是传值，只不过传的是指针值。由于传一般值和传指针值还是有点区别，所以分成两种说法。传值一般就指传一般值，传指针专门用于描述传指针值。
+  本文采用Apache+PHP+MySQL进行配置，版本如下：
 
-
-从传参行为上看
-
-传参分为值复制和传自己。
-
-
-  传自己本质上也是值复制，只不过是取地址传无名指针，形参直接接上；而不是直接传有名指针。例如：
-
-
-// 函数调用
-func1(i...
+  Apache 2.4.43
+...
               </p>
             </div>
           </div>
@@ -1598,10 +1611,10 @@ func1(i...
   
 
   
-  <span class="btn btn-outline-primary disabled"
+  <a href="/posts/%E7%AE%80%E6%9E%90HTTPS/" class="btn btn-outline-primary"
     prompt="下一篇">
-    <p>-</p>
-  </span>
+    <p>简析HTTPS</p>
+  </a>
   
 
 </div>
@@ -1626,7 +1639,7 @@ func1(i...
   <div class="d-flex justify-content-between align-items-center text-muted">
     <div class="footer-left">
       <p class="mb-0">
-        © 2024
+        © 2025
         <a href="https://github.com/lcatmiao">小黑猫</a>.
         
         <span data-toggle="tooltip" data-placement="top"
@@ -1722,6 +1735,34 @@ func1(i...
         
         
 
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
 
 
   <div id="access-tags">
@@ -1730,13 +1771,16 @@ func1(i...
 
     
       
-      <a class="post-tag" href="/tags/c-cpp/">c-cpp</a>
+      <a class="post-tag" href="/tags/c/">c</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
       <a class="post-tag" href="/tags/sql/">sql</a>
+    
+      
+      <a class="post-tag" href="/tags/tls/">tls</a>
     
 
     </div>

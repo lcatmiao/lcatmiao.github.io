@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2024-10-13T14:41:07+08:00</updated>
+  <updated>2025-04-15T19:08:25+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -13,10 +13,73 @@
   <link rel="alternate" type="text/html" hreflang="zh-CN"
     href="http://0.0.0.0:4000/"/>
   <generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator>
-  <rights> © 2024 小黑猫 </rights>
+  <rights> © 2025 小黑猫 </rights>
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>简析HTTPS</title>
+    <link href="http://0.0.0.0:4000/posts/%E7%AE%80%E6%9E%90HTTPS/" rel="alternate" type="text/html" title="简析HTTPS" />
+    <published>2025-04-15T18:50:00+08:00</published>
+  
+    <updated>2025-04-15T18:50:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E7%AE%80%E6%9E%90HTTPS/</id>
+    <content src="http://0.0.0.0:4000/posts/%E7%AE%80%E6%9E%90HTTPS/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="Network" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      写在前面
+
+阅读《图解HTTP》，大致理解了 SSL/TLS 的握手过程和思想原理。然而作为入门书，它没有介绍基于 DH 算法的 TLS 握手过程，也没有介绍证书链相关的知识😡。我 Google 了不少资料，着重啃了几篇文章，结合抓包分析，本想“差不多得了”，却没料到入了大坑，疑问不减反增。
+
+一筹莫展之际，AI 技术大火，救我狗命。受此鼓舞，借助 AI 解惑，又打起精神啃读了多个 RFC 片段，遂拨云见日。本文既成，虽得益于天时，然亦可谓一波三折，历尽艰辛。我真牛逼👍。
+
+本文主要基于 TLS1.2 研写，知识整理于此👇。
+
+先行概念
+
+&amp;gt; 密码体制
+
+密码学主要有两种体制：
+
+
+  共享密码体制（对称密码体制）
+  公钥密码体制（非对称密码体制）
+
+
+&amp;gt; 数学难题
+
+公钥密码体制主要基于以下数学难题：
+
+
+  大整数分解问题
+  离散对数问题（DLP）
+    
+  ...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -36,7 +99,7 @@
     
     <category term="Tech" />
     
-    <category term="C-Cpp" />
+    <category term="Misc" />
     
   
 
@@ -107,7 +170,7 @@
     
     <category term="Tech" />
     
-    <category term="C-Cpp" />
+    <category term="C" />
     
   
 
@@ -167,7 +230,7 @@ ISO C11，ISO C17
     
     <category term="Tech" />
     
-    <category term="C-Cpp" />
+    <category term="C" />
     
   
 
@@ -230,7 +293,7 @@ func2(int *arr)
     
     <category term="Tech" />
     
-    <category term="C-Cpp" />
+    <category term="C" />
     
   
 
@@ -253,69 +316,6 @@ func2(int *arr)
 问题分析
 
 根据结构体内存对齐画出结构，可以发现 vsys_id 和 policy_id 是紧挨着的。原先指向 policy_id 的指针是 u16 * ，原代码对其进行了一个强转成 u32 * 的操作，这样一来，这个指针就指向了 policy_id 加 vsys_id 的4个字节，然后...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>C-Cpp中的const关键字</title>
-    <link href="http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" rel="alternate" type="text/html" title="C-Cpp中的const关键字" />
-    <published>2022-05-08T21:30:00+08:00</published>
-  
-    <updated>2022-05-08T21:30:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/</id>
-    <content src="http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="Tech" />
-    
-    <category term="C-Cpp" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      记录一波 const 关键字的知识点。
-
-概述
-
-const 意为不可修改。
-
-const 修饰的变量不可被修改， 是只读变量，也称这样的变量为常量。const 修饰的变量不可修改这一点是语法层面的限制，通过一些刻意构造的操作仍然可以修改变量的值，只是一般不会这样做。
-
-const 也可以修饰指针，既可以限制指针指向的数据，又可以限制指针本身。
-
-const 修饰变量
-
-const int VexNum = 20;
-int const VexNum = 20;
-
-
-上述两种写法的效果是一样的。我们一般使用第一种。const 修饰变量，即定义了常量 VexNum。
-
-
-  const 定义的常量一般单词首字母大写。
-
-
-这个时候企图修改常量是不行的。
-
-VexNum = 30; // error: assignment of read-only variable 'VexNum'
-
-
-...
     </summary>
   
 
