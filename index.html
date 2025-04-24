@@ -460,6 +460,97 @@
 
   <div class="post-preview">
     <h1>
+      <a href="/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/">gdb无-g调试实战记录</a>
+    </h1>
+
+    <div class="post-content">
+      <p>
+        
+
+
+
+
+
+        问题背景
+
+设备外发日志的内容错乱，甚至产生 core 文件。版本是正常编译的发行版本，没有附带 -g 加入的调试信息。
+
+我懒得加调试信息也不想加 -g 重新编译，二者在本人的开发环境中都十分麻烦。这种无 -g 调试的场景其实还蛮常见的，这次定位比较顺利，故记录之。
+
+定位过程
+
+从现象上看是日志内容错位了，但也不能排除是踩内存，出界内容被直接解析也能出现类似的现象。通过看代码，我高度怀疑...
+      </p>
+    </div>
+
+    <div class="post-meta text-muted d-flex">
+
+      <div class="mr-auto">
+        <!-- posted date -->
+        <i class="far fa-calendar fa-fw"></i>
+        <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago"
+    data-ts="1745503200"
+    
+      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
+    
+    
+      data-capitalize="true"
+    >
+  2025-04-24
+</em>
+
+
+        <!-- time to read -->
+        <i class="far fa-clock fa-fw"></i>
+        <!--
+  Calculate the post's reading time, and display the word count in tooltip
+ -->
+
+
+
+<!-- words per minute  -->
+
+
+
+
+
+
+
+
+
+
+<!-- return element -->
+<span class="readtime" data-toggle="tooltip" data-placement="bottom"
+  title="1416 字">
+  <em>7 分钟</em></span>
+
+
+        <!-- categories -->
+        
+          <i class="far fa-folder-open fa-fw"></i>
+          <span>
+          
+            Tech,
+            C
+          </span>
+        
+      </div>
+
+      
+
+    </div> <!-- .post-meta -->
+
+  </div> <!-- .post-review -->
+
+
+
+  <div class="post-preview">
+    <h1>
       <a href="/posts/%E7%AE%80%E6%9E%90HTTPS/">简析HTTPS</a>
     </h1>
 
@@ -1285,105 +1376,6 @@ Domain name - Wikiped...
 
 
 
-  <div class="post-preview">
-    <h1>
-      <a href="/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/">git如何合并分支</a>
-    </h1>
-
-    <div class="post-content">
-      <p>
-        
-
-
-
-
-
-        复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。
-
-
-  参考资料：Git 分支 - 分支的新建与合并
-
-
-合并过程
-
-快进(fast-forward)
-
-
-
-现在要将hotfix分支合并到master分支。
-
-$ git checkout master
-$ git merge hotfix
-Updating f42c576....
-      </p>
-    </div>
-
-    <div class="post-meta text-muted d-flex">
-
-      <div class="mr-auto">
-        <!-- posted date -->
-        <i class="far fa-calendar fa-fw"></i>
-        <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago"
-    data-ts="1643176177"
-    
-      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
-    
-    
-      data-capitalize="true"
-    >
-  2022-01-26
-</em>
-
-
-        <!-- time to read -->
-        <i class="far fa-clock fa-fw"></i>
-        <!--
-  Calculate the post's reading time, and display the word count in tooltip
- -->
-
-
-
-<!-- words per minute  -->
-
-
-
-
-
-
-
-
-
-
-<!-- return element -->
-<span class="readtime" data-toggle="tooltip" data-placement="bottom"
-  title="1576 字">
-  <em>8 分钟</em></span>
-
-
-        <!-- categories -->
-        
-          <i class="far fa-folder-open fa-fw"></i>
-          <span>
-          
-            Tech,
-            Git
-          </span>
-        
-      </div>
-
-      
-
-    </div> <!-- .post-meta -->
-
-  </div> <!-- .post-review -->
-
-
-
 </div> <!-- #post-list -->
 
 
@@ -1559,6 +1551,41 @@ Updating f42c576....
         
         
 
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
 
 
   <div id="access-tags">
@@ -1568,6 +1595,9 @@ Updating f42c576....
     
       
       <a class="post-tag" href="/tags/c/">c</a>
+    
+      
+      <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
@@ -1726,6 +1756,41 @@ Updating f42c576....
         
         
 
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
 
 
   <div id="access-tags">
@@ -1735,6 +1800,9 @@ Updating f42c576....
     
       
       <a class="post-tag" href="/tags/c/">c</a>
+    
+      
+      <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
