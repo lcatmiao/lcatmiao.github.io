@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2025-04-24T22:24:39+08:00</updated>
+  <updated>2025-04-24T22:48:13+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -58,12 +58,12 @@
 
 从现象上看是日志内容错位了，但也不能排除是踩内存，出界内容被直接解析也能出现类似的现象。通过看代码，我高度怀疑日志结构体在传参进入函数 output_syslog(log_s *in_buffer) 的时候就已经有问题了。没有 -g 的话，就只能进行有限的调试，通过跟踪地址、强看汇编来定位。
 
-gdb 给怀疑的函数 output_syslog() 打断点，命中后，栈帧、寄存器信息如下：
+gdb 给怀疑的函数 output_syslog() 打断点，命中后，寄存器信息如下：
 
 (gdb) b output_syslog 
 Breakpoint 1 at 0x43ed38
 (gdb) c
-Con...
+Contin...
     </summary>
   
 
