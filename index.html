@@ -43,7 +43,7 @@
 <meta property="twitter:title" content="小黑猫" />
 <meta name="twitter:site" content="@twitter_username" />
 <script type="application/ld+json">
-{"url":"http://0.0.0.0:4000/","description":"A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.","@type":"WebSite","headline":"小黑猫","name":"小黑猫","sameAs":["https://github.com/lcatmiao","https://twitter.com/username","https://github.com/username"],"@context":"https://schema.org"}</script>
+{"headline":"小黑猫","url":"http://0.0.0.0:4000/","sameAs":["https://github.com/lcatmiao","https://twitter.com/username","https://github.com/username"],"@type":"WebSite","description":"A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.","name":"小黑猫","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -455,6 +455,95 @@
 
 
 <div id="post-list">
+
+
+
+  <div class="post-preview">
+    <h1>
+      <a href="/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/">用户态源码反汇编定位方法记录</a>
+    </h1>
+
+    <div class="post-content">
+      <p>
+        
+
+
+
+
+
+        前言
+
+问题背景就是进程崩溃，产生了 core 文件。其实这次定位非常简单，bt, disassemble 就能直接看出来了。既然简单，就利用这次机会尝试了一下源码反汇编的定位方法。此前在别人的帮助下，运用该方法定位过内核态的问题，但都事发紧急，事后没能复盘，留下了遗憾。尽管存在差异，还是决定在用户态“模拟”一下。
+
+定位过程
+
+Program terminated with signal ...
+      </p>
+    </div>
+
+    <div class="post-meta text-muted d-flex">
+
+      <div class="mr-auto">
+        <!-- posted date -->
+        <i class="far fa-calendar fa-fw"></i>
+        <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago"
+    data-ts="1748094900"
+    
+      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
+    
+    
+      data-capitalize="true"
+    >
+  2025-05-24
+</em>
+
+
+        <!-- time to read -->
+        <i class="far fa-clock fa-fw"></i>
+        <!--
+  Calculate the post's reading time, and display the word count in tooltip
+ -->
+
+
+
+<!-- words per minute  -->
+
+
+
+
+
+
+
+
+
+
+<!-- return element -->
+<span class="readtime" data-toggle="tooltip" data-placement="bottom"
+  title="847 字">
+  <em>4 分钟</em></span>
+
+
+        <!-- categories -->
+        
+          <i class="far fa-folder-open fa-fw"></i>
+          <span>
+          
+            Tech,
+            C
+          </span>
+        
+      </div>
+
+      
+
+    </div> <!-- .post-meta -->
+
+  </div> <!-- .post-review -->
 
 
 
@@ -1287,95 +1376,6 @@ const int ...
 
 
 
-  <div class="post-preview">
-    <h1>
-      <a href="/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/">关于域名的各种名词叫法</a>
-    </h1>
-
-    <div class="post-content">
-      <p>
-        
-
-
-
-
-
-        关于域名有一些名词，比如域名、顶级域名、二级域名、三级域名、子域名、主机名等。自己总是搞不清这些名词具体指代什么，因为网上的资料总是有各种差别，同一个名词在不同的资料里有不同的解释，属实是迷惑。在查阅了很多资料后，决定做一个总结，尽可能涵盖各种说法，做一个自己理解的标准，以期在遇到这些说法时心里有底。
-
-资料
-
-基本概念 (aliyun.com)
-
-Domain name - Wikiped...
-      </p>
-    </div>
-
-    <div class="post-meta text-muted d-flex">
-
-      <div class="mr-auto">
-        <!-- posted date -->
-        <i class="far fa-calendar fa-fw"></i>
-        <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago"
-    data-ts="1643448670"
-    
-      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
-    
-    
-      data-capitalize="true"
-    >
-  2022-01-29
-</em>
-
-
-        <!-- time to read -->
-        <i class="far fa-clock fa-fw"></i>
-        <!--
-  Calculate the post's reading time, and display the word count in tooltip
- -->
-
-
-
-<!-- words per minute  -->
-
-
-
-
-
-
-
-
-
-
-<!-- return element -->
-<span class="readtime" data-toggle="tooltip" data-placement="bottom"
-  title="1349 字">
-  <em>7 分钟</em></span>
-
-
-        <!-- categories -->
-        
-          <i class="far fa-folder-open fa-fw"></i>
-          <span>
-          
-            Tech,
-            Misc
-          </span>
-        
-      </div>
-
-      
-
-    </div> <!-- .post-meta -->
-
-  </div> <!-- .post-review -->
-
-
-
 </div> <!-- #post-list -->
 
 
@@ -1512,6 +1512,30 @@ Domain name - Wikiped...
     
     
     
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
       
     
   
@@ -1532,36 +1556,6 @@ Domain name - Wikiped...
     
     
     
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
     
   
     
@@ -1717,6 +1711,30 @@ Domain name - Wikiped...
     
     
     
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
       
     
   
@@ -1737,36 +1755,6 @@ Domain name - Wikiped...
     
     
     
-    
-      
-    
-  
-    
-    
-    
-    
-      
-    
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-      
     
   
     

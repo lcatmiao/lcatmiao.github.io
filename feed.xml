@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2025-05-20T22:42:09+08:00</updated>
+  <updated>2025-05-24T21:57:19+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,56 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>用户态源码反汇编定位方法记录</title>
+    <link href="http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html" title="用户态源码反汇编定位方法记录" />
+    <published>2025-05-24T21:55:00+08:00</published>
+  
+    <updated>2025-05-24T21:55:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/</id>
+    <content src="http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="C" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      前言
+
+问题背景就是进程崩溃，产生了 core 文件。其实这次定位非常简单，bt, disassemble 就能直接看出来了。既然简单，就利用这次机会尝试了一下源码反汇编的定位方法。此前在别人的帮助下，运用该方法定位过内核态的问题，但都事发紧急，事后没能复盘，留下了遗憾。尽管存在差异，还是决定在用户态“模拟”一下。
+
+定位过程
+
+Program terminated with signal SIGSEGV, Segmentation fault.
+#0  0x00007fcff9ad157a in check ()
+   from ....so
+(gdb) bt
+#0  0x00007fcff9ad157a in check ()
+   from ....so
+#1  0x00007fcff9ad27c1 in func ()
+   from ....so
+#2  0x00007fc...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -258,69 +308,6 @@ ISO C11，ISO C17
 2017 年，ISO 编制了一个修正版本，并于 2018 年发布，该版本成为了新的 C 标准，即 ISO C17。
 
 在 gcc 中，可通过 -std=c11 或 -st...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>函数传参</title>
-    <link href="http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/" rel="alternate" type="text/html" title="函数传参" />
-    <published>2022-11-27T23:30:00+08:00</published>
-  
-    <updated>2022-11-27T23:30:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/</id>
-    <content src="http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="Tech" />
-    
-    <category term="C" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      传参分类
-
-从传参类型上看
-
-传参分为传值和传指针。
-
-
-  传指针本质上也是传值，只不过传的是指针值。由于传一般值和传指针值还是有点区别，所以分成两种说法。传值一般就指传一般值，传指针专门用于描述传指针值。
-
-
-从传参行为上看
-
-传参分为值复制和传自己。
-
-
-  传自己本质上也是值复制，只不过是取地址传无名指针，形参直接接上；而不是直接传有名指针。例如：
-
-
-// 函数调用
-func1(id, index, flag, &amp;amp;count);
-func2(arr);
-
-// 函数定义头
-func1(int id, int index, int flag, int *p_count)
-func2(int *arr)
-
-
-其中，id，index，flag 是值复制，这毫无疑义。arr 是数组名，这里退化为指针，直接进行了传参，也就是我说的“直接传有名指针”，所以我将其归为值复制。&amp;a...
     </summary>
   
 

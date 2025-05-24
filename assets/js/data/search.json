@@ -1,6 +1,21 @@
 [
   
   {
+    "title": "用户态源码反汇编定位方法记录",
+    "url": "/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/",
+    "categories": "Tech, C",
+    "tags": "gdb",
+    "date": "2025-05-24 21:55:00 +0800",
+    
+
+
+
+
+
+    "snippet": "前言问题背景就是进程崩溃，产生了 core 文件。其实这次定位非常简单，bt, disassemble 就能直接看出来了。既然简单，就利用这次机会尝试了一下源码反汇编的定位方法。此前在别人的帮助下，运用该方法定位过内核态的问题，但都事发紧急，事后没能复盘，留下了遗憾。尽管存在差异，还是决定在用户态“模拟”一下。定位过程Program terminated with signal SIGSEGV, Segmentation fault.#0  0x00007fcff9ad157a in check ()   from ....so(gdb) bt#0  0x00007fcff9ad157a in check ()   from ....so#1  0x00007fcff9ad27c1 in func ()   from ....so#2  0x00007fcff9ad3483 in func ()   from ....so#3  0x00007fcff9ad6696 in func ()   from ....so#4  0x00007fcff9ad9a40 in func ()   from ....so#5  0x00007fd018fa50d6 in func () from ....so#6  0x000000000041dbe9 in func ()#7  0x00000000004178bd in func ()#8  0x00007fd018fc39fd in func () from ....so#9  0x000000000040b56c in main ()死在 check() 中。(gdb) disassemble checkDump of assembler code for function check:   0x00007fcff9ad1408 &amp;lt;+0&amp;gt;:     push   %r15   0x00007fcff9ad140a &amp;lt;+2&amp;gt;:     push   %r14   0x00007fcff9ad140c &amp;lt;+4&amp;gt;:     mov    %rdi,%r14...   0x00007fcff9ad156c &amp;lt;+356&amp;gt;:   mov    0x48(%r14),%rax   0x00007fcff9ad1570 &amp;lt;+360&amp;gt;:   or     $0xffffffffffffffff,%rcx   0x00007fcff9ad1574 &amp;lt;+364&amp;gt;:   mov    (%rax,%rbp,1),%rdi   0x00007fcff9ad1578 &amp;lt;+368&amp;gt;:   xor    %eax,%eax=&amp;gt; 0x00007fcff9ad157a &amp;lt;+370&amp;gt;:   repnz scas %es:(%rdi),%al   0x00007fcff9ad157c &amp;lt;+372&amp;gt;:   mov    %rcx,%rax   0x00007fcff9ad157f &amp;lt;+375&amp;gt;:   not    %rax   0x00007fcff9ad1582 &amp;lt;+378&amp;gt;:   dec    %rax   0x00007fcff9ad1585 &amp;lt;+381&amp;gt;:   cmp    $0x200,%rax...找到崩溃指令的偏移量为 +370，其十六进制为 172。接下来准备编译源码。编译前准备：  源码版本须与问题版本一致  给源码编译加上 -g 参数，去掉 STRIP，除此以外的编译参数都不变（与编译问题版本时的参数保持一致）将问题代码所在的文件编译出来，得到对应的 so。随后，在开发环境中反汇编：# -S  Intermix source code with disassembly# -l  Include line numbers and filenames in outputobjdump check.so -S -l &amp;gt; check.c.asm在 check.c.asm 中直接找到 check 函数。其第一条指令的首地址为 2653a。我们将之加上先前在调试环境中得到的崩溃指令的偏移量： 2653a + 172 = 266ac，就得到了开发环境中崩溃指令的偏移量。   2653a:    ....../.../check.c:3498        return ERR_MAX_CFG;    }    for (i = 0 ;i &amp;lt; obj-&amp;gt;sizeList; i++)    {        snprintf(err_str, NAME_LEN,&quot;list[%d].host&quot;, i);   26699:    e8 42 3b ff ff           callq  1a1e0 &amp;lt;snprintf@plt&amp;gt;/.../check.c:3499        if (strlen(obj-&amp;gt;list[i].host) &amp;gt; 512)   2669e:    49 8b 46 48              mov    0x48(%r14),%rax   266a2:    48 83 c9 ff              or     $0xffffffffffffffff,%rcx   266a6:    48 8b 3c 28              mov    (%rax,%rbp,1),%rdi   266aa:    31 c0                    xor    %eax,%eax   266ac:    f2 ae                    repnz scas %es:(%rdi),%al   266ae:    48 89 c8                 mov    %rcx,%rax   266b1:    48 f7 d0                 not    %rax   266b4:    48 ff c8                 dec    %rax   266b7:    48 3d 00 02 00 00        cmp    $0x200,%rax可以看到 266ac 的崩溃指令 repnz scas %es:(%rdi),%al 与调试环境中的崩溃指令是一致的。随即观察附近的源码，就知道问题所在了。1000% 是 strlen() 的问题，多半是 host 为 NULL 了。实测一番，果不其然，直接复现。注意事项在开发环境中重新编译相关源码时，需保证代码版本、编译参数（除 -g, STRIP 外）与问题版本一致，否则反汇编结果将与问题版本所在环境的反汇编结果不一致，在开发环境中就无法精准地找到同样的崩溃指令了，二者汇编都对不上，也就无法定位了。"
+  },
+  
+  {
     "title": "gdb无-g调试实战记录",
     "url": "/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/",
     "categories": "Tech, C",
