@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"headline":"C语言标准发展历史","dateModified":"2024-02-24T16:53:37+08:00","datePublished":"2024-02-24T16:53:37+08:00","url":"http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"对各种 C 标准进行简述。 参考资料：Standards (Using the GNU Compiler Collection (GCC)) ANSI C，ISO C89/90 ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。 1990 年晚些时候，该标准成为了 ISO C89/90 标准。 这两个标准之间没有技术上的差异，可以当作就是一个标准。 C94/95 是这一标准的修订版本。 ISO C99 1999 年，ISO 发布了新的 C 标准，即 ISO C99。 ISO C11，ISO C17 2011 年，ISO 发布了新的 C 标准，即 ISO C11。 2017 年，ISO 编制了一个修正版本，并于 2018 年发布，该版本成为了新的 C 标准，即 ISO C17。 在 gcc 中，可通过 -std=c11 或 -std=iso9899:2011 指定 C11 标准； 通过 -std=c17 或 -std=iso9899:2017 指定 C17 标准。 若通过 -std=c11 指定 C11 标准，也会应用 C17 中的修正，只不过 __STDC_VERSION__ 的值为 C11 对应的值，除此以外和 C17 没有区别。 GNU Extensions 标准是标准，实现是实现。gcc 在实现上述标准的同时也添加了一些自己的扩展功能。把带 GNU 扩展的 C 标准直接当作 GNU C 标准，问题也不大。 例如可以指定 -std=gnu90 (for C90 with GNU extensions)、-std=gnu99 (for C99 with GNU extensions)、-std=gnu11 (for C11 with GNU extensions)。 gcc 将一些 C99 中的特性作为 C90 模式的扩展，将一些 C11 中的特性作为 C90 和 C99 模式的扩展。这个按我的理解，大概可以这么看：只有经过了广泛的实践和时间检验的特性才能被写入标准。gcc 扩展就像是先行者，在经过广泛检验后，被接受为新标准的一部分。","@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/"},"datePublished":"2024-02-24T16:53:37+08:00","url":"http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/","description":"对各种 C 标准进行简述。 参考资料：Standards (Using the GNU Compiler Collection (GCC)) ANSI C，ISO C89/90 ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。 1990 年晚些时候，该标准成为了 ISO C89/90 标准。 这两个标准之间没有技术上的差异，可以当作就是一个标准。 C94/95 是这一标准的修订版本。 ISO C99 1999 年，ISO 发布了新的 C 标准，即 ISO C99。 ISO C11，ISO C17 2011 年，ISO 发布了新的 C 标准，即 ISO C11。 2017 年，ISO 编制了一个修正版本，并于 2018 年发布，该版本成为了新的 C 标准，即 ISO C17。 在 gcc 中，可通过 -std=c11 或 -std=iso9899:2011 指定 C11 标准； 通过 -std=c17 或 -std=iso9899:2017 指定 C17 标准。 若通过 -std=c11 指定 C11 标准，也会应用 C17 中的修正，只不过 __STDC_VERSION__ 的值为 C11 对应的值，除此以外和 C17 没有区别。 GNU Extensions 标准是标准，实现是实现。gcc 在实现上述标准的同时也添加了一些自己的扩展功能。把带 GNU 扩展的 C 标准直接当作 GNU C 标准，问题也不大。 例如可以指定 -std=gnu90 (for C90 with GNU extensions)、-std=gnu99 (for C99 with GNU extensions)、-std=gnu11 (for C11 with GNU extensions)。 gcc 将一些 C99 中的特性作为 C90 模式的扩展，将一些 C11 中的特性作为 C90 和 C99 模式的扩展。这个按我的理解，大概可以这么看：只有经过了广泛的实践和时间检验的特性才能被写入标准。gcc 扩展就像是先行者，在经过广泛检验后，被接受为新标准的一部分。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"C语言标准发展历史","dateModified":"2024-02-24T16:53:37+08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -671,14 +671,6 @@
 
   <!-- tags -->
   
-  <div class="post-tags">
-    <i class="fa fa-tags fa-fw mr-1"></i>
-      
-      <a href="/tags/c/"
-          class="post-tag no-text-decoration" >c</a>
-      
-  </div>
-  
 
   <div class="post-tail-bottom
     d-flex justify-content-between align-items-center mt-3 pt-5 pb-2">
@@ -802,30 +794,6 @@
     
     
     
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
       
     
   
@@ -837,11 +805,6 @@
         
         
 
-  
-    
-    
-    
-    
   
     
     
@@ -878,16 +841,13 @@
 
     
       
-      <a class="post-tag" href="/tags/c/">c</a>
-    
-      
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/sql/">sql</a>
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
@@ -936,6 +896,19 @@
 
 
 
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
 
   
@@ -1395,30 +1368,6 @@ func1(i...
     
     
     
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
       
     
   
@@ -1430,11 +1379,6 @@ func1(i...
         
         
 
-  
-    
-    
-    
-    
   
     
     
@@ -1471,16 +1415,13 @@ func1(i...
 
     
       
-      <a class="post-tag" href="/tags/c/">c</a>
-    
-      
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/sql/">sql</a>
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>

@@ -43,7 +43,7 @@
 <meta property="twitter:title" content="小黑猫" />
 <meta name="twitter:site" content="@twitter_username" />
 <script type="application/ld+json">
-{"headline":"小黑猫","url":"http://0.0.0.0:4000/","sameAs":["https://github.com/lcatmiao","https://twitter.com/username","https://github.com/username"],"@type":"WebSite","description":"A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.","name":"小黑猫","@context":"https://schema.org"}</script>
+{"url":"http://0.0.0.0:4000/","description":"A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.","@type":"WebSite","headline":"小黑猫","name":"小黑猫","sameAs":["https://github.com/lcatmiao","https://twitter.com/username","https://github.com/username"],"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -455,6 +455,95 @@
 
 
 <div id="post-list">
+
+
+
+  <div class="post-preview">
+    <h1>
+      <a href="/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/">死机定位-内存不足死在vmalloc</a>
+    </h1>
+
+    <div class="post-content">
+      <p>
+        
+
+
+
+
+
+        定位过程
+
+死机调用栈如下，推栈结果与 bt 结果大差不差。由一个终端程序一路调用到 vmalloc，最后死在其内部。注意到函数 out_of_memory，这表明可能是系统内存快耗尽了。
+
+[0]kdb&amp;gt; bt
+Stack traceback for pid 693
+0xffff880362416740      693        1  1    0   R  0xffff880...
+      </p>
+    </div>
+
+    <div class="post-meta text-muted d-flex">
+
+      <div class="mr-auto">
+        <!-- posted date -->
+        <i class="far fa-calendar fa-fw"></i>
+        <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago"
+    data-ts="1748781000"
+    
+      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
+    
+    
+      data-capitalize="true"
+    >
+  2025-06-01
+</em>
+
+
+        <!-- time to read -->
+        <i class="far fa-clock fa-fw"></i>
+        <!--
+  Calculate the post's reading time, and display the word count in tooltip
+ -->
+
+
+
+<!-- words per minute  -->
+
+
+
+
+
+
+
+
+
+
+<!-- return element -->
+<span class="readtime" data-toggle="tooltip" data-placement="bottom"
+  title="1862 字">
+  <em>10 分钟</em></span>
+
+
+        <!-- categories -->
+        
+          <i class="far fa-folder-open fa-fw"></i>
+          <span>
+          
+            Tech,
+            Linux
+          </span>
+        
+      </div>
+
+      
+
+    </div> <!-- .post-meta -->
+
+  </div> <!-- .post-review -->
 
 
 
@@ -1293,89 +1382,6 @@ const int ...
 
 
 
-  <div class="post-preview">
-    <h1>
-      <a href="/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">jekyll-chirpy-theme-github搭建个人博客</a>
-    </h1>
-
-    <div class="post-content">
-      <p>
-        
-
-
-
-
-
-        本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法...
-      </p>
-    </div>
-
-    <div class="post-meta text-muted d-flex">
-
-      <div class="mr-auto">
-        <!-- posted date -->
-        <i class="far fa-calendar fa-fw"></i>
-        <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago"
-    data-ts="1644043380"
-    
-      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
-    
-    
-      data-capitalize="true"
-    >
-  2022-02-05
-</em>
-
-
-        <!-- time to read -->
-        <i class="far fa-clock fa-fw"></i>
-        <!--
-  Calculate the post's reading time, and display the word count in tooltip
- -->
-
-
-
-<!-- words per minute  -->
-
-
-
-
-
-
-
-
-
-
-<!-- return element -->
-<span class="readtime" data-toggle="tooltip" data-placement="bottom"
-  title="1590 字">
-  <em>8 分钟</em></span>
-
-
-        <!-- categories -->
-        
-          <i class="far fa-folder-open fa-fw"></i>
-          <span>
-          
-            Tech,
-            Misc
-          </span>
-        
-      </div>
-
-      
-
-    </div> <!-- .post-meta -->
-
-  </div> <!-- .post-review -->
-
-
-
 </div> <!-- #post-list -->
 
 
@@ -1512,30 +1518,6 @@ const int ...
     
     
     
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
       
     
   
@@ -1547,11 +1529,6 @@ const int ...
         
         
 
-  
-    
-    
-    
-    
   
     
     
@@ -1588,16 +1565,13 @@ const int ...
 
     
       
-      <a class="post-tag" href="/tags/c/">c</a>
-    
-      
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/sql/">sql</a>
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
@@ -1711,30 +1685,6 @@ const int ...
     
     
     
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
       
     
   
@@ -1746,11 +1696,6 @@ const int ...
         
         
 
-  
-    
-    
-    
-    
   
     
     
@@ -1787,16 +1732,13 @@ const int ...
 
     
       
-      <a class="post-tag" href="/tags/c/">c</a>
-    
-      
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/sql/">sql</a>
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>

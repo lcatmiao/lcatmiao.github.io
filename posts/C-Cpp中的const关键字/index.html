@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"headline":"C-Cpp中的const关键字","dateModified":"2022-05-08T21:30:00+08:00","datePublished":"2022-05-08T21:30:00+08:00","url":"http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"记录一波 const 关键字的知识点。 概述 const 意为不可修改。 const 修饰的变量不可被修改， 是只读变量，也称这样的变量为常量。const 修饰的变量不可修改这一点是语法层面的限制，通过一些刻意构造的操作仍然可以修改变量的值，只是一般不会这样做。 const 也可以修饰指针，既可以限制指针指向的数据，又可以限制指针本身。 const 修饰变量 1 2 const int VexNum = 20; int const VexNum = 20; 上述两种写法的效果是一样的。我们一般使用第一种。const 修饰变量，即定义了常量 VexNum。 const 定义的常量一般单词首字母大写。 这个时候企图修改常量是不行的。 1 VexNum = 30; // error: assignment of read-only variable &#39;VexNum&#39; 由于常量在后期不能被更改，所以定义常量时必须初始化。 const 修饰指针 1 2 3 4 const int *p; int const *p; int * const p = &amp;m; 第一、二种写法等效，指针指向的数据不可修改，定义了常量指针；第三种写法是指针本身不可修改，定义了指针常量。 可以这样记忆：const 离指针近，指针本身不可修改，是指针常量；const 离指针远，指针指向的数据不可修改，是常量指针。 第一、二种写法定义常量指针，定义时可以不初始化；第三种写法定义指针常量，由于指针常量在后期不能被修改，所以定义指针常量时必须初始化。 上述写法本质上是两种写法，这两种写法也可以合到一起，如下： 1 2 const int * const p = &amp;m; int const * const p = &amp;m; 这种写法定义的指针，既是常量指针，又是指针常量。指针本身不能被修改，指针指向的数据也不能被修改。 const 和非 const 指针之间的赋值 将 const 指针赋值给非 const 指针，不可以。 将非 const 指针赋值给 const 指针，可以。 方便记忆：去限制不行，加限制行。 const 与字符串 写这一块的原因是我发现字符串常量通常都用 const char * 接，但后来发现直接用 char * 接编译也没有报错，一时间产生了诸多疑惑，现将研究结果呈现如下。 先说一下字符串。 字符串本质上就是字符数组。这里我将字符串分为两类，一类是内存只读的字符数组，一类是内存可读可写的字符数组，前者就是字符串常量，后者可以理解为“字符串变量”。 C语言中并没有“字符串变量”的说法，平时大都直接用字符数组来称呼“字符串变量”，但其实无论是字符串常量还是“字符串变量”，本质上都是字符数组。由于我不喜欢用字符数组来称呼“字符串变量”，所以还是忍不住直接使用了“字符串变量”的说法，读者只要清楚这里的“字符串变量”是指内存可读可写的字符数组就行。 我们在代码中直接书写的类似 &quot;abc&quot;，&quot;This is a string.&quot;，&quot;Fail to open db.&quot; 就是字符串常量，除此以外都是“字符串变量”。既然字符串是字符数组，那么指向首元素的指针就是 char *，用 char * 接字符串常量自然能过编译。 1 2 // 能过编译 char *str = &quot;abc&quot;; 但是如果企图更改它的值，那就要出问题了。 1 2 3 4 5 6 7 8 9 10 11 12 // 能过编译，但运行时会出错 #include &lt;stdio.h&gt; int main() { char *str = &quot;abc&quot;; *str = &#39;A&#39;; printf(&quot;%s\\n&quot;, str); return 0; } 字符串常量是内存只读的字符数组，强行改值自然要出问题。正因如此，通常会使用 const 关键字加以编译层面的检查，防止开发者无意间做出更改只读内存的操作。 1 const char *str = &quot;abc&quot;; const 在 C 和 C++ 中的区别 编译期替换 1 2 3 4 5 6 7 8 9 10 11 #include &lt;stdio.h&gt; int main() { const int m = 20; int *p = (int *)&amp;m; *p = 40; printf(&quot;%d\\n&quot;, m); printf(&quot;%d\\n&quot;, *p); return 0; } 上述代码中，m 是常量，但我们通过指针仍然更改了它的值。&amp;m 得到的是 const int * 类型，不能直接赋值给 int *，所以这里需要强转。最终我们更改了 m 常量在内存中的值。可见，const 的限制并不是绝对的，通过一些刻意的操作仍然可以修改，只是一般不会这样做。 下面说一下 const 在 C 和 C++ 中的区别。 上述代码在C中运行的结果如下： 1 2 40 40 将同样的代码放到C++中运行： 1 2 3 4 5 6 7 8 9 10 11 12 #include &lt;iostream&gt; using namespace std; int main() { const int m = 20; int *p = (int *)&amp;m; *p = 40; cout &lt;&lt; m &lt;&lt; endl; cout &lt;&lt; *p &lt;&lt; endl; return 0; } 结果为： 1 2 20 40 原因在于：C++中的 `const` 会进行编译期替换，有点类似 #define，但 #define 是在预处理阶段。我们可以理解为，C++的代码，在经过编译后，变成了如下： 1 2 3 4 5 6 7 8 9 10 11 12 #include &lt;iostream&gt; using namespace std; int main() { const int m = 20; int *p = (int *)&amp;m; *p = 40; cout &lt;&lt; 20 &lt;&lt; endl; cout &lt;&lt; *p &lt;&lt; endl; return 0; } 实际上 m 在内存中的值的确被改为了 40，只不过由于编译期替换，我们 cout &lt;&lt; m 直接变成了 cout &lt;&lt; 20，自然就输出了 20。而在C中运行时，就是正常执行，printf(&quot;%d\\n&quot;, m) 中 m 还是变量 m，程序读取变量 m 的值，发现是 40，就输出 40。C++少了读取变量内存的过程，提高了执行效率，但不能及时反应变量的修改；然而，一般也不会修改 const 变量。 可见范围 在C语言中，const 全局变量和普通全局变量一样，作用域是整个工程，只不过需要用 extern 声明一下才能在其它文件中使用。见如下代码： test1.c 1 2 3 4 5 6 7 8 9 #include &lt;stdio.h&gt; extern const int m; int main() { printf(&quot;%d\\n&quot;, m); return 0; } test2.c 1 const int m = 20; 编译命令： 1 gcc test1.c test2.c -o test 运行结果： 1 20 我们在 test2.c 中定义了 const 全局变量，在 test1.c 中通过 extern 声明之，便可以使用了。 其实这里使用 extern int m; 声明也是可以的，但还是建议使用 extern const int m; 声明，因为使用后者能够启用相关的代码检查，具体说明如下： 修改 test1.c 如下： 1 2 3 4 5 6 7 8 9 10 11 #include &lt;stdio.h&gt; extern const int m; int main() { // 这里尝试对const变量进行修改，无论是VSCode Linting还是gcc都会报错，这很正常。 m = 40; printf(&quot;%d\\n&quot;, m); return 0; } 但若修改 test1.c 如下： 1 2 3 4 5 6 7 8 9 10 11 12 #include &lt;stdio.h&gt; extern int m; int main() { // 这里尝试对const变量进行修改，但无论是VSCode Linting还是gcc都没有报错， // 但是生成的exe无法正常运行。 m = 40; printf(&quot;%d\\n&quot;, m); return 0; } 综上所述，推荐使用 extern const int m; 进行声明，这样可以使相关代码检查能够正常工作，而且代码看上去更清楚，可读性更高。 稍微扯远了点，现在我们回来，总之，在C语言中，const 全局变量和普通全局变量一样，作用域都是整个工程，只不过需要用 extern 声明一下才能在其它文件中使用。 在C++中，`const` 全局变量的作用域仅是单个文件。 见如下代码： test1.cpp 1 2 3 4 5 6 7 8 9 10 #include &lt;iostream&gt; using namespace std; extern const int m; int main() { cout &lt;&lt; m &lt;&lt; endl; return 0; } test2.cpp 1 const int m = 20; 编译命令： 1 g++ test1.cpp test2.cpp -o test 此时编译链接会出现错误： 1 2 undefined reference to `m&#39; collect2.exe: error: ld returned 1 exit status 因为C++中 const 全局变量的作用域仅是单个文件，用 extern 也没用。 所以在C++中，下述代码是成立的： test1.cpp 1 2 3 4 5 6 7 8 9 10 11 12 13 #include &lt;iostream&gt; using namespace std; const int m = 20; void func(); int main() { cout &lt;&lt; m &lt;&lt; endl; func(); return 0; } test2.cpp 1 2 3 4 5 6 7 8 9 #include &lt;iostream&gt; using namespace std; const int m = 40; void func() { cout &lt;&lt; m &lt;&lt; endl; } 运行结果： 1 2 20 40 上面两个全局变量 m 互不影响，进行编译期替换，自然就能得到上述结果。 至于内存，我认为全局区同时存在两个 m，编译器应该通过某种方式区分了它们。在 VSCode 调试中，我也能看到 m 的值既可以是 20，也可以是 40。如下图： 当我在 main() 中时，只能看见 test1.cpp 中定义的 m，从全局区读取了 test1.cpp 中定义的 m 为 20。 当我在 func() 中时，只能看见 test2.cpp 中定义的 m，从全局区读取了 test2.cpp 中定义的 m 为 40。 总之，这样的代码在C中就不能成立，会出现重复定义全局变量的错误。 C++中，在定义 `const` 全局变量时加上 `extern` 关键字可以将作用域从单个文件扩展到整个工程，此方法仅 `g++` 支持。 见如下代码： test1.cpp 1 2 3 4 5 6 7 8 9 10 #include &lt;iostream&gt; using namespace std; extern const int m; int main() { cout &lt;&lt; m &lt;&lt; endl; return 0; } test2.cpp 1 extern const int m = 20; 运行结果： 1 20 在 test2.cpp 中，使用 extern 定义了 const 全局变量，作用域是整个工程，在 test1.cpp 中使用 extern 声明一下后就可以使用了。 const or #define 如果只是为了像 const int a = 10;，#define MAX 20 这样定义一个常量，那么 const 和 #define 都可以用来定义。有的资料中说使用 const 定义常量时带了类型，编译时会有类型检查；#define 在预编译阶段只是替换，没有类型检查一说。这点心里有数就行。 纯粹只是定义一个常量的话，C语言的风格更多使用 #define；C++两者都会用，const 很常见。","@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/"},"datePublished":"2022-05-08T21:30:00+08:00","url":"http://0.0.0.0:4000/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/","description":"记录一波 const 关键字的知识点。 概述 const 意为不可修改。 const 修饰的变量不可被修改， 是只读变量，也称这样的变量为常量。const 修饰的变量不可修改这一点是语法层面的限制，通过一些刻意构造的操作仍然可以修改变量的值，只是一般不会这样做。 const 也可以修饰指针，既可以限制指针指向的数据，又可以限制指针本身。 const 修饰变量 1 2 const int VexNum = 20; int const VexNum = 20; 上述两种写法的效果是一样的。我们一般使用第一种。const 修饰变量，即定义了常量 VexNum。 const 定义的常量一般单词首字母大写。 这个时候企图修改常量是不行的。 1 VexNum = 30; // error: assignment of read-only variable &#39;VexNum&#39; 由于常量在后期不能被更改，所以定义常量时必须初始化。 const 修饰指针 1 2 3 4 const int *p; int const *p; int * const p = &amp;m; 第一、二种写法等效，指针指向的数据不可修改，定义了常量指针；第三种写法是指针本身不可修改，定义了指针常量。 可以这样记忆：const 离指针近，指针本身不可修改，是指针常量；const 离指针远，指针指向的数据不可修改，是常量指针。 第一、二种写法定义常量指针，定义时可以不初始化；第三种写法定义指针常量，由于指针常量在后期不能被修改，所以定义指针常量时必须初始化。 上述写法本质上是两种写法，这两种写法也可以合到一起，如下： 1 2 const int * const p = &amp;m; int const * const p = &amp;m; 这种写法定义的指针，既是常量指针，又是指针常量。指针本身不能被修改，指针指向的数据也不能被修改。 const 和非 const 指针之间的赋值 将 const 指针赋值给非 const 指针，不可以。 将非 const 指针赋值给 const 指针，可以。 方便记忆：去限制不行，加限制行。 const 与字符串 写这一块的原因是我发现字符串常量通常都用 const char * 接，但后来发现直接用 char * 接编译也没有报错，一时间产生了诸多疑惑，现将研究结果呈现如下。 先说一下字符串。 字符串本质上就是字符数组。这里我将字符串分为两类，一类是内存只读的字符数组，一类是内存可读可写的字符数组，前者就是字符串常量，后者可以理解为“字符串变量”。 C语言中并没有“字符串变量”的说法，平时大都直接用字符数组来称呼“字符串变量”，但其实无论是字符串常量还是“字符串变量”，本质上都是字符数组。由于我不喜欢用字符数组来称呼“字符串变量”，所以还是忍不住直接使用了“字符串变量”的说法，读者只要清楚这里的“字符串变量”是指内存可读可写的字符数组就行。 我们在代码中直接书写的类似 &quot;abc&quot;，&quot;This is a string.&quot;，&quot;Fail to open db.&quot; 就是字符串常量，除此以外都是“字符串变量”。既然字符串是字符数组，那么指向首元素的指针就是 char *，用 char * 接字符串常量自然能过编译。 1 2 // 能过编译 char *str = &quot;abc&quot;; 但是如果企图更改它的值，那就要出问题了。 1 2 3 4 5 6 7 8 9 10 11 12 // 能过编译，但运行时会出错 #include &lt;stdio.h&gt; int main() { char *str = &quot;abc&quot;; *str = &#39;A&#39;; printf(&quot;%s\\n&quot;, str); return 0; } 字符串常量是内存只读的字符数组，强行改值自然要出问题。正因如此，通常会使用 const 关键字加以编译层面的检查，防止开发者无意间做出更改只读内存的操作。 1 const char *str = &quot;abc&quot;; const 在 C 和 C++ 中的区别 编译期替换 1 2 3 4 5 6 7 8 9 10 11 #include &lt;stdio.h&gt; int main() { const int m = 20; int *p = (int *)&amp;m; *p = 40; printf(&quot;%d\\n&quot;, m); printf(&quot;%d\\n&quot;, *p); return 0; } 上述代码中，m 是常量，但我们通过指针仍然更改了它的值。&amp;m 得到的是 const int * 类型，不能直接赋值给 int *，所以这里需要强转。最终我们更改了 m 常量在内存中的值。可见，const 的限制并不是绝对的，通过一些刻意的操作仍然可以修改，只是一般不会这样做。 下面说一下 const 在 C 和 C++ 中的区别。 上述代码在C中运行的结果如下： 1 2 40 40 将同样的代码放到C++中运行： 1 2 3 4 5 6 7 8 9 10 11 12 #include &lt;iostream&gt; using namespace std; int main() { const int m = 20; int *p = (int *)&amp;m; *p = 40; cout &lt;&lt; m &lt;&lt; endl; cout &lt;&lt; *p &lt;&lt; endl; return 0; } 结果为： 1 2 20 40 原因在于：C++中的 `const` 会进行编译期替换，有点类似 #define，但 #define 是在预处理阶段。我们可以理解为，C++的代码，在经过编译后，变成了如下： 1 2 3 4 5 6 7 8 9 10 11 12 #include &lt;iostream&gt; using namespace std; int main() { const int m = 20; int *p = (int *)&amp;m; *p = 40; cout &lt;&lt; 20 &lt;&lt; endl; cout &lt;&lt; *p &lt;&lt; endl; return 0; } 实际上 m 在内存中的值的确被改为了 40，只不过由于编译期替换，我们 cout &lt;&lt; m 直接变成了 cout &lt;&lt; 20，自然就输出了 20。而在C中运行时，就是正常执行，printf(&quot;%d\\n&quot;, m) 中 m 还是变量 m，程序读取变量 m 的值，发现是 40，就输出 40。C++少了读取变量内存的过程，提高了执行效率，但不能及时反应变量的修改；然而，一般也不会修改 const 变量。 可见范围 在C语言中，const 全局变量和普通全局变量一样，作用域是整个工程，只不过需要用 extern 声明一下才能在其它文件中使用。见如下代码： test1.c 1 2 3 4 5 6 7 8 9 #include &lt;stdio.h&gt; extern const int m; int main() { printf(&quot;%d\\n&quot;, m); return 0; } test2.c 1 const int m = 20; 编译命令： 1 gcc test1.c test2.c -o test 运行结果： 1 20 我们在 test2.c 中定义了 const 全局变量，在 test1.c 中通过 extern 声明之，便可以使用了。 其实这里使用 extern int m; 声明也是可以的，但还是建议使用 extern const int m; 声明，因为使用后者能够启用相关的代码检查，具体说明如下： 修改 test1.c 如下： 1 2 3 4 5 6 7 8 9 10 11 #include &lt;stdio.h&gt; extern const int m; int main() { // 这里尝试对const变量进行修改，无论是VSCode Linting还是gcc都会报错，这很正常。 m = 40; printf(&quot;%d\\n&quot;, m); return 0; } 但若修改 test1.c 如下： 1 2 3 4 5 6 7 8 9 10 11 12 #include &lt;stdio.h&gt; extern int m; int main() { // 这里尝试对const变量进行修改，但无论是VSCode Linting还是gcc都没有报错， // 但是生成的exe无法正常运行。 m = 40; printf(&quot;%d\\n&quot;, m); return 0; } 综上所述，推荐使用 extern const int m; 进行声明，这样可以使相关代码检查能够正常工作，而且代码看上去更清楚，可读性更高。 稍微扯远了点，现在我们回来，总之，在C语言中，const 全局变量和普通全局变量一样，作用域都是整个工程，只不过需要用 extern 声明一下才能在其它文件中使用。 在C++中，`const` 全局变量的作用域仅是单个文件。 见如下代码： test1.cpp 1 2 3 4 5 6 7 8 9 10 #include &lt;iostream&gt; using namespace std; extern const int m; int main() { cout &lt;&lt; m &lt;&lt; endl; return 0; } test2.cpp 1 const int m = 20; 编译命令： 1 g++ test1.cpp test2.cpp -o test 此时编译链接会出现错误： 1 2 undefined reference to `m&#39; collect2.exe: error: ld returned 1 exit status 因为C++中 const 全局变量的作用域仅是单个文件，用 extern 也没用。 所以在C++中，下述代码是成立的： test1.cpp 1 2 3 4 5 6 7 8 9 10 11 12 13 #include &lt;iostream&gt; using namespace std; const int m = 20; void func(); int main() { cout &lt;&lt; m &lt;&lt; endl; func(); return 0; } test2.cpp 1 2 3 4 5 6 7 8 9 #include &lt;iostream&gt; using namespace std; const int m = 40; void func() { cout &lt;&lt; m &lt;&lt; endl; } 运行结果： 1 2 20 40 上面两个全局变量 m 互不影响，进行编译期替换，自然就能得到上述结果。 至于内存，我认为全局区同时存在两个 m，编译器应该通过某种方式区分了它们。在 VSCode 调试中，我也能看到 m 的值既可以是 20，也可以是 40。如下图： 当我在 main() 中时，只能看见 test1.cpp 中定义的 m，从全局区读取了 test1.cpp 中定义的 m 为 20。 当我在 func() 中时，只能看见 test2.cpp 中定义的 m，从全局区读取了 test2.cpp 中定义的 m 为 40。 总之，这样的代码在C中就不能成立，会出现重复定义全局变量的错误。 C++中，在定义 `const` 全局变量时加上 `extern` 关键字可以将作用域从单个文件扩展到整个工程，此方法仅 `g++` 支持。 见如下代码： test1.cpp 1 2 3 4 5 6 7 8 9 10 #include &lt;iostream&gt; using namespace std; extern const int m; int main() { cout &lt;&lt; m &lt;&lt; endl; return 0; } test2.cpp 1 extern const int m = 20; 运行结果： 1 20 在 test2.cpp 中，使用 extern 定义了 const 全局变量，作用域是整个工程，在 test1.cpp 中使用 extern 声明一下后就可以使用了。 const or #define 如果只是为了像 const int a = 10;，#define MAX 20 这样定义一个常量，那么 const 和 #define 都可以用来定义。有的资料中说使用 const 定义常量时带了类型，编译时会有类型检查；#define 在预编译阶段只是替换，没有类型检查一说。这点心里有数就行。 纯粹只是定义一个常量的话，C语言的风格更多使用 #define；C++两者都会用，const 很常见。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"C-Cpp中的const关键字","dateModified":"2022-05-08T21:30:00+08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -1356,14 +1356,6 @@ collect2.exe: error: ld returned 1 exit status
 
   <!-- tags -->
   
-  <div class="post-tags">
-    <i class="fa fa-tags fa-fw mr-1"></i>
-      
-      <a href="/tags/c/"
-          class="post-tag no-text-decoration" >c</a>
-      
-  </div>
-  
 
   <div class="post-tail-bottom
     d-flex justify-content-between align-items-center mt-3 pt-5 pb-2">
@@ -1487,30 +1479,6 @@ collect2.exe: error: ld returned 1 exit status
     
     
     
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
       
     
   
@@ -1522,11 +1490,6 @@ collect2.exe: error: ld returned 1 exit status
         
         
 
-  
-    
-    
-    
-    
   
     
     
@@ -1563,16 +1526,13 @@ collect2.exe: error: ld returned 1 exit status
 
     
       
-      <a class="post-tag" href="/tags/c/">c</a>
-    
-      
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/sql/">sql</a>
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
@@ -1629,6 +1589,19 @@ collect2.exe: error: ld returned 1 exit status
 
 
 
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
 
   
@@ -2093,30 +2066,6 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
     
     
     
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
       
     
   
@@ -2128,11 +2077,6 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
         
         
 
-  
-    
-    
-    
-    
   
     
     
@@ -2169,16 +2113,13 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
 
     
       
-      <a class="post-tag" href="/tags/c/">c</a>
-    
-      
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/sql/">sql</a>
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>

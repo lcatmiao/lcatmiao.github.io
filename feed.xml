@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2025-05-24T21:57:19+08:00</updated>
+  <updated>2025-06-01T21:58:53+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,51 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>死机定位-内存不足死在vmalloc</title>
+    <link href="http://0.0.0.0:4000/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/" rel="alternate" type="text/html" title="死机定位-内存不足死在vmalloc" />
+    <published>2025-06-01T20:30:00+08:00</published>
+  
+    <updated>2025-06-01T20:30:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/</id>
+    <content src="http://0.0.0.0:4000/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="Linux" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      定位过程
+
+死机调用栈如下，推栈结果与 bt 结果大差不差。由一个终端程序一路调用到 vmalloc，最后死在其内部。注意到函数 out_of_memory，这表明可能是系统内存快耗尽了。
+
+[0]kdb&amp;gt; bt
+Stack traceback for pid 693
+0xffff880362416740      693        1  1    0   R  0xffff8803624171c0 *vtysh
+[15792.666500]  ffff88042d6bb818 0000000000000018 ffffffff818604c0 ffff88042d6bb858
+[15792.755452]  ffffffff8109f38e ffff88042d6bb848 ffffffff817a6588 000000000040adbd
+[15792.844406] ...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -248,66 +293,6 @@ Contin...
   
   
     负真值只能视作有符号数；非负真值既可以视作有符号数，又可...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>C语言标准发展历史</title>
-    <link href="http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/" rel="alternate" type="text/html" title="C语言标准发展历史" />
-    <published>2024-02-24T16:53:37+08:00</published>
-  
-    <updated>2024-02-24T16:53:37+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/</id>
-    <content src="http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="Tech" />
-    
-    <category term="C" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      对各种 C 标准进行简述。
-
-参考资料：Standards (Using the GNU Compiler Collection (GCC))
-
-ANSI C，ISO C89/90
-
-ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。
-
-1990 年晚些时候，该标准成为了 ISO C89/90 标准。
-
-这两个标准之间没有技术上的差异，可以当作就是一个标准。
-
-C94/95 是这一标准的修订版本。
-
-ISO C99
-
-1999 年，ISO 发布了新的 C 标准，即 ISO C99。
-
-ISO C11，ISO C17
-
-2011 年，ISO 发布了新的 C 标准，即 ISO C11。
-
-2017 年，ISO 编制了一个修正版本，并于 2018 年发布，该版本成为了新的 C 标准，即 ISO C17。
-
-在 gcc 中，可通过 -std=c11 或 -st...
     </summary>
   
 

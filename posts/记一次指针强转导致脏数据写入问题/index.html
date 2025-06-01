@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"headline":"记一次指针强转导致脏数据写入问题","dateModified":"2022-11-26T11:40:00+08:00","datePublished":"2022-11-26T11:40:00+08:00","url":"http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。 问题描述 时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据写入了，也就是说，我们更改变量 policy_id 的同时把 vsys_id 也给改了，从而导致了问题。 问题分析 根据结构体内存对齐画出结构，可以发现 vsys_id 和 policy_id 是紧挨着的。原先指向 policy_id 的指针是 u16 * ，原代码对其进行了一个强转成 u32 * 的操作，这样一来，这个指针就指向了 policy_id 加 vsys_id 的4个字节，然后原代码对该指针取值赋值1，相当于把这4个字节当成一个变量赋值了。这里似乎是由于传参的时候类型不匹配，于是使用了强转，具体为什么要强转也记不太清了。总之按照正常的逻辑，代码其实是要对 policy_id 赋值成1。强转后赋值的情况如图所示，在X86架构下，的确只是对 policy_id 赋值成1，没什么不对的，所以测试的时候X86架构没啥问题；在MIPS架构下，由于字节序相反，1反而是写给了 vsys_id ，从而引发了问题。 结构体内存对齐这里不赘述，简单来说就是： 成员的偏移量要是自身大小的整数倍， 结构体总大小要是最大成员大小的整数倍。 至于字节序，图中描述已经很清楚。 本来是给 policy_id 赋值，却同时改掉了相邻的 vsys_id 的值，也难怪乍一看定位不了问题。最后理解了问题成因，也就顺利解决了。本文对导致该问题的原因做一个记录。","@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/"},"datePublished":"2022-11-26T11:40:00+08:00","url":"http://0.0.0.0:4000/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/","description":"交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。 问题描述 时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据写入了，也就是说，我们更改变量 policy_id 的同时把 vsys_id 也给改了，从而导致了问题。 问题分析 根据结构体内存对齐画出结构，可以发现 vsys_id 和 policy_id 是紧挨着的。原先指向 policy_id 的指针是 u16 * ，原代码对其进行了一个强转成 u32 * 的操作，这样一来，这个指针就指向了 policy_id 加 vsys_id 的4个字节，然后原代码对该指针取值赋值1，相当于把这4个字节当成一个变量赋值了。这里似乎是由于传参的时候类型不匹配，于是使用了强转，具体为什么要强转也记不太清了。总之按照正常的逻辑，代码其实是要对 policy_id 赋值成1。强转后赋值的情况如图所示，在X86架构下，的确只是对 policy_id 赋值成1，没什么不对的，所以测试的时候X86架构没啥问题；在MIPS架构下，由于字节序相反，1反而是写给了 vsys_id ，从而引发了问题。 结构体内存对齐这里不赘述，简单来说就是： 成员的偏移量要是自身大小的整数倍， 结构体总大小要是最大成员大小的整数倍。 至于字节序，图中描述已经很清楚。 本来是给 policy_id 赋值，却同时改掉了相邻的 vsys_id 的值，也难怪乍一看定位不了问题。最后理解了问题成因，也就顺利解决了。本文对导致该问题的原因做一个记录。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"记一次指针强转导致脏数据写入问题","dateModified":"2022-11-26T11:40:00+08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -723,14 +723,6 @@
 
   <!-- tags -->
   
-  <div class="post-tags">
-    <i class="fa fa-tags fa-fw mr-1"></i>
-      
-      <a href="/tags/c/"
-          class="post-tag no-text-decoration" >c</a>
-      
-  </div>
-  
 
   <div class="post-tail-bottom
     d-flex justify-content-between align-items-center mt-3 pt-5 pb-2">
@@ -854,30 +846,6 @@
     
     
     
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
       
     
   
@@ -889,11 +857,6 @@
         
         
 
-  
-    
-    
-    
-    
   
     
     
@@ -930,16 +893,13 @@
 
     
       
-      <a class="post-tag" href="/tags/c/">c</a>
-    
-      
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/sql/">sql</a>
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
@@ -988,6 +948,19 @@
 
 
 
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
 
   
@@ -1460,30 +1433,6 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
     
     
     
-  
-    
-    
-    
-    
-      
-        
-        
-
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
-    
       
     
   
@@ -1495,11 +1444,6 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
         
         
 
-  
-    
-    
-    
-    
   
     
     
@@ -1536,16 +1480,13 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
 
     
       
-      <a class="post-tag" href="/tags/c/">c</a>
-    
-      
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
       <a class="post-tag" href="/tags/git/">git</a>
     
       
-      <a class="post-tag" href="/tags/sql/">sql</a>
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
