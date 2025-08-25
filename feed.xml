@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2025-06-01T21:58:53+08:00</updated>
+  <updated>2025-08-25T12:11:47+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,85 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>五险一金超详细整理</title>
+    <link href="http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/" rel="alternate" type="text/html" title="五险一金超详细整理" />
+    <published>2025-08-25T10:53:00+08:00</published>
+  
+    <updated>2025-08-25T10:53:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/</id>
+    <content src="http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Society" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      前言
+
+本文正好成文于 2025 年社保新规前，所以有些内容可能刚整理出来就过时了。文中大多数内容均以浙江省政策为例。政策是会变化的，且各地政策不同，本文仅供学习参考。
+
+五险
+
+
+  
+    
+      类别
+      缴纳
+      账户
+    
+  
+  
+    
+      养老（职工保险）
+      个人 + 单位
+      个人 + 统筹
+    
+    
+      医疗（职工医保）
+      个人 + 单位
+      个人 + 统筹
+    
+    
+      失业
+      个人 + 单位
+      统筹
+    
+    
+      工伤
+      单位
+      统筹
+    
+    
+      生育
+      单位
+      统筹
+    
+  
+
+
+
+  统筹账户也叫统筹基金。
+  个人账户里的钱都是自己的，至于能...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -222,77 +301,6 @@ Contin...
   离散对数问题（DLP）
     
   ...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>真值与内存的相互转换</title>
-    <link href="http://0.0.0.0:4000/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/" rel="alternate" type="text/html" title="真值与内存的相互转换" />
-    <published>2024-03-30T17:58:00+08:00</published>
-  
-    <updated>2024-03-30T17:58:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/</id>
-    <content src="http://0.0.0.0:4000/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="Tech" />
-    
-    <category term="Misc" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      总览
-
-一些自创的名词定义：
-
-
-  
-    在内存中实际存储的值称为内存值。
-  
-  
-    内存值经过字节序转换后，以无符号形式写成的数值，称为内存数值。内存数值用来直观纯粹地反映内存值的样貌。
-
-    用二进制表示的内存数值称为内存二进制。
-
-    用十六进制表示的内存数值称为内存十六进制。
-
-    用八进制表示的内存数值称为内存八进制。
-
-    用无符号十进制表示的内存数值称为内存十进制。
-  
-  
-    平时直接看到的数值，代码里直接书写的数值等，称为真值。
-  
-
-
-转换过程一张图：
-
-
-
-一些说明：
-
-
-  
-    不妨认为真值这个概念还在数学范畴，有正、负、零的概念，还没有计算机科学范畴中有符号、无符号的概念。接下来，进入计算机科学范畴，你可以视之为有符号数或者无符号数。
-  
-  
-    负真值只能视作有符号数；非负真值既可以视作有符号数，又可...
     </summary>
   
 
