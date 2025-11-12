@@ -1057,6 +1057,19 @@
   
 
   
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
     
   
 
@@ -1170,51 +1183,6 @@
       
       
       <div class="card">
-        <a href="/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1652016600"
-    
-    >
-  2022-05-08
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>C-Cpp中的const关键字</h3>
-            <div class="text-muted small">
-              <p>
-                
-
-
-
-
-
-                记录一波 const 关键字的知识点。
-
-概述
-
-const 意为不可修改。
-
-const 修饰的变量不可被修改， 是只读变量，也称这样的变量为常量。const 修饰的变量不可修改这一点是语法层面的限制，通过一些刻意构造的操作仍然可以修改变量的值，只是一般不会这样做。
-
-const 也可以修饰指针，既可以限制指针指向的数据，又可以限制指针本身。
-
-const 修饰变量
-
-const int ...
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
-      
-      
-      <div class="card">
         <a href="/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/">
           <div class="card-body">
             <!--
@@ -1308,6 +1276,47 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
 
 这两个标准之间没有技术上的差异，可以当作就是一个标准。
 ...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1745503200"
+    
+    >
+  2025-04-24
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>gdb无-g调试实战记录</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                问题背景
+
+设备外发日志的内容错乱，甚至产生 core 文件。版本是正常编译的发行版本，没有附带 -g 加入的调试信息。
+
+我懒得加调试信息也不想加 -g 重新编译，二者在本人的开发环境中都十分麻烦。这种无 -g 调试的场景其实还蛮常见的，这次定位比较顺利，故记录之。
+
+定位过程
+
+从现象上看是日志内容错位了，但也不能排除是踩内存，出界内容被直接解析也能出现类似的现象。通过看代码，我高度怀疑...
               </p>
             </div>
           </div>

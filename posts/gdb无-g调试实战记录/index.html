@@ -1112,6 +1112,19 @@ x4             0x2000   8192
   
 
   
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
     
   
 
@@ -1342,51 +1355,6 @@ x4             0x2000   8192
       
       
       <div class="card">
-        <a href="/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1652016600"
-    
-    >
-  2022-05-08
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>C-Cpp中的const关键字</h3>
-            <div class="text-muted small">
-              <p>
-                
-
-
-
-
-
-                记录一波 const 关键字的知识点。
-
-概述
-
-const 意为不可修改。
-
-const 修饰的变量不可被修改， 是只读变量，也称这样的变量为常量。const 修饰的变量不可修改这一点是语法层面的限制，通过一些刻意构造的操作仍然可以修改变量的值，只是一般不会这样做。
-
-const 也可以修饰指针，既可以限制指针指向的数据，又可以限制指针本身。
-
-const 修饰变量
-
-const int ...
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
-      
-      
-      <div class="card">
         <a href="/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/">
           <div class="card-body">
             <!--
@@ -1415,6 +1383,58 @@ const int ...
 问题描述
 
 时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1669563000"
+    
+    >
+  2022-11-27
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>函数传参</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                传参分类
+
+从传参类型上看
+
+传参分为传值和传指针。
+
+
+  传指针本质上也是传值，只不过传的是指针值。由于传一般值和传指针值还是有点区别，所以分成两种说法。传值一般就指传一般值，传指针专门用于描述传指针值。
+
+
+从传参行为上看
+
+传参分为值复制和传自己。
+
+
+  传自己本质上也是值复制，只不过是取地址传无名指针，形参直接接上；而不是直接传有名指针。例如：
+
+
+// 函数调用
+func1(i...
               </p>
             </div>
           </div>

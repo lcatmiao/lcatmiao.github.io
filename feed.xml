@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2025-08-26T11:21:43+08:00</updated>
+  <updated>2025-11-12T16:59:23+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,62 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>你真的搞懂优先级和结合性了吗？</title>
+    <link href="http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/" rel="alternate" type="text/html" title="你真的搞懂优先级和结合性了吗？" />
+    <published>2025-11-12T16:44:00+08:00</published>
+  
+    <updated>2025-11-12T16:44:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/</id>
+    <content src="http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="C" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      颠覆认知
+
+我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。
+
+绝大多数教程都是告诉你：
+
+
+  优先级高的运算符先执行。
+  当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。
+
+
+其实按照上面的说法，将有诸多无法解释的现象，比如：
+
+int main(void)
+{
+    printf("%c", 'a') + 1 + 1 + (printf("%c", 'b') + printf("%c", 'c'));
+    return 0;
+}
+
+
+括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -238,69 +294,6 @@ gdb 给怀疑的函数 output_syslog() 打断点，命中后，寄存器信息�
 Breakpoint 1 at 0x43ed38
 (gdb) c
 Contin...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>简析HTTPS</title>
-    <link href="http://0.0.0.0:4000/posts/%E7%AE%80%E6%9E%90HTTPS/" rel="alternate" type="text/html" title="简析HTTPS" />
-    <published>2025-04-15T18:50:00+08:00</published>
-  
-    <updated>2025-04-15T18:50:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E7%AE%80%E6%9E%90HTTPS/</id>
-    <content src="http://0.0.0.0:4000/posts/%E7%AE%80%E6%9E%90HTTPS/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="Tech" />
-    
-    <category term="Network" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      写在前面
-
-阅读《图解HTTP》，大致理解了 SSL/TLS 的握手过程和思想原理。然而作为入门书，它没有介绍基于 DH 算法的 TLS 握手过程，也没有介绍证书链相关的知识😡。我 Google 了不少资料，着重啃了几篇文章，结合抓包分析，本想“差不多得了”，却没料到入了大坑，疑问不减反增。
-
-一筹莫展之际，AI 技术大火，救我狗命。受此鼓舞，借助 AI 解惑，又打起精神啃读了多个 RFC 片段，遂拨云见日。本文既成，虽得益于天时，然亦可谓一波三折，历尽艰辛。我真牛逼👍。
-
-本文主要基于 TLS1.2 研写，知识整理于此👇。
-
-先行概念
-
-&amp;gt; 密码体制
-
-密码学主要有两种体制：
-
-
-  共享密码体制（对称密码体制）
-  公钥密码体制（非对称密码体制）
-
-
-&amp;gt; 数学难题
-
-公钥密码体制主要基于以下数学难题：
-
-
-  大整数分解问题
-  离散对数问题（DLP）
-    
-  ...
     </summary>
   
 

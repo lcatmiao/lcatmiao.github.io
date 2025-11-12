@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html lang="zh-CN"
+  
+>
+
+  <!--
+  The Head
+-->
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Allow having a localized datetime different from the appearance language -->
+  
+
+  
+
+    
+
+    
+
+  
+
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="你真的搞懂优先级和结合性了吗？" />
+<meta name="author" content="小黑猫" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="颠覆认知 我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。 绝大多数教程都是告诉你： 优先级高的运算符先执行。 当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。 其实按照上面的说法，将有诸多无法解释的现象，比如： 1 2 3 4 5 int main(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); return 0; } 括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project) 15.2.0 编译后，在 windows 平台下输出结果是 abc。是不是很疑惑？难道括号没起作用吗？ 我还能举出一些令你心虚的例子： 1 1 + (2 + 3) + 4 + (5 + 6) 请问上面的表达式中是 2 + 3 先执行还是 5 + 6 先执行？你也许会说：括号优先级最高，所以肯定先执行 2 + 3 或者 5 + 6，然后由于这两个括号优先级相同，所以接下来看结合性，又因为括号是左结合性，所以先执行 2 + 3。结合性真的是这样用的吗？请问它的“结合”体现在哪里了？ 再看一例： 1 1 + 2 + 3 + 4 这个表达式由于 + 优先级相同，所以看结合性，又由于是左结合性，所以在这三个连续的 + 中，应该先执行最左边的 +，即先结合最左边的加号及其操作数，变成 (1 + 2) + 3 + 4，再结合第二个加号及其操作数，变成 ((1 + 2) + 3) + 4。相信这个例子与上一例相比，你能够更加感性地体会到“结合”的概念，而在上一例中，你似乎只是单纯地确认了两个子表达式的执行顺序，并没有所谓“结合”的感受。你真的认为上面两例中所谓“结合性的运用”是一样的吗？这对吗？ 还有众所周知的逻辑运算符： 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 这个表达式显然在输出 a 后就结束了，因为 printf() 将返回写入的字符数，前半条件非零为真，直接触发短路，后续不再执行。但我们明明给后半条件加了括号，按照优先级那套说法，b 应该先输出才对。然而这套说法连你自己也不敢相信，因为这违背了短路规则。 上面的例子都在说明，日常所见的那套优先级和结合性的说法显然太过简陋，并且导致了不少误解。 直接说结论 结合性只作用于连续相邻的同优先级运算符。 优先级和结合性只能确定表达式的执行是怎么分组的，并不能确定子表达式之间或子表达式内部的执行顺序。子表达式之间或内部的执行顺序由编译器自行决定，这在多数情况下并不影响表达式最终的执行结果，而对于那些执行顺序影响执行结果的情况，应当竭力避免之。 sequence point 定义了一些特定的执行顺序。简言之，有些运算符被明确定义了子表达式（操作数）的执行顺序，如 &amp;&amp;、||。 理论分析 概念定义 首先了解一些概念定义。 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Value computation of operations The C++ standard uses the term value computation to mean the execution of operators in an expression to produce a value. The precedence and association rules determine the order in which value computation happens. For example, given the expression 4 + 2 * 3, due to the precedence rules this groups as 4 + (2 * 3). The value computation for (2 * 3) must happen first, so that the value computation for 4 + 6 can be completed. 1 2 3 4 5 6 Evaluation of operands The C++ standard (mostly) uses the term evaluation to refer to the evaluation of operands (not the evaluation of operators or expressions!). For example, given expression a + b, a will be evaluated to produce some value, and b will be evaluated to produce some value. These values can be then used as operands to operator+ for value computation. ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 Accessing a volatile object, modifying an object, modifying a file, or calling a function that does any of those operations are all side effects,12) which are changes in the state of the execution environment. Evaluation of an expression in general includes both value computations and initiation of side effects. Value computation for an lvalue expression includes determining the identity of the designated object. 简单来说，就是表达式的 evaluation 过程包括了 value computations 和 side effects，前者就是常规的值计算过程，后者主要是“写”过程。 以表达式 a = (1 + 2) 为例，表达式 (1 + 2) 的 evaluation 过程仅包括了 value computation，即计算 (1 + 2) 得到 3；表达式 a = (1 + 2) 的 evaluation 过程包括了 value computation 和 side effects，前者包含计算表达式 (1 + 2) 的值为 3 的过程和计算表达式 a = 3 的值为 3 的过程，后者是把 3 赋值给 a 的过程。 ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 6 7 8 9 10 11 Sequenced before is an asymmetric, transitive, pair-wise relation between evaluations executed by a single thread, which induces a partial order among those evaluations. Given any two evaluations A and B, if A is sequenced before B, then the execution of A shall precede the execution of B. (Conversely, if A is sequenced before B, then B is sequenced after A.) If A is not sequenced before or after B, then A and B are unsequenced. Evaluations A and B are indeterminately sequenced when A is sequenced either before or after B, but it is unspecified which.13) The presence of a sequence point between the evaluation of expressions A and B implies that every value computation and side effect associated with A is sequenced before every value computation and side effect associated with B. (A summary of the sequence points is given in annex C.) 这一段主要定义了 sequenced、unsequenced、indeterminately sequenced 以及 sequence point 的概念。 sequenced：有顺序。标准明确规定了子表达式的执行顺序，编译器实现必须遵守。 unsequenced：无顺序。标准没有规定子表达式的执行顺序，编译器可以自由实现，甚至可以并发执行，合并执行子表达式。 indeterminately sequenced：不确定顺序。标准规定子表达式的执行要有顺序，但未规定方向，编译器可以自行选择一个方向实现。 论编译器实现自由度，unsequenced &gt; indeterminately sequenced &gt; sequenced。 sequence point： 表达式A与B之间存在 sequence point，意味着表达式A的 evaluation(value computation + side effects) 按顺序排列在表达式B的 evaluation 之前。 sequence point（DeepSeek）：序列点是程序执行中的一个特定位置，在此位置之前的所有表达式的求值（包括数值计算和副作用）都必须完成，并且不会影响在此之后的所有表达式的求值。 提取结论 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Operator precedence To assist with parsing a compound expression, all operators are assigned a level of precedence. Operators with a higher precedence level are grouped with operands first. You can see in the table below that multiplication and division (precedence level 5) have a higher precedence level than addition and subtraction (precedence level 6). Thus, multiplication and division will be grouped with operands before addition and subtraction. In other words, 4 + 2 * 3 will be grouped as 4 + (2 * 3). 1 2 3 4 5 6 7 8 9 10 11 Operator associativity Consider a compound expression like 7 - 4 - 1. Should this be grouped as (7 - 4) - 1 which evaluates to 2, or 7 - (4 - 1), which evaluates to 4? Since both subtraction operators have the same precedence level, the compiler can not use precedence alone to determine how this should be grouped. If two operators with the same precedence level are adjacent to each other in an expression, the operator’s associativity tells the compiler whether to evaluate the operators (not the operands!) from left to right or from right to left. Subtraction has precedence level 6, and the operators in precedence level 6 have an associativity of left to right. So this expression is grouped from left to right: (7 - 4) - 1. 1 2 In most cases, the order of evaluation for operands and function arguments is unspecified, meaning they may be evaluated in any order. 上述资料的重点可以被总结为三句话： 拥有高优先级的运算符优先与它的操作数一起被分组。 对于拥有相同优先级的相邻两个运算符，由结合性决定哪个运算符先被分组。 操作数（子表达式）和函数参数的求值（执行）顺序没有被明确指定。 ISO/IEC 9899:201x, C11, 6.5 Expressions 1 2 3 The grouping of operators and operands is indicated by the syntax.85) Except as specified later, side effects and value computations of subexpressions are unsequenced.86) 除非特别指定，子表达式的 side effects 和 value computations 是 unsequenced 的。 1 2 3 4 5 If a side effect on a scalar object is unsequenced relative to either a different side effect on the same scalar object or a value computation using the value of the same scalar object, the behavior is undefined. If there are multiple allowable orderings of the subexpressions of an expression, the behavior is undefined if such an unsequenced side effect occurs in any of the orderings.84) 翻译（DeepSeek）： 如果一个标量对象的副作用，相对于同一个标量对象的另一个副作用，或者相对于使用同一个标量对象的值的值计算是未排序的，那么其行为是未定义的。 如果一个表达式的子表达式存在多种允许的执行顺序，那么在任何一种顺序中，如果出现了这种未排序的副作用，其行为都是未定义的。 其实有第一条就差不多了，第二条主要是强调：只要有一种顺序会产生歧义，即使有某些顺序没有歧义，依旧算未定义行为。 这段话属实晦涩，仅以例子作简单说明。 例1： 1 1 + (a = 2) + 3 + (a = 4) + 5; 不知道 (a = 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，两个 side effects（赋值）没有被规定顺序，先执行 (a = 2) 与先执行 (a = 4) 将使变量 a 的最终结果不同。情况符合第一条的描述，是未定义行为。 例2： 1 2 a = 1; 1 + (a + 2) + 3 + (a = 4) + 5; 不知道 (a + 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，side effects（赋值）与 value computations（加2） 没有被规定顺序，先执行 (a + 2) 与先执行 (a = 4) 将使整个表达式的最终结果不同。情况符合第一条的描述，是未定义行为。先执行 (a = 4) 再执行 (a + 2)，也就是彻底写完了以后读，这看起来没有歧义；若先执行 (a + 2) 再执行 (a = 4)，也就是先读再写，按DeepSeek的意思，这与先前的读产生冲突，导致歧义；两种顺序有一种有歧义，情况符合第二条的描述，是未定义行为。我个人认为把本例往第二条上靠似乎有点牵强，但这不重要，有第一条足够了。 例3： 1 i = ++i + 1; 分组完毕后是 i = ((++i) + 1)。子表达式内部的执行顺序是 unsequenced 的。(++i) 可以只返回表达式的值，先不给 i 加1，然后该表达式的值与1相加，和赋值给 i，最后再执行 (++i) 的加1，这是一种顺序；(++i) 返回表达式的值并给 i 加1，然后该表达式的值与1相加，和赋值给 i，覆盖掉其当前值，这是一种顺序。情况符合第一条的描述，是未定义行为。 Precedence and order of evaluation -Microsoft Learn 1 2 3 4 5 6 Only the sequential-evaluation (,), logical-AND (&amp;&amp;), logical-OR (||), conditional-expression (? :), and function-call operators constitute sequence points, and therefore guarantee a particular order of evaluation for their operands. ... (The comma operator in a function call is not the same as the sequential-evaluation operator and does not provide any such guarantee.) 直译：运算符 ,、&amp;&amp;、||、? :、()（指函数调用，function_name(arguments)）拥有 sequence point，从而保证了特定的求值顺序。（函数参数列表中的逗号与逗号表达式中的逗号运算符是两回事，前者并没有序列点。） ISO/IEC 9899:201x, C11, 6.5.14 Logical OR operator 1 2 3 4 Unlike the bitwise | operator, the || operator guarantees left-to-right evaluation; if the second operand is evaluated, there is a sequence point between the evaluations of the first and second operands. If the first operand compares unequal to 0, the second operand is not evaluated. 其实就是给 || 明确规定了从左到右的执行顺序，并且遵守短路规则。其它特别的运算符诸如 &amp;&amp; 肯定也有明确的序列点定义。 ISO/IEC 9899:201x, C11, 6.5.2.2 Function calls 1 2 3 4 EXAMPLE In the function call (*pf[f1()]) (f2(), f3() + f4()) the functions f1, f2, f3, and f4 may be called in any order. All side effects have to be completed before the function pointed to by pf[f1()] is called. 1 2 3 4 5 There is a sequence point after the evaluations of the function designator and the actual arguments but before the actual call. Every evaluation in the calling function (including other function calls) that is not otherwise specifically sequenced before or after the execution of the body of the called function is indeterminately sequenced with respect to the execution of the called function.94) 函数指示符（函数名，也可以是一个函数指针）和函数参数的执行顺序是 unsequenced，所以上例中 f1()、 f2()、f3()、f4() 的调用顺序由编译器自由决定。 在“函数指示符和函数参数的求值”和“实际调用的发生”之间，存在一个序列点，即标准明确规定在函数调用前，函数指示符和函数参数的求值必须全部完成，包括所有 value computations 和 side effects。在上例中，一定是 f1()、 f2()、f3()、f4() 都执行完，(*pf[f1()]) 值计算完后才会调用函数 pf[f1()]（即 (*pf[f1()])，* 可加可不加）。 调用函数中相对于被调函数体的执行没有被明确指定顺序的 evaluation(including function calls) 相对于被调函数体的执行是 indeterminately sequenced。这条比较抽象，以例说明。 例： 1 2 3 4 void func(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); } 调用函数就是 func()，被调函数就是任意一个 printf()。上面三个 printf() 的调用是 unsequenced，编译器可以自由选择先调用谁。被调用的 printf() 的函数体一定会完整地执行完才能去调用另一个 printf() 并完整地执行其函数体，不可以并发执行。执行有顺序，方向不确定，即 indeterminately sequenced。 C Sequence Points - Microsoft Learn 上述链接总结了很多 sequence points，其描述相对于C标准文档通俗很多，故记录链接于此。 回到最初的问题 问题1：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 编译器将保留程序员手动添加的分组（括号），然后根据优先级和结合性进一步分组（分组可以被视作一个整体），结果如下： 1 ((printf(&quot;%c&quot;, &#39;a&#39;) + 1) + 1) + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 子表达式的执行顺序是 unsequenced 的，所以上面三个 printf() 被以什么顺序调用都不足为奇，根本就没有固定答案，只是一般来说编译器从左往右执行，所以可能会得到 abc 的结果。本例中表达式的执行顺序未知且会影响打印结果。 问题2：`(2 + 3)` 和 `(5 + 6)` 谁先执行？ 1 1 + (2 + 3) + 4 + (5 + 6); 编译器保留手动添加的分组，然后根据优先级和结合性进一步分组，分组可以被视作一个整体，结果如下： 1 ((1 + (2 + 3)) + 4) + (5 + 6); 到此为止了，子表达式的执行顺序是 unsequenced 的，所以 (2 + 3) 和 (5 + 6) 谁先执行不知道，但这不影响最终结果。 问题3：下面的表达式是怎么执行的？ 1 1 + 2 + 3 + 4; 编译器根据优先级和结合性分组，结果如下： 1 ((1 + 2) + 3) + 4; 子表达式的执行顺序是 unsequenced 的，编译器可以先确定 4 的值就是 4，也可以先去求 ((1 + 2) + 3) 的值，顺序未知，不过也不重要，这并不影响最终结果。 问题4：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 编译器保留手动添加的分组，然后根据优先级进一步分组，函数调用运算符 () 的优先级最高，结果如下： 1 (printf(&quot;%c&quot;, &#39;a&#39;)) || (printf(&quot;%c&quot;, &#39;b&#39;)); 运算符 || 被规定了明确的执行顺序，并遵守短路规则。所以，一定是先执行左边的表达式，输出 a，然后函数返回 1，触发短路规则，整个表达式直接执行结束，右边的表达式不会再执行。打印结果是明确的，为 a。 感想： 写到这里，我似乎突然明白为什么国外有些“优先级结合性一览表”中，括号的释义仅仅只有“Function call”而没有“Parentheses”了。“一览表”本身是用来确定分组的，而我们平时添加的括号就是用来手动指定分组的，比起运算符，我更愿意叫它分组标识符，所以它有时不被列进“一览表”也无伤大雅。 最后，不要写逆天表达式。" />
+<meta property="og:description" content="颠覆认知 我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。 绝大多数教程都是告诉你： 优先级高的运算符先执行。 当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。 其实按照上面的说法，将有诸多无法解释的现象，比如： 1 2 3 4 5 int main(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); return 0; } 括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project) 15.2.0 编译后，在 windows 平台下输出结果是 abc。是不是很疑惑？难道括号没起作用吗？ 我还能举出一些令你心虚的例子： 1 1 + (2 + 3) + 4 + (5 + 6) 请问上面的表达式中是 2 + 3 先执行还是 5 + 6 先执行？你也许会说：括号优先级最高，所以肯定先执行 2 + 3 或者 5 + 6，然后由于这两个括号优先级相同，所以接下来看结合性，又因为括号是左结合性，所以先执行 2 + 3。结合性真的是这样用的吗？请问它的“结合”体现在哪里了？ 再看一例： 1 1 + 2 + 3 + 4 这个表达式由于 + 优先级相同，所以看结合性，又由于是左结合性，所以在这三个连续的 + 中，应该先执行最左边的 +，即先结合最左边的加号及其操作数，变成 (1 + 2) + 3 + 4，再结合第二个加号及其操作数，变成 ((1 + 2) + 3) + 4。相信这个例子与上一例相比，你能够更加感性地体会到“结合”的概念，而在上一例中，你似乎只是单纯地确认了两个子表达式的执行顺序，并没有所谓“结合”的感受。你真的认为上面两例中所谓“结合性的运用”是一样的吗？这对吗？ 还有众所周知的逻辑运算符： 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 这个表达式显然在输出 a 后就结束了，因为 printf() 将返回写入的字符数，前半条件非零为真，直接触发短路，后续不再执行。但我们明明给后半条件加了括号，按照优先级那套说法，b 应该先输出才对。然而这套说法连你自己也不敢相信，因为这违背了短路规则。 上面的例子都在说明，日常所见的那套优先级和结合性的说法显然太过简陋，并且导致了不少误解。 直接说结论 结合性只作用于连续相邻的同优先级运算符。 优先级和结合性只能确定表达式的执行是怎么分组的，并不能确定子表达式之间或子表达式内部的执行顺序。子表达式之间或内部的执行顺序由编译器自行决定，这在多数情况下并不影响表达式最终的执行结果，而对于那些执行顺序影响执行结果的情况，应当竭力避免之。 sequence point 定义了一些特定的执行顺序。简言之，有些运算符被明确定义了子表达式（操作数）的执行顺序，如 &amp;&amp;、||。 理论分析 概念定义 首先了解一些概念定义。 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Value computation of operations The C++ standard uses the term value computation to mean the execution of operators in an expression to produce a value. The precedence and association rules determine the order in which value computation happens. For example, given the expression 4 + 2 * 3, due to the precedence rules this groups as 4 + (2 * 3). The value computation for (2 * 3) must happen first, so that the value computation for 4 + 6 can be completed. 1 2 3 4 5 6 Evaluation of operands The C++ standard (mostly) uses the term evaluation to refer to the evaluation of operands (not the evaluation of operators or expressions!). For example, given expression a + b, a will be evaluated to produce some value, and b will be evaluated to produce some value. These values can be then used as operands to operator+ for value computation. ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 Accessing a volatile object, modifying an object, modifying a file, or calling a function that does any of those operations are all side effects,12) which are changes in the state of the execution environment. Evaluation of an expression in general includes both value computations and initiation of side effects. Value computation for an lvalue expression includes determining the identity of the designated object. 简单来说，就是表达式的 evaluation 过程包括了 value computations 和 side effects，前者就是常规的值计算过程，后者主要是“写”过程。 以表达式 a = (1 + 2) 为例，表达式 (1 + 2) 的 evaluation 过程仅包括了 value computation，即计算 (1 + 2) 得到 3；表达式 a = (1 + 2) 的 evaluation 过程包括了 value computation 和 side effects，前者包含计算表达式 (1 + 2) 的值为 3 的过程和计算表达式 a = 3 的值为 3 的过程，后者是把 3 赋值给 a 的过程。 ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 6 7 8 9 10 11 Sequenced before is an asymmetric, transitive, pair-wise relation between evaluations executed by a single thread, which induces a partial order among those evaluations. Given any two evaluations A and B, if A is sequenced before B, then the execution of A shall precede the execution of B. (Conversely, if A is sequenced before B, then B is sequenced after A.) If A is not sequenced before or after B, then A and B are unsequenced. Evaluations A and B are indeterminately sequenced when A is sequenced either before or after B, but it is unspecified which.13) The presence of a sequence point between the evaluation of expressions A and B implies that every value computation and side effect associated with A is sequenced before every value computation and side effect associated with B. (A summary of the sequence points is given in annex C.) 这一段主要定义了 sequenced、unsequenced、indeterminately sequenced 以及 sequence point 的概念。 sequenced：有顺序。标准明确规定了子表达式的执行顺序，编译器实现必须遵守。 unsequenced：无顺序。标准没有规定子表达式的执行顺序，编译器可以自由实现，甚至可以并发执行，合并执行子表达式。 indeterminately sequenced：不确定顺序。标准规定子表达式的执行要有顺序，但未规定方向，编译器可以自行选择一个方向实现。 论编译器实现自由度，unsequenced &gt; indeterminately sequenced &gt; sequenced。 sequence point： 表达式A与B之间存在 sequence point，意味着表达式A的 evaluation(value computation + side effects) 按顺序排列在表达式B的 evaluation 之前。 sequence point（DeepSeek）：序列点是程序执行中的一个特定位置，在此位置之前的所有表达式的求值（包括数值计算和副作用）都必须完成，并且不会影响在此之后的所有表达式的求值。 提取结论 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Operator precedence To assist with parsing a compound expression, all operators are assigned a level of precedence. Operators with a higher precedence level are grouped with operands first. You can see in the table below that multiplication and division (precedence level 5) have a higher precedence level than addition and subtraction (precedence level 6). Thus, multiplication and division will be grouped with operands before addition and subtraction. In other words, 4 + 2 * 3 will be grouped as 4 + (2 * 3). 1 2 3 4 5 6 7 8 9 10 11 Operator associativity Consider a compound expression like 7 - 4 - 1. Should this be grouped as (7 - 4) - 1 which evaluates to 2, or 7 - (4 - 1), which evaluates to 4? Since both subtraction operators have the same precedence level, the compiler can not use precedence alone to determine how this should be grouped. If two operators with the same precedence level are adjacent to each other in an expression, the operator’s associativity tells the compiler whether to evaluate the operators (not the operands!) from left to right or from right to left. Subtraction has precedence level 6, and the operators in precedence level 6 have an associativity of left to right. So this expression is grouped from left to right: (7 - 4) - 1. 1 2 In most cases, the order of evaluation for operands and function arguments is unspecified, meaning they may be evaluated in any order. 上述资料的重点可以被总结为三句话： 拥有高优先级的运算符优先与它的操作数一起被分组。 对于拥有相同优先级的相邻两个运算符，由结合性决定哪个运算符先被分组。 操作数（子表达式）和函数参数的求值（执行）顺序没有被明确指定。 ISO/IEC 9899:201x, C11, 6.5 Expressions 1 2 3 The grouping of operators and operands is indicated by the syntax.85) Except as specified later, side effects and value computations of subexpressions are unsequenced.86) 除非特别指定，子表达式的 side effects 和 value computations 是 unsequenced 的。 1 2 3 4 5 If a side effect on a scalar object is unsequenced relative to either a different side effect on the same scalar object or a value computation using the value of the same scalar object, the behavior is undefined. If there are multiple allowable orderings of the subexpressions of an expression, the behavior is undefined if such an unsequenced side effect occurs in any of the orderings.84) 翻译（DeepSeek）： 如果一个标量对象的副作用，相对于同一个标量对象的另一个副作用，或者相对于使用同一个标量对象的值的值计算是未排序的，那么其行为是未定义的。 如果一个表达式的子表达式存在多种允许的执行顺序，那么在任何一种顺序中，如果出现了这种未排序的副作用，其行为都是未定义的。 其实有第一条就差不多了，第二条主要是强调：只要有一种顺序会产生歧义，即使有某些顺序没有歧义，依旧算未定义行为。 这段话属实晦涩，仅以例子作简单说明。 例1： 1 1 + (a = 2) + 3 + (a = 4) + 5; 不知道 (a = 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，两个 side effects（赋值）没有被规定顺序，先执行 (a = 2) 与先执行 (a = 4) 将使变量 a 的最终结果不同。情况符合第一条的描述，是未定义行为。 例2： 1 2 a = 1; 1 + (a + 2) + 3 + (a = 4) + 5; 不知道 (a + 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，side effects（赋值）与 value computations（加2） 没有被规定顺序，先执行 (a + 2) 与先执行 (a = 4) 将使整个表达式的最终结果不同。情况符合第一条的描述，是未定义行为。先执行 (a = 4) 再执行 (a + 2)，也就是彻底写完了以后读，这看起来没有歧义；若先执行 (a + 2) 再执行 (a = 4)，也就是先读再写，按DeepSeek的意思，这与先前的读产生冲突，导致歧义；两种顺序有一种有歧义，情况符合第二条的描述，是未定义行为。我个人认为把本例往第二条上靠似乎有点牵强，但这不重要，有第一条足够了。 例3： 1 i = ++i + 1; 分组完毕后是 i = ((++i) + 1)。子表达式内部的执行顺序是 unsequenced 的。(++i) 可以只返回表达式的值，先不给 i 加1，然后该表达式的值与1相加，和赋值给 i，最后再执行 (++i) 的加1，这是一种顺序；(++i) 返回表达式的值并给 i 加1，然后该表达式的值与1相加，和赋值给 i，覆盖掉其当前值，这是一种顺序。情况符合第一条的描述，是未定义行为。 Precedence and order of evaluation -Microsoft Learn 1 2 3 4 5 6 Only the sequential-evaluation (,), logical-AND (&amp;&amp;), logical-OR (||), conditional-expression (? :), and function-call operators constitute sequence points, and therefore guarantee a particular order of evaluation for their operands. ... (The comma operator in a function call is not the same as the sequential-evaluation operator and does not provide any such guarantee.) 直译：运算符 ,、&amp;&amp;、||、? :、()（指函数调用，function_name(arguments)）拥有 sequence point，从而保证了特定的求值顺序。（函数参数列表中的逗号与逗号表达式中的逗号运算符是两回事，前者并没有序列点。） ISO/IEC 9899:201x, C11, 6.5.14 Logical OR operator 1 2 3 4 Unlike the bitwise | operator, the || operator guarantees left-to-right evaluation; if the second operand is evaluated, there is a sequence point between the evaluations of the first and second operands. If the first operand compares unequal to 0, the second operand is not evaluated. 其实就是给 || 明确规定了从左到右的执行顺序，并且遵守短路规则。其它特别的运算符诸如 &amp;&amp; 肯定也有明确的序列点定义。 ISO/IEC 9899:201x, C11, 6.5.2.2 Function calls 1 2 3 4 EXAMPLE In the function call (*pf[f1()]) (f2(), f3() + f4()) the functions f1, f2, f3, and f4 may be called in any order. All side effects have to be completed before the function pointed to by pf[f1()] is called. 1 2 3 4 5 There is a sequence point after the evaluations of the function designator and the actual arguments but before the actual call. Every evaluation in the calling function (including other function calls) that is not otherwise specifically sequenced before or after the execution of the body of the called function is indeterminately sequenced with respect to the execution of the called function.94) 函数指示符（函数名，也可以是一个函数指针）和函数参数的执行顺序是 unsequenced，所以上例中 f1()、 f2()、f3()、f4() 的调用顺序由编译器自由决定。 在“函数指示符和函数参数的求值”和“实际调用的发生”之间，存在一个序列点，即标准明确规定在函数调用前，函数指示符和函数参数的求值必须全部完成，包括所有 value computations 和 side effects。在上例中，一定是 f1()、 f2()、f3()、f4() 都执行完，(*pf[f1()]) 值计算完后才会调用函数 pf[f1()]（即 (*pf[f1()])，* 可加可不加）。 调用函数中相对于被调函数体的执行没有被明确指定顺序的 evaluation(including function calls) 相对于被调函数体的执行是 indeterminately sequenced。这条比较抽象，以例说明。 例： 1 2 3 4 void func(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); } 调用函数就是 func()，被调函数就是任意一个 printf()。上面三个 printf() 的调用是 unsequenced，编译器可以自由选择先调用谁。被调用的 printf() 的函数体一定会完整地执行完才能去调用另一个 printf() 并完整地执行其函数体，不可以并发执行。执行有顺序，方向不确定，即 indeterminately sequenced。 C Sequence Points - Microsoft Learn 上述链接总结了很多 sequence points，其描述相对于C标准文档通俗很多，故记录链接于此。 回到最初的问题 问题1：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 编译器将保留程序员手动添加的分组（括号），然后根据优先级和结合性进一步分组（分组可以被视作一个整体），结果如下： 1 ((printf(&quot;%c&quot;, &#39;a&#39;) + 1) + 1) + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 子表达式的执行顺序是 unsequenced 的，所以上面三个 printf() 被以什么顺序调用都不足为奇，根本就没有固定答案，只是一般来说编译器从左往右执行，所以可能会得到 abc 的结果。本例中表达式的执行顺序未知且会影响打印结果。 问题2：`(2 + 3)` 和 `(5 + 6)` 谁先执行？ 1 1 + (2 + 3) + 4 + (5 + 6); 编译器保留手动添加的分组，然后根据优先级和结合性进一步分组，分组可以被视作一个整体，结果如下： 1 ((1 + (2 + 3)) + 4) + (5 + 6); 到此为止了，子表达式的执行顺序是 unsequenced 的，所以 (2 + 3) 和 (5 + 6) 谁先执行不知道，但这不影响最终结果。 问题3：下面的表达式是怎么执行的？ 1 1 + 2 + 3 + 4; 编译器根据优先级和结合性分组，结果如下： 1 ((1 + 2) + 3) + 4; 子表达式的执行顺序是 unsequenced 的，编译器可以先确定 4 的值就是 4，也可以先去求 ((1 + 2) + 3) 的值，顺序未知，不过也不重要，这并不影响最终结果。 问题4：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 编译器保留手动添加的分组，然后根据优先级进一步分组，函数调用运算符 () 的优先级最高，结果如下： 1 (printf(&quot;%c&quot;, &#39;a&#39;)) || (printf(&quot;%c&quot;, &#39;b&#39;)); 运算符 || 被规定了明确的执行顺序，并遵守短路规则。所以，一定是先执行左边的表达式，输出 a，然后函数返回 1，触发短路规则，整个表达式直接执行结束，右边的表达式不会再执行。打印结果是明确的，为 a。 感想： 写到这里，我似乎突然明白为什么国外有些“优先级结合性一览表”中，括号的释义仅仅只有“Function call”而没有“Parentheses”了。“一览表”本身是用来确定分组的，而我们平时添加的括号就是用来手动指定分组的，比起运算符，我更愿意叫它分组标识符，所以它有时不被列进“一览表”也无伤大雅。 最后，不要写逆天表达式。" />
+<link rel="canonical" href="http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/" />
+<meta property="og:url" content="http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/" />
+<meta property="og:site_name" content="小黑猫" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-11-12T16:44:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="你真的搞懂优先级和结合性了吗？" />
+<meta name="twitter:site" content="@twitter_username" />
+<meta name="twitter:creator" content="@小黑猫" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/"},"datePublished":"2025-11-12T16:44:00+08:00","url":"http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/","description":"颠覆认知 我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。 绝大多数教程都是告诉你： 优先级高的运算符先执行。 当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。 其实按照上面的说法，将有诸多无法解释的现象，比如： 1 2 3 4 5 int main(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); return 0; } 括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project) 15.2.0 编译后，在 windows 平台下输出结果是 abc。是不是很疑惑？难道括号没起作用吗？ 我还能举出一些令你心虚的例子： 1 1 + (2 + 3) + 4 + (5 + 6) 请问上面的表达式中是 2 + 3 先执行还是 5 + 6 先执行？你也许会说：括号优先级最高，所以肯定先执行 2 + 3 或者 5 + 6，然后由于这两个括号优先级相同，所以接下来看结合性，又因为括号是左结合性，所以先执行 2 + 3。结合性真的是这样用的吗？请问它的“结合”体现在哪里了？ 再看一例： 1 1 + 2 + 3 + 4 这个表达式由于 + 优先级相同，所以看结合性，又由于是左结合性，所以在这三个连续的 + 中，应该先执行最左边的 +，即先结合最左边的加号及其操作数，变成 (1 + 2) + 3 + 4，再结合第二个加号及其操作数，变成 ((1 + 2) + 3) + 4。相信这个例子与上一例相比，你能够更加感性地体会到“结合”的概念，而在上一例中，你似乎只是单纯地确认了两个子表达式的执行顺序，并没有所谓“结合”的感受。你真的认为上面两例中所谓“结合性的运用”是一样的吗？这对吗？ 还有众所周知的逻辑运算符： 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 这个表达式显然在输出 a 后就结束了，因为 printf() 将返回写入的字符数，前半条件非零为真，直接触发短路，后续不再执行。但我们明明给后半条件加了括号，按照优先级那套说法，b 应该先输出才对。然而这套说法连你自己也不敢相信，因为这违背了短路规则。 上面的例子都在说明，日常所见的那套优先级和结合性的说法显然太过简陋，并且导致了不少误解。 直接说结论 结合性只作用于连续相邻的同优先级运算符。 优先级和结合性只能确定表达式的执行是怎么分组的，并不能确定子表达式之间或子表达式内部的执行顺序。子表达式之间或内部的执行顺序由编译器自行决定，这在多数情况下并不影响表达式最终的执行结果，而对于那些执行顺序影响执行结果的情况，应当竭力避免之。 sequence point 定义了一些特定的执行顺序。简言之，有些运算符被明确定义了子表达式（操作数）的执行顺序，如 &amp;&amp;、||。 理论分析 概念定义 首先了解一些概念定义。 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Value computation of operations The C++ standard uses the term value computation to mean the execution of operators in an expression to produce a value. The precedence and association rules determine the order in which value computation happens. For example, given the expression 4 + 2 * 3, due to the precedence rules this groups as 4 + (2 * 3). The value computation for (2 * 3) must happen first, so that the value computation for 4 + 6 can be completed. 1 2 3 4 5 6 Evaluation of operands The C++ standard (mostly) uses the term evaluation to refer to the evaluation of operands (not the evaluation of operators or expressions!). For example, given expression a + b, a will be evaluated to produce some value, and b will be evaluated to produce some value. These values can be then used as operands to operator+ for value computation. ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 Accessing a volatile object, modifying an object, modifying a file, or calling a function that does any of those operations are all side effects,12) which are changes in the state of the execution environment. Evaluation of an expression in general includes both value computations and initiation of side effects. Value computation for an lvalue expression includes determining the identity of the designated object. 简单来说，就是表达式的 evaluation 过程包括了 value computations 和 side effects，前者就是常规的值计算过程，后者主要是“写”过程。 以表达式 a = (1 + 2) 为例，表达式 (1 + 2) 的 evaluation 过程仅包括了 value computation，即计算 (1 + 2) 得到 3；表达式 a = (1 + 2) 的 evaluation 过程包括了 value computation 和 side effects，前者包含计算表达式 (1 + 2) 的值为 3 的过程和计算表达式 a = 3 的值为 3 的过程，后者是把 3 赋值给 a 的过程。 ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 6 7 8 9 10 11 Sequenced before is an asymmetric, transitive, pair-wise relation between evaluations executed by a single thread, which induces a partial order among those evaluations. Given any two evaluations A and B, if A is sequenced before B, then the execution of A shall precede the execution of B. (Conversely, if A is sequenced before B, then B is sequenced after A.) If A is not sequenced before or after B, then A and B are unsequenced. Evaluations A and B are indeterminately sequenced when A is sequenced either before or after B, but it is unspecified which.13) The presence of a sequence point between the evaluation of expressions A and B implies that every value computation and side effect associated with A is sequenced before every value computation and side effect associated with B. (A summary of the sequence points is given in annex C.) 这一段主要定义了 sequenced、unsequenced、indeterminately sequenced 以及 sequence point 的概念。 sequenced：有顺序。标准明确规定了子表达式的执行顺序，编译器实现必须遵守。 unsequenced：无顺序。标准没有规定子表达式的执行顺序，编译器可以自由实现，甚至可以并发执行，合并执行子表达式。 indeterminately sequenced：不确定顺序。标准规定子表达式的执行要有顺序，但未规定方向，编译器可以自行选择一个方向实现。 论编译器实现自由度，unsequenced &gt; indeterminately sequenced &gt; sequenced。 sequence point： 表达式A与B之间存在 sequence point，意味着表达式A的 evaluation(value computation + side effects) 按顺序排列在表达式B的 evaluation 之前。 sequence point（DeepSeek）：序列点是程序执行中的一个特定位置，在此位置之前的所有表达式的求值（包括数值计算和副作用）都必须完成，并且不会影响在此之后的所有表达式的求值。 提取结论 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Operator precedence To assist with parsing a compound expression, all operators are assigned a level of precedence. Operators with a higher precedence level are grouped with operands first. You can see in the table below that multiplication and division (precedence level 5) have a higher precedence level than addition and subtraction (precedence level 6). Thus, multiplication and division will be grouped with operands before addition and subtraction. In other words, 4 + 2 * 3 will be grouped as 4 + (2 * 3). 1 2 3 4 5 6 7 8 9 10 11 Operator associativity Consider a compound expression like 7 - 4 - 1. Should this be grouped as (7 - 4) - 1 which evaluates to 2, or 7 - (4 - 1), which evaluates to 4? Since both subtraction operators have the same precedence level, the compiler can not use precedence alone to determine how this should be grouped. If two operators with the same precedence level are adjacent to each other in an expression, the operator’s associativity tells the compiler whether to evaluate the operators (not the operands!) from left to right or from right to left. Subtraction has precedence level 6, and the operators in precedence level 6 have an associativity of left to right. So this expression is grouped from left to right: (7 - 4) - 1. 1 2 In most cases, the order of evaluation for operands and function arguments is unspecified, meaning they may be evaluated in any order. 上述资料的重点可以被总结为三句话： 拥有高优先级的运算符优先与它的操作数一起被分组。 对于拥有相同优先级的相邻两个运算符，由结合性决定哪个运算符先被分组。 操作数（子表达式）和函数参数的求值（执行）顺序没有被明确指定。 ISO/IEC 9899:201x, C11, 6.5 Expressions 1 2 3 The grouping of operators and operands is indicated by the syntax.85) Except as specified later, side effects and value computations of subexpressions are unsequenced.86) 除非特别指定，子表达式的 side effects 和 value computations 是 unsequenced 的。 1 2 3 4 5 If a side effect on a scalar object is unsequenced relative to either a different side effect on the same scalar object or a value computation using the value of the same scalar object, the behavior is undefined. If there are multiple allowable orderings of the subexpressions of an expression, the behavior is undefined if such an unsequenced side effect occurs in any of the orderings.84) 翻译（DeepSeek）： 如果一个标量对象的副作用，相对于同一个标量对象的另一个副作用，或者相对于使用同一个标量对象的值的值计算是未排序的，那么其行为是未定义的。 如果一个表达式的子表达式存在多种允许的执行顺序，那么在任何一种顺序中，如果出现了这种未排序的副作用，其行为都是未定义的。 其实有第一条就差不多了，第二条主要是强调：只要有一种顺序会产生歧义，即使有某些顺序没有歧义，依旧算未定义行为。 这段话属实晦涩，仅以例子作简单说明。 例1： 1 1 + (a = 2) + 3 + (a = 4) + 5; 不知道 (a = 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，两个 side effects（赋值）没有被规定顺序，先执行 (a = 2) 与先执行 (a = 4) 将使变量 a 的最终结果不同。情况符合第一条的描述，是未定义行为。 例2： 1 2 a = 1; 1 + (a + 2) + 3 + (a = 4) + 5; 不知道 (a + 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，side effects（赋值）与 value computations（加2） 没有被规定顺序，先执行 (a + 2) 与先执行 (a = 4) 将使整个表达式的最终结果不同。情况符合第一条的描述，是未定义行为。先执行 (a = 4) 再执行 (a + 2)，也就是彻底写完了以后读，这看起来没有歧义；若先执行 (a + 2) 再执行 (a = 4)，也就是先读再写，按DeepSeek的意思，这与先前的读产生冲突，导致歧义；两种顺序有一种有歧义，情况符合第二条的描述，是未定义行为。我个人认为把本例往第二条上靠似乎有点牵强，但这不重要，有第一条足够了。 例3： 1 i = ++i + 1; 分组完毕后是 i = ((++i) + 1)。子表达式内部的执行顺序是 unsequenced 的。(++i) 可以只返回表达式的值，先不给 i 加1，然后该表达式的值与1相加，和赋值给 i，最后再执行 (++i) 的加1，这是一种顺序；(++i) 返回表达式的值并给 i 加1，然后该表达式的值与1相加，和赋值给 i，覆盖掉其当前值，这是一种顺序。情况符合第一条的描述，是未定义行为。 Precedence and order of evaluation -Microsoft Learn 1 2 3 4 5 6 Only the sequential-evaluation (,), logical-AND (&amp;&amp;), logical-OR (||), conditional-expression (? :), and function-call operators constitute sequence points, and therefore guarantee a particular order of evaluation for their operands. ... (The comma operator in a function call is not the same as the sequential-evaluation operator and does not provide any such guarantee.) 直译：运算符 ,、&amp;&amp;、||、? :、()（指函数调用，function_name(arguments)）拥有 sequence point，从而保证了特定的求值顺序。（函数参数列表中的逗号与逗号表达式中的逗号运算符是两回事，前者并没有序列点。） ISO/IEC 9899:201x, C11, 6.5.14 Logical OR operator 1 2 3 4 Unlike the bitwise | operator, the || operator guarantees left-to-right evaluation; if the second operand is evaluated, there is a sequence point between the evaluations of the first and second operands. If the first operand compares unequal to 0, the second operand is not evaluated. 其实就是给 || 明确规定了从左到右的执行顺序，并且遵守短路规则。其它特别的运算符诸如 &amp;&amp; 肯定也有明确的序列点定义。 ISO/IEC 9899:201x, C11, 6.5.2.2 Function calls 1 2 3 4 EXAMPLE In the function call (*pf[f1()]) (f2(), f3() + f4()) the functions f1, f2, f3, and f4 may be called in any order. All side effects have to be completed before the function pointed to by pf[f1()] is called. 1 2 3 4 5 There is a sequence point after the evaluations of the function designator and the actual arguments but before the actual call. Every evaluation in the calling function (including other function calls) that is not otherwise specifically sequenced before or after the execution of the body of the called function is indeterminately sequenced with respect to the execution of the called function.94) 函数指示符（函数名，也可以是一个函数指针）和函数参数的执行顺序是 unsequenced，所以上例中 f1()、 f2()、f3()、f4() 的调用顺序由编译器自由决定。 在“函数指示符和函数参数的求值”和“实际调用的发生”之间，存在一个序列点，即标准明确规定在函数调用前，函数指示符和函数参数的求值必须全部完成，包括所有 value computations 和 side effects。在上例中，一定是 f1()、 f2()、f3()、f4() 都执行完，(*pf[f1()]) 值计算完后才会调用函数 pf[f1()]（即 (*pf[f1()])，* 可加可不加）。 调用函数中相对于被调函数体的执行没有被明确指定顺序的 evaluation(including function calls) 相对于被调函数体的执行是 indeterminately sequenced。这条比较抽象，以例说明。 例： 1 2 3 4 void func(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); } 调用函数就是 func()，被调函数就是任意一个 printf()。上面三个 printf() 的调用是 unsequenced，编译器可以自由选择先调用谁。被调用的 printf() 的函数体一定会完整地执行完才能去调用另一个 printf() 并完整地执行其函数体，不可以并发执行。执行有顺序，方向不确定，即 indeterminately sequenced。 C Sequence Points - Microsoft Learn 上述链接总结了很多 sequence points，其描述相对于C标准文档通俗很多，故记录链接于此。 回到最初的问题 问题1：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 编译器将保留程序员手动添加的分组（括号），然后根据优先级和结合性进一步分组（分组可以被视作一个整体），结果如下： 1 ((printf(&quot;%c&quot;, &#39;a&#39;) + 1) + 1) + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 子表达式的执行顺序是 unsequenced 的，所以上面三个 printf() 被以什么顺序调用都不足为奇，根本就没有固定答案，只是一般来说编译器从左往右执行，所以可能会得到 abc 的结果。本例中表达式的执行顺序未知且会影响打印结果。 问题2：`(2 + 3)` 和 `(5 + 6)` 谁先执行？ 1 1 + (2 + 3) + 4 + (5 + 6); 编译器保留手动添加的分组，然后根据优先级和结合性进一步分组，分组可以被视作一个整体，结果如下： 1 ((1 + (2 + 3)) + 4) + (5 + 6); 到此为止了，子表达式的执行顺序是 unsequenced 的，所以 (2 + 3) 和 (5 + 6) 谁先执行不知道，但这不影响最终结果。 问题3：下面的表达式是怎么执行的？ 1 1 + 2 + 3 + 4; 编译器根据优先级和结合性分组，结果如下： 1 ((1 + 2) + 3) + 4; 子表达式的执行顺序是 unsequenced 的，编译器可以先确定 4 的值就是 4，也可以先去求 ((1 + 2) + 3) 的值，顺序未知，不过也不重要，这并不影响最终结果。 问题4：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 编译器保留手动添加的分组，然后根据优先级进一步分组，函数调用运算符 () 的优先级最高，结果如下： 1 (printf(&quot;%c&quot;, &#39;a&#39;)) || (printf(&quot;%c&quot;, &#39;b&#39;)); 运算符 || 被规定了明确的执行顺序，并遵守短路规则。所以，一定是先执行左边的表达式，输出 a，然后函数返回 1，触发短路规则，整个表达式直接执行结束，右边的表达式不会再执行。打印结果是明确的，为 a。 感想： 写到这里，我似乎突然明白为什么国外有些“优先级结合性一览表”中，括号的释义仅仅只有“Function call”而没有“Parentheses”了。“一览表”本身是用来确定分组的，而我们平时添加的括号就是用来手动指定分组的，比起运算符，我更愿意叫它分组标识符，所以它有时不被列进“一览表”也无伤大雅。 最后，不要写逆天表达式。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"你真的搞懂优先级和结合性了吗？","dateModified":"2025-11-12T16:44:00+08:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <title>你真的搞懂优先级和结合性了吗？ | 小黑猫
+  </title>
+
+  <!--
+  The Favicons for Web, Android, Microsoft, and iOS (iPhone and iPad) Apps
+  Generated by: https://realfavicongenerator.net/
+-->
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png">
+<link rel="manifest" href="/assets/img/favicons/site.webmanifest">
+<link rel="shortcut icon" href="/assets/img/favicons/favicon.ico">
+<meta name="apple-mobile-web-app-title" content="小黑猫">
+<meta name="application-name" content="小黑猫">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+  <!-- GA -->
+  
+
+  <!-- jsDelivr CDN -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css">
+
+  <!--
+  CSS selector for site.
+-->
+
+<link rel="stylesheet" href="/assets/css/style.css">
+
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css">
+
+
+
+  <!-- Manific Popup -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.min.css">
+
+
+
+  <!-- JavaScript -->
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+
+</head>
+
+
+  
+    <!--
+  Switch the mode between dark and light.
+-->
+
+<script type="text/javascript">
+  class ModeToggle {
+    static get MODE_KEY() { return "mode"; }
+    static get MODE_ATTR() { return "data-mode"; }
+    static get DARK_MODE() { return "dark"; }
+    static get LIGHT_MODE() { return "light"; }
+    static get ID() { return "mode-toggle"; }
+
+    constructor() {
+      if (this.hasMode) {
+        if (this.isDarkMode) {
+          if (!this.isSysDarkPrefer) {
+            this.setDark();
+          }
+        } else {
+          if (this.isSysDarkPrefer) {
+            this.setLight();
+          }
+        }
+      }
+
+      let self = this;
+
+      /* always follow the system prefers */
+      this.sysDarkPrefers.addEventListener("change", () => {
+        if (self.hasMode) {
+          if (self.isDarkMode) {
+            if (!self.isSysDarkPrefer) {
+              self.setDark();
+            }
+
+          } else {
+            if (self.isSysDarkPrefer) {
+              self.setLight();
+            }
+          }
+
+          self.clearMode();
+        }
+
+        self.notify();
+
+      });
+
+    } /* constructor() */
+
+    get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); }
+
+    get isSysDarkPrefer() { return this.sysDarkPrefers.matches; }
+
+    get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; }
+
+    get isLightMode() { return this.mode === ModeToggle.LIGHT_MODE; }
+
+    get hasMode() { return this.mode != null; }
+
+    get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); }
+
+    /* get the current mode on screen */
+    get modeStatus() {
+      if (this.isDarkMode
+        || (!this.hasMode && this.isSysDarkPrefer)) {
+        return ModeToggle.DARK_MODE;
+      } else {
+        return ModeToggle.LIGHT_MODE;
+      }
+    }
+
+    setDark() {
+      $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE);
+      sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE);
+    }
+
+    setLight() {
+      $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE);
+      sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE);
+    }
+
+    clearMode() {
+      $('html').removeAttr(ModeToggle.MODE_ATTR);
+      sessionStorage.removeItem(ModeToggle.MODE_KEY);
+    }
+
+    /* Notify another plugins that the theme mode has changed */
+    notify() {
+      window.postMessage({
+        direction: ModeToggle.ID,
+        message: this.modeStatus
+      }, "*");
+    }
+
+  } /* ModeToggle */
+
+  const toggle = new ModeToggle();
+
+  function flipMode() {
+    if (toggle.hasMode) {
+      if (toggle.isSysDarkPrefer) {
+        if (toggle.isLightMode) {
+          toggle.clearMode();
+        } else {
+          toggle.setLight();
+        }
+
+      } else {
+        if (toggle.isDarkMode) {
+          toggle.clearMode();
+        } else {
+          toggle.setDark();
+        }
+      }
+
+    } else {
+      if (toggle.isSysDarkPrefer) {
+        toggle.setLight();
+      } else {
+        toggle.setDark();
+      }
+    }
+
+    toggle.notify();
+
+  } /* flipMode() */
+
+</script>
+
+  
+
+  <body data-spy="scroll" data-target="#toc" data-topbar-visible="true">
+
+    <!--
+  The Side Bar
+-->
+
+<div id="sidebar" class="d-flex flex-column align-items-end" lang="zh-CN">
+  <div class="profile-wrapper text-center">
+    <div id="avatar">
+      <a href="/" alt="avatar" class="mx-auto">
+        
+          
+          <img src="https://img-host-lcatmiao.oss-cn-hangzhou.aliyuncs.com/202202021358647.png" alt="avatar" onerror="this.style.display='none'">
+        
+      </a>
+    </div>
+
+    <div class="site-title mt-3">
+      <a href="/">小黑猫</a>
+    </div>
+    <div class="site-subtitle font-italic">喵～</div>
+
+  </div><!-- .profile-wrapper -->
+
+  <ul class="w-100">
+
+    <!-- home -->
+    <li class="nav-item">
+      <a href="/" class="nav-link">
+        <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i>
+        <span>首页</span>
+      </a>
+    </li>
+    <!-- the real tabs -->
+    
+    <li class="nav-item">
+      <a href="/categories/" class="nav-link">
+        <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i>
+        
+
+        <span>分类</span>
+      </a>
+    </li> <!-- .nav-item -->
+    
+    <li class="nav-item">
+      <a href="/tags/" class="nav-link">
+        <i class="fa-fw fas fa-tag ml-xl-3 mr-xl-3 unloaded"></i>
+        
+
+        <span>标签</span>
+      </a>
+    </li> <!-- .nav-item -->
+    
+    <li class="nav-item">
+      <a href="/archives/" class="nav-link">
+        <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i>
+        
+
+        <span>归档</span>
+      </a>
+    </li> <!-- .nav-item -->
+    
+    <li class="nav-item">
+      <a href="/about/" class="nav-link">
+        <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i>
+        
+
+        <span>关于</span>
+      </a>
+    </li> <!-- .nav-item -->
+    
+
+  </ul> <!-- ul.nav.flex-column -->
+
+  <div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center">
+
+    
+      <button class="mode-toggle btn" aria-label="Switch Mode">
+        <i class="fas fa-adjust"></i>
+      </button>
+
+      
+        <span class="icon-border"></span>
+      
+    
+
+    
+      
+
+      
+      <a href="https://github.com/lcatmiao" aria-label="github"
+        target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+      
+
+    
+      
+
+      
+      <a href="https://twitter.com/twitter_username" aria-label="twitter"
+        target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+      
+
+    
+      
+
+      
+      <a href="
+          javascript:location.href = 'mailto:' + ['example','doamin.com'].join('@')" aria-label="email"
+        >
+        <i class="fas fa-envelope"></i>
+      </a>
+      
+
+    
+      
+
+      
+      <a href="/feed.xml" aria-label="rss"
+        >
+        <i class="fas fa-rss"></i>
+      </a>
+      
+
+    
+
+  </div> <!-- .sidebar-bottom -->
+
+</div><!-- #sidebar -->
+
+
+    <!--
+  The Top Bar
+-->
+
+<div id="topbar-wrapper" class="row justify-content-center">
+  <div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between">
+    <span id="breadcrumb">
+
+    
+
+    
+
+      
+
+        
+          <span>
+            <a href="/">
+              首页
+            </a>
+          </span>
+
+        
+
+      
+
+        
+
+      
+
+        
+
+          
+            <span>你真的搞懂优先级和结合性了吗？</span>
+          
+
+        
+
+      
+
+    
+
+    </span><!-- endof #breadcrumb -->
+
+    <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i>
+
+    <div id="topbar-title">
+      文章
+    </div>
+
+    <i id="search-trigger" class="fas fa-search fa-fw"></i>
+    <span id="search-wrapper" class="align-items-center">
+      <i class="fas fa-search fa-fw"></i>
+      <input class="form-control" id="search-input" type="search"
+        aria-label="search" autocomplete="off" placeholder="搜索...">
+      <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i>
+    </span>
+    <span id="search-cancel" >取消</span>
+  </div>
+
+</div>
+
+
+    <div id="main-wrapper">
+      <div id="main">
+
+        
+
+
+
+<div class="row">
+
+  <!-- core -->
+  <div id="core-wrapper" class="col-12 col-lg-11 col-xl-8">
+    <div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4">
+
+    
+
+    
+      
+      
+        <!--
+  Refactor the HTML structure.
+-->
+
+
+
+<!--
+  In order to allow a wide table to scroll horizontally,
+  we suround the markdown table with `<div class="table-wrapper">` and `</div>`
+-->
+
+
+
+<!--
+  Fixed kramdown code highlight rendering:
+  https://github.com/penibelst/jekyll-compress-html/issues/101
+  https://github.com/penibelst/jekyll-compress-html/issues/71#issuecomment-188144901
+-->
+
+
+
+<!-- Add attribute 'hide-bullet' to the checkbox list -->
+
+
+
+<!-- images -->
+
+
+
+
+
+<!-- Add header for code snippets -->
+
+
+
+<!-- Create heading anchors -->
+
+
+
+
+
+  
+  
+
+  
+    
+    
+
+    
+      
+        
+        
+      
+
+      
+      
+
+      
+      
+      
+      
+
+      
+
+    
+      
+
+      
+      
+
+      
+      
+      
+      
+
+      
+
+    
+
+    
+
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+
+
+
+<!-- Wrap prompt element of blockquote with the <div> tag -->
+
+
+
+
+
+
+
+<!-- return -->
+
+
+
+
+
+
+
+<h1 data-toc-skip>你真的搞懂优先级和结合性了吗？</h1>
+
+<div class="post-meta text-muted">
+
+  <!-- author -->
+  <div>
+    
+    
+
+    
+
+    作者
+    <em>
+      
+        <a href="https://github.com/lcatmiao">小黑猫</a>
+      
+    </em>
+  </div>
+
+  <div class="d-flex">
+    <div>
+      <!-- published date -->
+      <span>
+        发表于
+        <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago"
+    data-ts="1762937040"
+    
+      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
+    
+    >
+  2025-11-12
+</em>
+
+      </span>
+
+      <!-- lastmod date -->
+      
+
+      <!-- read time -->
+      <!--
+  Calculate the post's reading time, and display the word count in tooltip
+ -->
+
+
+
+<!-- words per minute  -->
+
+
+
+
+
+
+
+
+
+
+<!-- return element -->
+<span class="readtime" data-toggle="tooltip" data-placement="bottom"
+  title="4546 字">
+  <em>25 分钟</em>阅读</span>
+
+
+      <!-- page views -->
+      
+    </div>
+
+  </div> <!-- .d-flex -->
+
+</div> <!-- .post-meta -->
+
+<div class="post-content">
+  <h1 id="颠覆认知">颠覆认知</h1>
+
+<p>我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但<strong>我们对于优先级和结合性的理解其实存在着广泛误解</strong>。</p>
+
+<p>绝大多数教程都是告诉你：</p>
+
+<ol>
+  <li>优先级高的运算符先执行。</li>
+  <li>当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。</li>
+</ol>
+
+<p>其实按照上面的说法，将有诸多无法解释的现象，比如：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'b'</span><span class="p">)</span> <span class="o">+</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'c'</span><span class="p">));</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>括号的优先级最高，所以上面的代码应该先打印 <code class="language-plaintext highlighter-rouge">b</code> 或者 <code class="language-plaintext highlighter-rouge">c</code>，另外，你也无法回答是 <code class="language-plaintext highlighter-rouge">b</code> 先被打印还是 <code class="language-plaintext highlighter-rouge">c</code> 先被打印。现在揭晓“答案”，上述代码经过 <code class="language-plaintext highlighter-rouge">gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project) 15.2.0</code> 编译后，在 windows 平台下输出结果是 <code class="language-plaintext highlighter-rouge">abc</code>。是不是很疑惑？难道括号没起作用吗？</p>
+
+<p>我还能举出一些令你心虚的例子：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>1 + (2 + 3) + 4 + (5 + 6)
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>请问上面的表达式中是 <code class="language-plaintext highlighter-rouge">2 + 3</code> 先执行还是 <code class="language-plaintext highlighter-rouge">5 + 6</code> 先执行？你也许会说：括号优先级最高，所以肯定先执行 <code class="language-plaintext highlighter-rouge">2 + 3</code> 或者 <code class="language-plaintext highlighter-rouge">5 + 6</code>，然后由于这两个括号优先级相同，所以接下来看结合性，又因为括号是左结合性，所以先执行 <code class="language-plaintext highlighter-rouge">2 + 3</code>。结合性真的是这样用的吗？请问它的“结合”体现在哪里了？</p>
+
+<p>再看一例：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>1 + 2 + 3 + 4
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>这个表达式由于 <code class="language-plaintext highlighter-rouge">+</code> 优先级相同，所以看结合性，又由于是左结合性，所以在这三个连续的 <code class="language-plaintext highlighter-rouge">+</code> 中，应该先执行最左边的 <code class="language-plaintext highlighter-rouge">+</code>，即先结合最左边的加号及其操作数，变成 <code class="language-plaintext highlighter-rouge">(1 + 2) + 3 + 4</code>，再结合第二个加号及其操作数，变成 <code class="language-plaintext highlighter-rouge">((1 + 2) + 3) + 4</code>。相信这个例子与上一例相比，你能够更加感性地体会到“结合”的概念，而在上一例中，你似乎只是单纯地确认了两个子表达式的执行顺序，并没有所谓“结合”的感受。你真的认为上面两例中所谓“结合性的运用”是一样的吗？这对吗？</p>
+
+<p>还有众所周知的逻辑运算符：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'b'</span><span class="p">));</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>这个表达式显然在输出 <code class="language-plaintext highlighter-rouge">a</code> 后就结束了，因为 <code class="language-plaintext highlighter-rouge">printf()</code> 将返回写入的字符数，前半条件非零为真，直接触发短路，后续不再执行。但我们明明给后半条件加了括号，按照优先级那套说法，<code class="language-plaintext highlighter-rouge">b</code> 应该先输出才对。然而这套说法连你自己也不敢相信，因为这违背了短路规则。</p>
+
+<p>上面的例子都在说明，日常所见的那套优先级和结合性的说法显然太过简陋，并且导致了不少误解。</p>
+
+<h1 id="直接说结论">直接说结论</h1>
+
+<ol>
+  <li>结合性只作用于连续相邻的同优先级运算符。</li>
+  <li><strong>优先级和结合性只能确定表达式的执行是怎么分组的，并不能确定子表达式之间或子表达式内部的执行顺序。</strong>子表达式之间或内部的执行顺序由编译器自行决定，这在多数情况下并不影响表达式最终的执行结果，而对于那些执行顺序影响执行结果的情况，应当竭力避免之。</li>
+  <li><code class="language-plaintext highlighter-rouge">sequence point</code> 定义了一些特定的执行顺序。简言之，有些运算符被明确定义了子表达式（操作数）的执行顺序，如 <code class="language-plaintext highlighter-rouge">&amp;&amp;</code>、<code class="language-plaintext highlighter-rouge">||</code>。</li>
+</ol>
+
+<h1 id="理论分析">理论分析</h1>
+
+<h2 id="概念定义">概念定义 <a href="#概念定义" class="anchor"><i class="fas fa-hashtag"></i></a></h2></h2>
+
+<p>首先了解一些概念定义。</p>
+
+<p><a href="https://www.learncpp.com/cpp-tutorial/operator-precedence-and-associativity/">6.1 — Operator precedence and associativity – Learn C++</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre>Value computation of operations
+The C++ standard uses the term value computation to mean the execution of operators in 
+an expression to produce a value. The precedence and association rules determine the 
+order in which value computation happens.
+
+For example, given the expression 4 + 2 * 3, due to the precedence rules this groups as 
+4 + (2 * 3). The value computation for (2 * 3) must happen first, so that the value 
+computation for 4 + 6 can be completed.
+</pre></td></tr></tbody></table></code></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>Evaluation of operands
+The C++ standard (mostly) uses the term evaluation to refer to the evaluation of 
+operands (not the evaluation of operators or expressions!). For example, given 
+expression a + b, a will be evaluated to produce some value, and b will be evaluated to 
+produce some value. These values can be then used as operands to operator+ for value 
+computation.
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><a href="https://www.open-std.org/JTC1/SC22/WG14/www/docs/n1570.pdf">ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>Accessing a volatile object, modifying an object, modifying a file, or calling a 
+function that does any of those operations are all side effects,12) which are changes in 
+the state of the execution environment. Evaluation of an expression in general includes 
+both value computations and initiation of side effects. Value computation for an lvalue 
+expression includes determining the identity of the designated object.
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>简单来说，就是表达式的 <code class="language-plaintext highlighter-rouge">evaluation</code> 过程包括了 <code class="language-plaintext highlighter-rouge">value computations</code> 和 <code class="language-plaintext highlighter-rouge">side effects</code>，前者就是常规的值计算过程，后者主要是“写”过程。</p>
+
+<p>以表达式 <code class="language-plaintext highlighter-rouge">a = (1 + 2)</code> 为例，表达式 <code class="language-plaintext highlighter-rouge">(1 + 2)</code> 的 <code class="language-plaintext highlighter-rouge">evaluation</code> 过程仅包括了 <code class="language-plaintext highlighter-rouge">value computation</code>，即计算 <code class="language-plaintext highlighter-rouge">(1 + 2)</code> 得到 <code class="language-plaintext highlighter-rouge">3</code>；表达式 <code class="language-plaintext highlighter-rouge">a = (1 + 2)</code> 的 <code class="language-plaintext highlighter-rouge">evaluation</code> 过程包括了 <code class="language-plaintext highlighter-rouge">value computation</code> 和 <code class="language-plaintext highlighter-rouge">side effects</code>，前者包含计算表达式 <code class="language-plaintext highlighter-rouge">(1 + 2)</code> 的值为 <code class="language-plaintext highlighter-rouge">3</code> 的过程和计算表达式 <code class="language-plaintext highlighter-rouge">a = 3</code> 的值为 <code class="language-plaintext highlighter-rouge">3</code> 的过程，后者是把 <code class="language-plaintext highlighter-rouge">3</code> 赋值给 <code class="language-plaintext highlighter-rouge">a</code> 的过程。</p>
+
+<p><a href="https://www.open-std.org/JTC1/SC22/WG14/www/docs/n1570.pdf">ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre>Sequenced before is an asymmetric, transitive, pair-wise relation between evaluations 
+executed by a single thread, which induces a partial order among those evaluations. 
+Given any two evaluations A and B, if A is sequenced before B, then the execution of A
+shall precede the execution of B. (Conversely, if A is sequenced before B, then B is 
+sequenced after A.) If A is not sequenced before or after B, then A and B are 
+unsequenced. Evaluations A and B are indeterminately sequenced when A is sequenced 
+either before or after B, but it is unspecified which.13) The presence of a sequence 
+point between the evaluation of expressions A and B implies that every value 
+computation and side effect associated with A is sequenced before every value 
+computation and side effect associated with B. (A summary of the sequence points is 
+given in annex C.)
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>这一段主要定义了 <code class="language-plaintext highlighter-rouge">sequenced</code>、<code class="language-plaintext highlighter-rouge">unsequenced</code>、<code class="language-plaintext highlighter-rouge">indeterminately sequenced</code> 以及 <code class="language-plaintext highlighter-rouge">sequence point</code> 的概念。</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">sequenced</code>：有顺序。标准明确规定了子表达式的执行顺序，编译器实现必须遵守。</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">unsequenced</code>：无顺序。标准没有规定子表达式的执行顺序，编译器可以自由实现，甚至可以并发执行，合并执行子表达式。</li>
+  <li><code class="language-plaintext highlighter-rouge">indeterminately sequenced</code>：不确定顺序。标准规定子表达式的执行要有顺序，但未规定方向，编译器可以自行选择一个方向实现。</li>
+</ul>
+
+<p>论编译器实现自由度，<code class="language-plaintext highlighter-rouge">unsequenced &gt; indeterminately sequenced &gt; sequenced</code>。</p>
+
+<p><code class="language-plaintext highlighter-rouge">sequence point</code>： 表达式A与B之间存在 <code class="language-plaintext highlighter-rouge">sequence point</code>，意味着表达式A的 <code class="language-plaintext highlighter-rouge">evaluation(value computation + side effects)</code> 按顺序排列在表达式B的 <code class="language-plaintext highlighter-rouge">evaluation</code> 之前。</p>
+
+<p><code class="language-plaintext highlighter-rouge">sequence point</code>（DeepSeek）：序列点是程序执行中的一个特定位置，在此位置之前的所有表达式的求值（包括数值计算和副作用）都必须完成，并且不会影响在此之后的所有表达式的求值。</p>
+
+<h2 id="提取结论">提取结论 <a href="#提取结论" class="anchor"><i class="fas fa-hashtag"></i></a></h2></h2>
+
+<p><a href="https://www.learncpp.com/cpp-tutorial/operator-precedence-and-associativity/">6.1 — Operator precedence and associativity – Learn C++</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre>Operator precedence
+To assist with parsing a compound expression, all operators are assigned a level of 
+precedence. Operators with a higher precedence level are grouped with operands first.
+
+You can see in the table below that multiplication and division (precedence level 5) 
+have a higher precedence level than addition and subtraction (precedence level 6). Thus, 
+multiplication and division will be grouped with operands before addition and 
+subtraction. In other words, 4 + 2 * 3 will be grouped as 4 + (2 * 3).
+</pre></td></tr></tbody></table></code></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre>Operator associativity
+Consider a compound expression like 7 - 4 - 1. Should this be grouped as (7 - 4) - 1 
+which evaluates to 2, or 7 - (4 - 1), which evaluates to 4? Since both subtraction 
+operators have the same precedence level, the compiler can not use precedence alone to 
+determine how this should be grouped.
+
+If two operators with the same precedence level are adjacent to each other in an 
+expression, the operator’s associativity tells the compiler whether to evaluate the 
+operators (not the operands!) from left to right or from right to left. Subtraction has 
+precedence level 6, and the operators in precedence level 6 have an associativity of 
+left to right. So this expression is grouped from left to right: (7 - 4) - 1.
+</pre></td></tr></tbody></table></code></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>In most cases, the order of evaluation for operands and function arguments is 
+unspecified, meaning they may be evaluated in any order.
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>上述资料的重点可以被总结为三句话：</p>
+
+<ol>
+  <li>拥有高优先级的运算符优先与它的操作数一起被分组。</li>
+  <li>对于拥有相同优先级的相邻两个运算符，由结合性决定哪个运算符先被分组。</li>
+  <li>操作数（子表达式）和函数参数的求值（执行）顺序没有被明确指定。</li>
+</ol>
+
+<hr />
+
+<p><a href="https://www.open-std.org/JTC1/SC22/WG14/www/docs/n1570.pdf">ISO/IEC 9899:201x, C11, 6.5 Expressions</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>The grouping of operators and operands is indicated by the syntax.85) Except as 
+specified later, side effects and value computations of subexpressions are 
+unsequenced.86)
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>除非特别指定，子表达式的 <code class="language-plaintext highlighter-rouge">side effects</code> 和 <code class="language-plaintext highlighter-rouge">value computations</code> 是 <code class="language-plaintext highlighter-rouge">unsequenced</code> 的。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>If a side effect on a scalar object is unsequenced relative to either a different side 
+effect on the same scalar object or a value computation using the value of the same 
+scalar object, the behavior is undefined. If there are multiple allowable orderings of 
+the subexpressions of an expression, the behavior is undefined if such an unsequenced 
+side effect occurs in any of the orderings.84)
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>翻译（DeepSeek）：</p>
+
+<ol>
+  <li>如果一个标量对象的副作用，相对于同一个标量对象的另一个副作用，或者相对于使用同一个标量对象的值的值计算是未排序的，那么其行为是未定义的。</li>
+  <li>如果一个表达式的子表达式存在多种允许的执行顺序，那么在任何一种顺序中，如果出现了这种未排序的副作用，其行为都是未定义的。</li>
+</ol>
+
+<p>其实有第一条就差不多了，第二条主要是强调：只要有一种顺序会产生歧义，即使有某些顺序没有歧义，依旧算未定义行为。</p>
+
+<p>这段话属实晦涩，仅以例子作简单说明。</p>
+
+<p>例1：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>不知道 <code class="language-plaintext highlighter-rouge">(a = 2)</code> 先执行还是 <code class="language-plaintext highlighter-rouge">(a = 4)</code> 先执行，它们是 <code class="language-plaintext highlighter-rouge">unsequenced</code> 的，两个 <code class="language-plaintext highlighter-rouge">side effects</code>（赋值）没有被规定顺序，先执行 <code class="language-plaintext highlighter-rouge">(a = 2)</code> 与先执行 <code class="language-plaintext highlighter-rouge">(a = 4)</code> 将使变量 <code class="language-plaintext highlighter-rouge">a</code> 的最终结果不同。情况符合第一条的描述，是未定义行为。</p>
+
+<p>例2：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>不知道 <code class="language-plaintext highlighter-rouge">(a + 2)</code> 先执行还是 <code class="language-plaintext highlighter-rouge">(a = 4)</code> 先执行，它们是 <code class="language-plaintext highlighter-rouge">unsequenced</code> 的，<code class="language-plaintext highlighter-rouge">side effects</code>（赋值）与 <code class="language-plaintext highlighter-rouge">value computations</code>（加2） 没有被规定顺序，先执行 <code class="language-plaintext highlighter-rouge">(a + 2)</code> 与先执行 <code class="language-plaintext highlighter-rouge">(a = 4)</code> 将使整个表达式的最终结果不同。情况符合第一条的描述，是未定义行为。先执行 <code class="language-plaintext highlighter-rouge">(a = 4)</code> 再执行 <code class="language-plaintext highlighter-rouge">(a + 2)</code>，也就是彻底写完了以后读，这看起来没有歧义；若先执行 <code class="language-plaintext highlighter-rouge">(a + 2)</code> 再执行 <code class="language-plaintext highlighter-rouge">(a = 4)</code>，也就是先读再写，按DeepSeek的意思，这与先前的读产生冲突，导致歧义；两种顺序有一种有歧义，情况符合第二条的描述，是未定义行为。我个人认为把本例往第二条上靠似乎有点牵强，但这不重要，有第一条足够了。</p>
+
+<p>例3：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">i</span> <span class="o">=</span> <span class="o">++</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>分组完毕后是 <code class="language-plaintext highlighter-rouge">i = ((++i) + 1)</code>。子表达式内部的执行顺序是 <code class="language-plaintext highlighter-rouge">unsequenced</code> 的。<code class="language-plaintext highlighter-rouge">(++i)</code> 可以只返回表达式的值，先不给 <code class="language-plaintext highlighter-rouge">i</code> 加1，然后该表达式的值与1相加，和赋值给 <code class="language-plaintext highlighter-rouge">i</code>，最后再执行 <code class="language-plaintext highlighter-rouge">(++i)</code> 的加1，这是一种顺序；<code class="language-plaintext highlighter-rouge">(++i)</code> 返回表达式的值并给 <code class="language-plaintext highlighter-rouge">i</code> 加1，然后该表达式的值与1相加，和赋值给 <code class="language-plaintext highlighter-rouge">i</code>，覆盖掉其当前值，这是一种顺序。情况符合第一条的描述，是未定义行为。</p>
+
+<hr />
+
+<p><a href="https://learn.microsoft.com/en-us/cpp/c-language/precedence-and-order-of-evaluation?view=msvc-170">Precedence and order of evaluation -Microsoft Learn</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>Only the sequential-evaluation (,), logical-AND (&amp;&amp;), logical-OR (||), 
+conditional-expression (? :), and function-call operators constitute sequence points, 
+and therefore guarantee a particular order of evaluation for their operands.
+...
+(The comma operator in a function call is not the same as the sequential-evaluation 
+operator and does not provide any such guarantee.)
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>直译：运算符 <code class="language-plaintext highlighter-rouge">,</code>、<code class="language-plaintext highlighter-rouge">&amp;&amp;</code>、<code class="language-plaintext highlighter-rouge">||</code>、<code class="language-plaintext highlighter-rouge">? :</code>、<code class="language-plaintext highlighter-rouge">()</code>（指函数调用，<code class="language-plaintext highlighter-rouge">function_name(arguments)</code>）拥有 <code class="language-plaintext highlighter-rouge">sequence point</code>，从而保证了特定的求值顺序。（函数参数列表中的逗号与逗号表达式中的逗号运算符是两回事，前者并没有序列点。）</p>
+
+<p><a href="https://www.open-std.org/JTC1/SC22/WG14/www/docs/n1570.pdf">ISO/IEC 9899:201x, C11, 6.5.14 Logical OR operator</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>Unlike the bitwise | operator, the || operator guarantees left-to-right evaluation; if 
+the second operand is evaluated, there is a sequence point between the evaluations of 
+the first and second operands. If the first operand compares unequal to 0, the second 
+operand is not evaluated.
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>其实就是给 <code class="language-plaintext highlighter-rouge">||</code> 明确规定了从左到右的执行顺序，并且遵守短路规则。其它特别的运算符诸如 <code class="language-plaintext highlighter-rouge">&amp;&amp;</code> 肯定也有明确的序列点定义。</p>
+
+<p><a href="https://www.open-std.org/JTC1/SC22/WG14/www/docs/n1570.pdf">ISO/IEC 9899:201x, C11, 6.5.2.2 Function calls</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>EXAMPLE In the function call
+    (*pf[f1()]) (f2(), f3() + f4())
+the functions f1, f2, f3, and f4 may be called in any order. All side effects have to be 
+completed before the function pointed to by pf[f1()] is called.
+</pre></td></tr></tbody></table></code></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>There is a sequence point after the evaluations of the function designator and the 
+actual arguments but before the actual call. Every evaluation in the calling function 
+(including other function calls) that is not otherwise specifically sequenced before or 
+after the execution of the body of the called function is indeterminately sequenced with 
+respect to the execution of the called function.94)
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>函数指示符（函数名，也可以是一个函数指针）和函数参数的执行顺序是 <code class="language-plaintext highlighter-rouge">unsequenced</code>，所以上例中 <code class="language-plaintext highlighter-rouge">f1()</code>、 <code class="language-plaintext highlighter-rouge">f2()</code>、<code class="language-plaintext highlighter-rouge">f3()</code>、<code class="language-plaintext highlighter-rouge">f4()</code> 的调用顺序由编译器自由决定。</p>
+
+<p>在“函数指示符和函数参数的求值”和“实际调用的发生”之间，存在一个序列点，即标准明确规定在函数调用前，函数指示符和函数参数的求值必须全部完成，包括所有 <code class="language-plaintext highlighter-rouge">value computations</code> 和 <code class="language-plaintext highlighter-rouge">side effects</code>。在上例中，一定是 <code class="language-plaintext highlighter-rouge">f1()</code>、 <code class="language-plaintext highlighter-rouge">f2()</code>、<code class="language-plaintext highlighter-rouge">f3()</code>、<code class="language-plaintext highlighter-rouge">f4()</code> 都执行完，<code class="language-plaintext highlighter-rouge">(*pf[f1()])</code> 值计算完后才会调用函数 <code class="language-plaintext highlighter-rouge">pf[f1()]</code>（即 <code class="language-plaintext highlighter-rouge">(*pf[f1()])</code>，<code class="language-plaintext highlighter-rouge">*</code> 可加可不加）。</p>
+
+<p>调用函数中相对于被调函数体的执行没有被明确指定顺序的 <code class="language-plaintext highlighter-rouge">evaluation(including function calls)</code> 相对于被调函数体的执行是 <code class="language-plaintext highlighter-rouge">indeterminately sequenced</code>。这条比较抽象，以例说明。</p>
+
+<p>例：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="kt">void</span> <span class="nf">func</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'b'</span><span class="p">)</span> <span class="o">+</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'c'</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>调用函数就是 <code class="language-plaintext highlighter-rouge">func()</code>，被调函数就是任意一个 <code class="language-plaintext highlighter-rouge">printf()</code>。上面三个 <code class="language-plaintext highlighter-rouge">printf()</code> 的调用是 <code class="language-plaintext highlighter-rouge">unsequenced</code>，编译器可以自由选择先调用谁。被调用的 <code class="language-plaintext highlighter-rouge">printf()</code> 的函数体一定会完整地执行完才能去调用另一个 <code class="language-plaintext highlighter-rouge">printf()</code> 并完整地执行其函数体，不可以并发执行。执行有顺序，方向不确定，即 <code class="language-plaintext highlighter-rouge">indeterminately sequenced</code>。</p>
+
+<p><a href="https://learn.microsoft.com/en-us/cpp/c-language/c-sequence-points?view=msvc-170">C Sequence Points - Microsoft Learn</a></p>
+
+<p>上述链接总结了很多 <code class="language-plaintext highlighter-rouge">sequence points</code>，其描述相对于C标准文档通俗很多，故记录链接于此。</p>
+
+<h1 id="回到最初的问题">回到最初的问题</h1>
+
+<p><u>问题1：下面表达式的打印结果是什么？</u></p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'b'</span><span class="p">)</span> <span class="o">+</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'c'</span><span class="p">));</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>编译器将保留程序员手动添加的分组（括号），然后根据优先级和结合性进一步分组（分组可以被视作一个整体），结果如下：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="p">((</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'b'</span><span class="p">)</span> <span class="o">+</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'c'</span><span class="p">));</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>子表达式的执行顺序是 <code class="language-plaintext highlighter-rouge">unsequenced</code> 的，所以上面三个 <code class="language-plaintext highlighter-rouge">printf()</code> 被以什么顺序调用都不足为奇，根本就没有固定答案，只是一般来说编译器从左往右执行，所以可能会得到 <code class="language-plaintext highlighter-rouge">abc</code> 的结果。本例中表达式的执行顺序未知且会影响打印结果。</p>
+
+<p><u>问题2：`(2 + 3)` 和 `(5 + 6)` 谁先执行？</u></p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="mi">6</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>编译器保留手动添加的分组，然后根据优先级和结合性进一步分组，分组可以被视作一个整体，结果如下：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="mi">6</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>到此为止了，子表达式的执行顺序是 <code class="language-plaintext highlighter-rouge">unsequenced</code> 的，所以 <code class="language-plaintext highlighter-rouge">(2 + 3)</code> 和 <code class="language-plaintext highlighter-rouge">(5 + 6)</code> 谁先执行不知道，但这不影响最终结果。</p>
+
+<p><u>问题3：下面的表达式是怎么执行的？</u></p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>编译器根据优先级和结合性分组，结果如下：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>子表达式的执行顺序是 <code class="language-plaintext highlighter-rouge">unsequenced</code> 的，编译器可以先确定 <code class="language-plaintext highlighter-rouge">4</code> 的值就是 <code class="language-plaintext highlighter-rouge">4</code>，也可以先去求 <code class="language-plaintext highlighter-rouge">((1 + 2) + 3)</code> 的值，顺序未知，不过也不重要，这并不影响最终结果。</p>
+
+<p><u>问题4：下面表达式的打印结果是什么？</u></p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'b'</span><span class="p">));</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>编译器保留手动添加的分组，然后根据优先级进一步分组，函数调用运算符 <code class="language-plaintext highlighter-rouge">()</code> 的优先级最高，结果如下：</p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'a'</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="sc">'b'</span><span class="p">));</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>运算符 <code class="language-plaintext highlighter-rouge">||</code> 被规定了明确的执行顺序，并遵守短路规则。所以，一定是先执行左边的表达式，输出 <code class="language-plaintext highlighter-rouge">a</code>，然后函数返回 <code class="language-plaintext highlighter-rouge">1</code>，触发短路规则，整个表达式直接执行结束，右边的表达式不会再执行。打印结果是明确的，为 <code class="language-plaintext highlighter-rouge">a</code>。</p>
+
+<hr />
+
+<p>感想：</p>
+
+<p>写到这里，我似乎突然明白为什么国外有些“优先级结合性一览表”中，括号的释义仅仅只有“Function call”而没有“Parentheses”了。“一览表”本身是用来确定分组的，而我们平时添加的括号就是用来手动指定分组的，比起运算符，我更愿意叫它分组标识符，所以它有时不被列进“一览表”也无伤大雅。</p>
+
+<p>最后，<strong>不要写逆天表达式</strong>。</p>
+
+
+</div>
+
+<div class="post-tail-wrapper text-muted">
+
+  <!-- categories -->
+  
+  <div class="post-meta mb-3">
+    <i class="far fa-folder-open fa-fw mr-1"></i>
+    
+      <a href='/categories/tech/'>Tech</a>,
+      <a href='/categories/c/'>C</a>
+  </div>
+  
+
+  <!-- tags -->
+  
+
+  <div class="post-tail-bottom
+    d-flex justify-content-between align-items-center mt-3 pt-5 pb-2">
+    <div class="license-wrapper">
+
+      
+
+        
+
+        本文由作者按照 
+        <a href="https://creativecommons.org/licenses/by/4.0/">
+          CC BY 4.0
+        </a>
+         进行授权
+
+      
+    </div>
+
+    <!--
+ Post sharing snippet
+-->
+
+<div class="share-wrapper">
+  <span class="share-label text-muted mr-1">分享</span>
+  <span class="share-icons">
+    
+    
+
+    
+      
+        <a href="https://twitter.com/intent/tweet?text=你真的搞懂优先级和结合性了吗？ - 小黑猫&amp;url=http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/" data-toggle="tooltip" data-placement="top"
+          title="Twitter" target="_blank" rel="noopener" aria-label="Twitter">
+          <i class="fa-fw fab fa-twitter"></i>
+        </a>
+    
+      
+        <a href="https://www.facebook.com/sharer/sharer.php?title=你真的搞懂优先级和结合性了吗？ - 小黑猫&amp;u=http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/" data-toggle="tooltip" data-placement="top"
+          title="Facebook" target="_blank" rel="noopener" aria-label="Facebook">
+          <i class="fa-fw fab fa-facebook-square"></i>
+        </a>
+    
+      
+        <a href="https://t.me/share/url?url=http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/&amp;text=你真的搞懂优先级和结合性了吗？ - 小黑猫" data-toggle="tooltip" data-placement="top"
+          title="Telegram" target="_blank" rel="noopener" aria-label="Telegram">
+          <i class="fa-fw fab fa-telegram"></i>
+        </a>
+    
+
+    <i id="copy-link" class="fa-fw fas fa-link small"
+        data-toggle="tooltip" data-placement="top"
+        title="分享链接"
+        data-title-succeed="链接已复制！">
+    </i>
+
+  </span>
+</div>
+
+
+  </div><!-- .post-tail-bottom -->
+
+</div><!-- div.post-tail-wrapper -->
+
+
+      
+    
+    
+
+    </div>
+  </div> <!-- #core-wrapper -->
+
+  <!-- pannel -->
+  <div id="panel-wrapper" class="col-xl-3 pl-2 text-muted">
+
+    <div class="access">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+
+
+  <div id="access-tags">
+    <div class="panel-heading">热门标签</div>
+    <div class="d-flex flex-wrap mt-3 mb-1 mr-3">
+
+    
+      
+      <a class="post-tag" href="/tags/gdb/">gdb</a>
+    
+      
+      <a class="post-tag" href="/tags/git/">git</a>
+    
+      
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
+    
+      
+      <a class="post-tag" href="/tags/tls/">tls</a>
+    
+
+    </div>
+  </div>
+
+
+    </div>
+
+    
+      
+      
+
+
+
+<!-- BS-toc.js will be loaded at medium priority -->
+<script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script>
+
+<div id="toc-wrapper" class="pl-0 pr-4 mb-5">
+  <div class="panel-heading pl-3 pt-2 mb-2">文章内容</div>
+  <nav id="toc" data-toggle="toc"></nav>
+</div>
+
+
+    
+  </div>
+
+</div>
+
+<!-- tail -->
+
+<div class="row">
+  <div class="col-12 col-lg-11 col-xl-8">
+    <div id="tail-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4">
+      
+        
+        <!--
+ Recommend the other 3 posts according to the tags and categories of the current post,
+ if the number is not enough, use the other latest posts to supplement.
+-->
+
+<!-- The total size of related posts  -->
+
+
+<!-- An random integer that bigger than 0  -->
+
+
+<!-- Equals to TAG_SCORE / {max_categories_hierarchy}  -->
+
+
+
+
+
+
+
+
+  
+
+  
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+
+
+<!-- Fill with the other newlest posts  -->
+
+
+
+
+
+
+  <div id="related-posts" class="mt-5 mb-2 mb-sm-4">
+    <h3 class="pt-2 mt-1 mb-4 ml-1"
+      data-toc-skip>相关文章</h3>
+    <div class="card-deck mb-4">
+    
+      
+      
+      <div class="card">
+        <a href="/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1669434000"
+    
+    >
+  2022-11-26
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>记一次指针强转导致脏数据写入问题</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。
+
+问题描述
+
+时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1669563000"
+    
+    >
+  2022-11-27
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>函数传参</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                传参分类
+
+从传参类型上看
+
+传参分为传值和传指针。
+
+
+  传指针本质上也是传值，只不过传的是指针值。由于传一般值和传指针值还是有点区别，所以分成两种说法。传值一般就指传一般值，传指针专门用于描述传指针值。
+
+
+从传参行为上看
+
+传参分为值复制和传自己。
+
+
+  传自己本质上也是值复制，只不过是取地址传无名指针，形参直接接上；而不是直接传有名指针。例如：
+
+
+// 函数调用
+func1(i...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1708764817"
+    
+    >
+  2024-02-24
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>C语言标准发展历史</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                对各种 C 标准进行简述。
+
+参考资料：Standards (Using the GNU Compiler Collection (GCC))
+
+ANSI C，ISO C89/90
+
+ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。
+
+1990 年晚些时候，该标准成为了 ISO C89/90 标准。
+
+这两个标准之间没有技术上的差异，可以当作就是一个标准。
+...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+    </div> <!-- .card-deck -->
+  </div> <!-- #related-posts -->
+
+
+      
+        
+        <!--
+  Navigation buttons at the bottom of the post.
+-->
+
+<div class="post-navigation d-flex justify-content-between">
+  
+  <a href="/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/" class="btn btn-outline-primary"
+    prompt="上一篇">
+    <p>五险一金超详细整理</p>
+  </a>
+  
+
+  
+  <span class="btn btn-outline-primary disabled"
+    prompt="下一篇">
+    <p>-</p>
+  </span>
+  
+
+</div>
+
+      
+        
+        <!--  The comments switcher -->
+
+
+      
+    </div>
+  </div>
+</div> <!-- .row -->
+
+
+
+        <!--
+  The Footer
+-->
+
+<footer class="d-flex w-100 justify-content-center">
+  <div class="d-flex justify-content-between align-items-center text-muted">
+    <div class="footer-left">
+      <p class="mb-0">
+        © 2025
+        <a href="https://github.com/lcatmiao">小黑猫</a>.
+        
+        <span data-toggle="tooltip" data-placement="top"
+          title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。">保留部分权利。</span>
+        
+      </p>
+    </div>
+
+    <div class="footer-right">
+      <p class="mb-0">
+        
+
+        
+
+        本站由 
+          <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>
+         生成，采用 
+          <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a>
+         主题。
+
+      </p>
+    </div>
+
+  </div> <!-- div.d-flex -->
+</footer>
+
+
+      </div>
+
+      <!--
+  The Search results
+-->
+<div id="search-result-wrapper" class="d-flex justify-content-center unloaded">
+  <div class="col-12 col-sm-11 post-content">
+    <div id="search-hints">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+
+
+  <div id="access-tags">
+    <div class="panel-heading">热门标签</div>
+    <div class="d-flex flex-wrap mt-3 mb-1 mr-3">
+
+    
+      
+      <a class="post-tag" href="/tags/gdb/">gdb</a>
+    
+      
+      <a class="post-tag" href="/tags/git/">git</a>
+    
+      
+      <a class="post-tag" href="/tags/kdb/">kdb</a>
+    
+      
+      <a class="post-tag" href="/tags/tls/">tls</a>
+    
+
+    </div>
+  </div>
+
+
+    </div>
+    <div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div>
+  </div>
+</div>
+
+
+    </div> <!-- #main-wrapper -->
+
+    
+
+    <div id="mask"></div>
+
+    <a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!--
+  Jekyll Simple Search loader
+  See: <https://github.com/christian-fei/Simple-Jekyll-Search>
+-->
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+  searchInput: document.getElementById('search-input'),
+  resultsContainer: document.getElementById('search-results'),
+  json: '/assets/js/data/search.json',
+  searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0">  <a href="{url}">{title}</a>  <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">    {categories}    {tags}  </div>  <p>{snippet}</p></div>',
+  noResultsText: '<p class="mt-5">搜索结果为空</p>',
+  templateMiddleware: function(prop, value, template) {
+    if (prop === 'categories') {
+      if (value === '') {
+        return `${value}`;
+      } else {
+        return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`;
+      }
+    }
+
+    if (prop === 'tags') {
+      if (value === '') {
+        return `${value}`;
+      } else {
+        return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`;
+      }
+    }
+  }
+});
+</script>
+
+
+    <!--
+  JS selector for site.
+-->
+
+<!-- layout specified -->
+
+
+  
+
+
+
+  <!-- image lazy-loading & popup -->
+  <script src="https://cdn.jsdelivr.net/combine/npm/lozad/dist/lozad.min.js,npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/clipboard@2/dist/clipboard.min.js"></script>
+
+
+
+
+  
+
+  <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1,npm/dayjs@1/locale/zh.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script>
+
+
+
+
+
+<script defer src="/assets/js/dist/post.min.js"></script>
+
+
+
+<!-- commons -->
+
+<script src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.16.1,npm/bootstrap@4/dist/js/bootstrap.min.js"></script>
+
+
+
+
+  </body>
+
+</html>
+
