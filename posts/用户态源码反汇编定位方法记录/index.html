@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/"},"datePublished":"2025-05-24T21:55:00+08:00","url":"http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/","description":"前言 问题背景就是进程崩溃，产生了 core 文件。其实这次定位非常简单，bt, disassemble 就能直接看出来了。既然简单，就利用这次机会尝试了一下源码反汇编的定位方法。此前在别人的帮助下，运用该方法定位过内核态的问题，但都事发紧急，事后没能复盘，留下了遗憾。尽管存在差异，还是决定在用户态“模拟”一下。 定位过程 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 Program terminated with signal SIGSEGV, Segmentation fault. #0 0x00007fcff9ad157a in check () from ....so (gdb) bt #0 0x00007fcff9ad157a in check () from ....so #1 0x00007fcff9ad27c1 in func () from ....so #2 0x00007fcff9ad3483 in func () from ....so #3 0x00007fcff9ad6696 in func () from ....so #4 0x00007fcff9ad9a40 in func () from ....so #5 0x00007fd018fa50d6 in func () from ....so #6 0x000000000041dbe9 in func () #7 0x00000000004178bd in func () #8 0x00007fd018fc39fd in func () from ....so #9 0x000000000040b56c in main () 死在 check() 中。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 (gdb) disassemble check Dump of assembler code for function check: 0x00007fcff9ad1408 &lt;+0&gt;: push %r15 0x00007fcff9ad140a &lt;+2&gt;: push %r14 0x00007fcff9ad140c &lt;+4&gt;: mov %rdi,%r14 ... 0x00007fcff9ad156c &lt;+356&gt;: mov 0x48(%r14),%rax 0x00007fcff9ad1570 &lt;+360&gt;: or $0xffffffffffffffff,%rcx 0x00007fcff9ad1574 &lt;+364&gt;: mov (%rax,%rbp,1),%rdi 0x00007fcff9ad1578 &lt;+368&gt;: xor %eax,%eax =&gt; 0x00007fcff9ad157a &lt;+370&gt;: repnz scas %es:(%rdi),%al 0x00007fcff9ad157c &lt;+372&gt;: mov %rcx,%rax 0x00007fcff9ad157f &lt;+375&gt;: not %rax 0x00007fcff9ad1582 &lt;+378&gt;: dec %rax 0x00007fcff9ad1585 &lt;+381&gt;: cmp $0x200,%rax ... 找到崩溃指令的偏移量为 +370，其十六进制为 172。 接下来准备编译源码。编译前准备： 源码版本须与问题版本一致 给源码编译加上 -g 参数，去掉 STRIP，除此以外的编译参数都不变（与编译问题版本时的参数保持一致） 将问题代码所在的文件编译出来，得到对应的 so。 随后，在开发环境中反汇编： 1 2 3 # -S Intermix source code with disassembly # -l Include line numbers and filenames in output objdump check.so -S -l &gt; check.c.asm 在 check.c.asm 中直接找到 check 函数。其第一条指令的首地址为 2653a。我们将之加上先前在调试环境中得到的崩溃指令的偏移量： 2653a + 172 = 266ac，就得到了开发环境中崩溃指令的偏移量。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 2653a: ... ... /.../check.c:3498 return ERR_MAX_CFG; } for (i = 0 ;i &lt; obj-&gt;sizeList; i++) { snprintf(err_str, NAME_LEN,&quot;list[%d].host&quot;, i); 26699: e8 42 3b ff ff callq 1a1e0 &lt;snprintf@plt&gt; /.../check.c:3499 if (strlen(obj-&gt;list[i].host) &gt; 512) 2669e: 49 8b 46 48 mov 0x48(%r14),%rax 266a2: 48 83 c9 ff or $0xffffffffffffffff,%rcx 266a6: 48 8b 3c 28 mov (%rax,%rbp,1),%rdi 266aa: 31 c0 xor %eax,%eax 266ac: f2 ae repnz scas %es:(%rdi),%al 266ae: 48 89 c8 mov %rcx,%rax 266b1: 48 f7 d0 not %rax 266b4: 48 ff c8 dec %rax 266b7: 48 3d 00 02 00 00 cmp $0x200,%rax 可以看到 266ac 的崩溃指令 repnz scas %es:(%rdi),%al 与调试环境中的崩溃指令是一致的。随即观察附近的源码，就知道问题所在了。 1000% 是 strlen() 的问题，多半是 host 为 NULL 了。实测一番，果不其然，直接复现。 注意事项 在开发环境中重新编译相关源码时，需保证代码版本、编译参数（除 -g, STRIP 外）与问题版本一致，否则反汇编结果将与问题版本所在环境的反汇编结果不一致，在开发环境中就无法精准地找到同样的崩溃指令了，二者汇编都对不上，也就无法定位了。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"用户态源码反汇编定位方法记录","dateModified":"2025-05-24T21:55:00+08:00","@context":"https://schema.org"}</script>
+{"headline":"用户态源码反汇编定位方法记录","dateModified":"2025-05-24T21:55:00+08:00","datePublished":"2025-05-24T21:55:00+08:00","url":"http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"前言 问题背景就是进程崩溃，产生了 core 文件。其实这次定位非常简单，bt, disassemble 就能直接看出来了。既然简单，就利用这次机会尝试了一下源码反汇编的定位方法。此前在别人的帮助下，运用该方法定位过内核态的问题，但都事发紧急，事后没能复盘，留下了遗憾。尽管存在差异，还是决定在用户态“模拟”一下。 定位过程 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 Program terminated with signal SIGSEGV, Segmentation fault. #0 0x00007fcff9ad157a in check () from ....so (gdb) bt #0 0x00007fcff9ad157a in check () from ....so #1 0x00007fcff9ad27c1 in func () from ....so #2 0x00007fcff9ad3483 in func () from ....so #3 0x00007fcff9ad6696 in func () from ....so #4 0x00007fcff9ad9a40 in func () from ....so #5 0x00007fd018fa50d6 in func () from ....so #6 0x000000000041dbe9 in func () #7 0x00000000004178bd in func () #8 0x00007fd018fc39fd in func () from ....so #9 0x000000000040b56c in main () 死在 check() 中。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 (gdb) disassemble check Dump of assembler code for function check: 0x00007fcff9ad1408 &lt;+0&gt;: push %r15 0x00007fcff9ad140a &lt;+2&gt;: push %r14 0x00007fcff9ad140c &lt;+4&gt;: mov %rdi,%r14 ... 0x00007fcff9ad156c &lt;+356&gt;: mov 0x48(%r14),%rax 0x00007fcff9ad1570 &lt;+360&gt;: or $0xffffffffffffffff,%rcx 0x00007fcff9ad1574 &lt;+364&gt;: mov (%rax,%rbp,1),%rdi 0x00007fcff9ad1578 &lt;+368&gt;: xor %eax,%eax =&gt; 0x00007fcff9ad157a &lt;+370&gt;: repnz scas %es:(%rdi),%al 0x00007fcff9ad157c &lt;+372&gt;: mov %rcx,%rax 0x00007fcff9ad157f &lt;+375&gt;: not %rax 0x00007fcff9ad1582 &lt;+378&gt;: dec %rax 0x00007fcff9ad1585 &lt;+381&gt;: cmp $0x200,%rax ... 找到崩溃指令的偏移量为 +370，其十六进制为 172。 接下来准备编译源码。编译前准备： 源码版本须与问题版本一致 给源码编译加上 -g 参数，去掉 STRIP，除此以外的编译参数都不变（与编译问题版本时的参数保持一致） 将问题代码所在的文件编译出来，得到对应的 so。 随后，在开发环境中反汇编： 1 2 3 # -S Intermix source code with disassembly # -l Include line numbers and filenames in output objdump check.so -S -l &gt; check.c.asm 在 check.c.asm 中直接找到 check 函数。其第一条指令的首地址为 2653a。我们将之加上先前在调试环境中得到的崩溃指令的偏移量： 2653a + 172 = 266ac，就得到了开发环境中崩溃指令的偏移量。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 2653a: ... ... /.../check.c:3498 return ERR_MAX_CFG; } for (i = 0 ;i &lt; obj-&gt;sizeList; i++) { snprintf(err_str, NAME_LEN,&quot;list[%d].host&quot;, i); 26699: e8 42 3b ff ff callq 1a1e0 &lt;snprintf@plt&gt; /.../check.c:3499 if (strlen(obj-&gt;list[i].host) &gt; 512) 2669e: 49 8b 46 48 mov 0x48(%r14),%rax 266a2: 48 83 c9 ff or $0xffffffffffffffff,%rcx 266a6: 48 8b 3c 28 mov (%rax,%rbp,1),%rdi 266aa: 31 c0 xor %eax,%eax 266ac: f2 ae repnz scas %es:(%rdi),%al 266ae: 48 89 c8 mov %rcx,%rax 266b1: 48 f7 d0 not %rax 266b4: 48 ff c8 dec %rax 266b7: 48 3d 00 02 00 00 cmp $0x200,%rax 可以看到 266ac 的崩溃指令 repnz scas %es:(%rdi),%al 与调试环境中的崩溃指令是一致的。随即观察附近的源码，就知道问题所在了。 1000% 是 strlen() 的问题，多半是 host 为 NULL 了。实测一番，果不其然，直接复现。 注意事项 在开发环境中重新编译相关源码时，需保证代码版本、编译参数（除 -g, STRIP 外）与问题版本一致，否则反汇编结果将与问题版本所在环境的反汇编结果不一致，在开发环境中就无法精准地找到同样的崩溃指令了，二者汇编都对不上，也就无法定位了。","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -900,15 +900,6 @@ objdump check.so <span class="nt">-S</span> <span class="nt">-l</span> <span cla
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
   
     
     
@@ -923,6 +914,43 @@ objdump check.so <span class="nt">-S</span> <span class="nt">-l</span> <span cla
     
     
     
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
   
     
     
@@ -943,6 +971,55 @@ objdump check.so <span class="nt">-S</span> <span class="nt">-l</span> <span cla
     
     
     
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
     
   
     
@@ -978,10 +1055,16 @@ objdump check.so <span class="nt">-S</span> <span class="nt">-l</span> <span cla
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
+      <a class="post-tag" href="/tags/bash/">bash</a>
+    
+      
       <a class="post-tag" href="/tags/git/">git</a>
     
       
       <a class="post-tag" href="/tags/kdb/">kdb</a>
+    
+      
+      <a class="post-tag" href="/tags/shell/">shell</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
@@ -1030,6 +1113,19 @@ objdump check.so <span class="nt">-S</span> <span class="nt">-l</span> <span cla
 
 
 
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
 
   
@@ -1306,43 +1402,6 @@ objdump check.so <span class="nt">-S</span> <span class="nt">-l</span> <span cla
       
       
       <div class="card">
-        <a href="/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1669434000"
-    
-    >
-  2022-11-26
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>记一次指针强转导致脏数据写入问题</h3>
-            <div class="text-muted small">
-              <p>
-                
-
-
-
-
-
-                交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。
-
-问题描述
-
-时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据...
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
-      
-      
-      <div class="card">
         <a href="/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/">
           <div class="card-body">
             <!--
@@ -1386,6 +1445,50 @@ objdump check.so <span class="nt">-S</span> <span class="nt">-l</span> <span cla
 
 // 函数调用
 func1(i...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1708764817"
+    
+    >
+  2024-02-24
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>C语言标准发展历史</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                对各种 C 标准进行简述。
+
+参考资料：Standards (Using the GNU Compiler Collection (GCC))
+
+ANSI C，ISO C89/90
+
+ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。
+
+1990 年晚些时候，该标准成为了 ISO C89/90 标准。
+
+这两个标准之间没有技术上的差异，可以当作就是一个标准。
+...
               </p>
             </div>
           </div>
@@ -1496,15 +1599,6 @@ func1(i...
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
   
     
     
@@ -1519,6 +1613,43 @@ func1(i...
     
     
     
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1539,6 +1670,55 @@ func1(i...
     
     
     
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
     
   
     
@@ -1574,10 +1754,16 @@ func1(i...
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
+      <a class="post-tag" href="/tags/bash/">bash</a>
+    
+      
       <a class="post-tag" href="/tags/git/">git</a>
     
       
       <a class="post-tag" href="/tags/kdb/">kdb</a>
+    
+      
+      <a class="post-tag" href="/tags/shell/">shell</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>

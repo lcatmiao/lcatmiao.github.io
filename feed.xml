@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2025-11-12T16:59:23+08:00</updated>
+  <updated>2025-12-04T16:43:22+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,58 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>Linux环境配置加载分析</title>
+    <link href="http://0.0.0.0:4000/posts/Linux%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/" rel="alternate" type="text/html" title="Linux环境配置加载分析" />
+    <published>2025-12-04T16:42:00+08:00</published>
+  
+    <updated>2025-12-04T16:42:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/Linux%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/</id>
+    <content src="http://0.0.0.0:4000/posts/Linux%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="Linux" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      本文以 OS: Debian, Shell: bash 为环境写成，其它环境如 OS: RedHat; Shell: sh, zsh 可能与本文结论有所出入。
+
+Shell环境配置加载分析
+
+在研究shell环境配置文件加载流程前，需要先搞明白 Interactive Shell、Login Shell 的概念。
+
+Interactive Shell
+
+定义
+
+man 说明如下：
+
+bash [options] [command_string | file]
+
+
+An interactive shell is one started without non-option arguments (unless -s is 
+specified) and without the -c option, whose standard input and error are both conne...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -243,57 +295,6 @@ Program terminated with signal SIGSEGV, Segmentation fault.
 #1  0x00007fcff9ad27c1 in func ()
    from ....so
 #2  0x00007fc...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>gdb无-g调试实战记录</title>
-    <link href="http://0.0.0.0:4000/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html" title="gdb无-g调试实战记录" />
-    <published>2025-04-24T22:00:00+08:00</published>
-  
-    <updated>2025-04-24T22:00:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/</id>
-    <content src="http://0.0.0.0:4000/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="Tech" />
-    
-    <category term="C" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      问题背景
-
-设备外发日志的内容错乱，甚至产生 core 文件。版本是正常编译的发行版本，没有附带 -g 加入的调试信息。
-
-我懒得加调试信息也不想加 -g 重新编译，二者在本人的开发环境中都十分麻烦。这种无 -g 调试的场景其实还蛮常见的，这次定位比较顺利，故记录之。
-
-定位过程
-
-从现象上看是日志内容错位了，但也不能排除是踩内存，出界内容被直接解析也能出现类似的现象。通过看代码，我高度怀疑日志结构体在传参进入函数 output_syslog(log_s *in_buffer) 的时候就已经有问题了。没有 -g 的话，就只能进行有限的调试，通过跟踪地址、强看汇编来定位。
-
-gdb 给怀疑的函数 output_syslog() 打断点，命中后，寄存器信息如下：
-
-(gdb) b output_syslog 
-Breakpoint 1 at 0x43ed38
-(gdb) c
-Contin...
     </summary>
   
 

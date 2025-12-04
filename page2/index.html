@@ -43,7 +43,7 @@
 <meta property="twitter:title" content="小黑猫" />
 <meta name="twitter:site" content="@twitter_username" />
 <script type="application/ld+json">
-{"url":"http://0.0.0.0:4000/page2/","description":"A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.","@type":"WebPage","headline":"小黑猫","@context":"https://schema.org"}</script>
+{"headline":"小黑猫","url":"http://0.0.0.0:4000/page2/","@type":"WebPage","description":"A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -455,6 +455,93 @@
 
 
 <div id="post-list">
+
+
+
+  <div class="post-preview">
+    <h1>
+      <a href="/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/">记一次指针强转导致脏数据写入问题</a>
+    </h1>
+
+    <div class="post-content">
+      <p>
+        
+
+
+
+
+
+        交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。
+
+问题描述
+
+时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据...
+      </p>
+    </div>
+
+    <div class="post-meta text-muted d-flex">
+
+      <div class="mr-auto">
+        <!-- posted date -->
+        <i class="far fa-calendar fa-fw"></i>
+        <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago"
+    data-ts="1669434000"
+    
+      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
+    
+    
+      data-capitalize="true"
+    >
+  2022-11-26
+</em>
+
+
+        <!-- time to read -->
+        <i class="far fa-clock fa-fw"></i>
+        <!--
+  Calculate the post's reading time, and display the word count in tooltip
+ -->
+
+
+
+<!-- words per minute  -->
+
+
+
+
+
+
+
+
+
+
+<!-- return element -->
+<span class="readtime" data-toggle="tooltip" data-placement="bottom"
+  title="605 字">
+  <em>3 分钟</em></span>
+
+
+        <!-- categories -->
+        
+          <i class="far fa-folder-open fa-fw"></i>
+          <span>
+          
+            Tech,
+            C
+          </span>
+        
+      </div>
+
+      
+
+    </div> <!-- .post-meta -->
+
+  </div> <!-- .post-review -->
 
 
 
@@ -1202,15 +1289,6 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
   
     
     
@@ -1225,6 +1303,43 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
     
     
     
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1245,6 +1360,55 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
     
     
     
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
     
   
     
@@ -1280,10 +1444,16 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
+      <a class="post-tag" href="/tags/bash/">bash</a>
+    
+      
       <a class="post-tag" href="/tags/git/">git</a>
     
       
       <a class="post-tag" href="/tags/kdb/">kdb</a>
+    
+      
+      <a class="post-tag" href="/tags/shell/">shell</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
@@ -1369,15 +1539,6 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
   
     
     
@@ -1392,6 +1553,43 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
     
     
     
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1412,6 +1610,55 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
     
     
     
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
     
   
     
@@ -1447,10 +1694,16 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
+      <a class="post-tag" href="/tags/bash/">bash</a>
+    
+      
       <a class="post-tag" href="/tags/git/">git</a>
     
       
       <a class="post-tag" href="/tags/kdb/">kdb</a>
+    
+      
+      <a class="post-tag" href="/tags/shell/">shell</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>

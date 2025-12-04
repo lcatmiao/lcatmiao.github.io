@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/"},"datePublished":"2025-11-12T16:44:00+08:00","url":"http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/","description":"颠覆认知 我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。 绝大多数教程都是告诉你： 优先级高的运算符先执行。 当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。 其实按照上面的说法，将有诸多无法解释的现象，比如： 1 2 3 4 5 int main(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); return 0; } 括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project) 15.2.0 编译后，在 windows 平台下输出结果是 abc。是不是很疑惑？难道括号没起作用吗？ 我还能举出一些令你心虚的例子： 1 1 + (2 + 3) + 4 + (5 + 6) 请问上面的表达式中是 2 + 3 先执行还是 5 + 6 先执行？你也许会说：括号优先级最高，所以肯定先执行 2 + 3 或者 5 + 6，然后由于这两个括号优先级相同，所以接下来看结合性，又因为括号是左结合性，所以先执行 2 + 3。结合性真的是这样用的吗？请问它的“结合”体现在哪里了？ 再看一例： 1 1 + 2 + 3 + 4 这个表达式由于 + 优先级相同，所以看结合性，又由于是左结合性，所以在这三个连续的 + 中，应该先执行最左边的 +，即先结合最左边的加号及其操作数，变成 (1 + 2) + 3 + 4，再结合第二个加号及其操作数，变成 ((1 + 2) + 3) + 4。相信这个例子与上一例相比，你能够更加感性地体会到“结合”的概念，而在上一例中，你似乎只是单纯地确认了两个子表达式的执行顺序，并没有所谓“结合”的感受。你真的认为上面两例中所谓“结合性的运用”是一样的吗？这对吗？ 还有众所周知的逻辑运算符： 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 这个表达式显然在输出 a 后就结束了，因为 printf() 将返回写入的字符数，前半条件非零为真，直接触发短路，后续不再执行。但我们明明给后半条件加了括号，按照优先级那套说法，b 应该先输出才对。然而这套说法连你自己也不敢相信，因为这违背了短路规则。 上面的例子都在说明，日常所见的那套优先级和结合性的说法显然太过简陋，并且导致了不少误解。 直接说结论 结合性只作用于连续相邻的同优先级运算符。 优先级和结合性只能确定表达式的执行是怎么分组的，并不能确定子表达式之间或子表达式内部的执行顺序。子表达式之间或内部的执行顺序由编译器自行决定，这在多数情况下并不影响表达式最终的执行结果，而对于那些执行顺序影响执行结果的情况，应当竭力避免之。 sequence point 定义了一些特定的执行顺序。简言之，有些运算符被明确定义了子表达式（操作数）的执行顺序，如 &amp;&amp;、||。 理论分析 概念定义 首先了解一些概念定义。 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Value computation of operations The C++ standard uses the term value computation to mean the execution of operators in an expression to produce a value. The precedence and association rules determine the order in which value computation happens. For example, given the expression 4 + 2 * 3, due to the precedence rules this groups as 4 + (2 * 3). The value computation for (2 * 3) must happen first, so that the value computation for 4 + 6 can be completed. 1 2 3 4 5 6 Evaluation of operands The C++ standard (mostly) uses the term evaluation to refer to the evaluation of operands (not the evaluation of operators or expressions!). For example, given expression a + b, a will be evaluated to produce some value, and b will be evaluated to produce some value. These values can be then used as operands to operator+ for value computation. ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 Accessing a volatile object, modifying an object, modifying a file, or calling a function that does any of those operations are all side effects,12) which are changes in the state of the execution environment. Evaluation of an expression in general includes both value computations and initiation of side effects. Value computation for an lvalue expression includes determining the identity of the designated object. 简单来说，就是表达式的 evaluation 过程包括了 value computations 和 side effects，前者就是常规的值计算过程，后者主要是“写”过程。 以表达式 a = (1 + 2) 为例，表达式 (1 + 2) 的 evaluation 过程仅包括了 value computation，即计算 (1 + 2) 得到 3；表达式 a = (1 + 2) 的 evaluation 过程包括了 value computation 和 side effects，前者包含计算表达式 (1 + 2) 的值为 3 的过程和计算表达式 a = 3 的值为 3 的过程，后者是把 3 赋值给 a 的过程。 ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 6 7 8 9 10 11 Sequenced before is an asymmetric, transitive, pair-wise relation between evaluations executed by a single thread, which induces a partial order among those evaluations. Given any two evaluations A and B, if A is sequenced before B, then the execution of A shall precede the execution of B. (Conversely, if A is sequenced before B, then B is sequenced after A.) If A is not sequenced before or after B, then A and B are unsequenced. Evaluations A and B are indeterminately sequenced when A is sequenced either before or after B, but it is unspecified which.13) The presence of a sequence point between the evaluation of expressions A and B implies that every value computation and side effect associated with A is sequenced before every value computation and side effect associated with B. (A summary of the sequence points is given in annex C.) 这一段主要定义了 sequenced、unsequenced、indeterminately sequenced 以及 sequence point 的概念。 sequenced：有顺序。标准明确规定了子表达式的执行顺序，编译器实现必须遵守。 unsequenced：无顺序。标准没有规定子表达式的执行顺序，编译器可以自由实现，甚至可以并发执行，合并执行子表达式。 indeterminately sequenced：不确定顺序。标准规定子表达式的执行要有顺序，但未规定方向，编译器可以自行选择一个方向实现。 论编译器实现自由度，unsequenced &gt; indeterminately sequenced &gt; sequenced。 sequence point： 表达式A与B之间存在 sequence point，意味着表达式A的 evaluation(value computation + side effects) 按顺序排列在表达式B的 evaluation 之前。 sequence point（DeepSeek）：序列点是程序执行中的一个特定位置，在此位置之前的所有表达式的求值（包括数值计算和副作用）都必须完成，并且不会影响在此之后的所有表达式的求值。 提取结论 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Operator precedence To assist with parsing a compound expression, all operators are assigned a level of precedence. Operators with a higher precedence level are grouped with operands first. You can see in the table below that multiplication and division (precedence level 5) have a higher precedence level than addition and subtraction (precedence level 6). Thus, multiplication and division will be grouped with operands before addition and subtraction. In other words, 4 + 2 * 3 will be grouped as 4 + (2 * 3). 1 2 3 4 5 6 7 8 9 10 11 Operator associativity Consider a compound expression like 7 - 4 - 1. Should this be grouped as (7 - 4) - 1 which evaluates to 2, or 7 - (4 - 1), which evaluates to 4? Since both subtraction operators have the same precedence level, the compiler can not use precedence alone to determine how this should be grouped. If two operators with the same precedence level are adjacent to each other in an expression, the operator’s associativity tells the compiler whether to evaluate the operators (not the operands!) from left to right or from right to left. Subtraction has precedence level 6, and the operators in precedence level 6 have an associativity of left to right. So this expression is grouped from left to right: (7 - 4) - 1. 1 2 In most cases, the order of evaluation for operands and function arguments is unspecified, meaning they may be evaluated in any order. 上述资料的重点可以被总结为三句话： 拥有高优先级的运算符优先与它的操作数一起被分组。 对于拥有相同优先级的相邻两个运算符，由结合性决定哪个运算符先被分组。 操作数（子表达式）和函数参数的求值（执行）顺序没有被明确指定。 ISO/IEC 9899:201x, C11, 6.5 Expressions 1 2 3 The grouping of operators and operands is indicated by the syntax.85) Except as specified later, side effects and value computations of subexpressions are unsequenced.86) 除非特别指定，子表达式的 side effects 和 value computations 是 unsequenced 的。 1 2 3 4 5 If a side effect on a scalar object is unsequenced relative to either a different side effect on the same scalar object or a value computation using the value of the same scalar object, the behavior is undefined. If there are multiple allowable orderings of the subexpressions of an expression, the behavior is undefined if such an unsequenced side effect occurs in any of the orderings.84) 翻译（DeepSeek）： 如果一个标量对象的副作用，相对于同一个标量对象的另一个副作用，或者相对于使用同一个标量对象的值的值计算是未排序的，那么其行为是未定义的。 如果一个表达式的子表达式存在多种允许的执行顺序，那么在任何一种顺序中，如果出现了这种未排序的副作用，其行为都是未定义的。 其实有第一条就差不多了，第二条主要是强调：只要有一种顺序会产生歧义，即使有某些顺序没有歧义，依旧算未定义行为。 这段话属实晦涩，仅以例子作简单说明。 例1： 1 1 + (a = 2) + 3 + (a = 4) + 5; 不知道 (a = 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，两个 side effects（赋值）没有被规定顺序，先执行 (a = 2) 与先执行 (a = 4) 将使变量 a 的最终结果不同。情况符合第一条的描述，是未定义行为。 例2： 1 2 a = 1; 1 + (a + 2) + 3 + (a = 4) + 5; 不知道 (a + 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，side effects（赋值）与 value computations（加2） 没有被规定顺序，先执行 (a + 2) 与先执行 (a = 4) 将使整个表达式的最终结果不同。情况符合第一条的描述，是未定义行为。先执行 (a = 4) 再执行 (a + 2)，也就是彻底写完了以后读，这看起来没有歧义；若先执行 (a + 2) 再执行 (a = 4)，也就是先读再写，按DeepSeek的意思，这与先前的读产生冲突，导致歧义；两种顺序有一种有歧义，情况符合第二条的描述，是未定义行为。我个人认为把本例往第二条上靠似乎有点牵强，但这不重要，有第一条足够了。 例3： 1 i = ++i + 1; 分组完毕后是 i = ((++i) + 1)。子表达式内部的执行顺序是 unsequenced 的。(++i) 可以只返回表达式的值，先不给 i 加1，然后该表达式的值与1相加，和赋值给 i，最后再执行 (++i) 的加1，这是一种顺序；(++i) 返回表达式的值并给 i 加1，然后该表达式的值与1相加，和赋值给 i，覆盖掉其当前值，这是一种顺序。情况符合第一条的描述，是未定义行为。 Precedence and order of evaluation -Microsoft Learn 1 2 3 4 5 6 Only the sequential-evaluation (,), logical-AND (&amp;&amp;), logical-OR (||), conditional-expression (? :), and function-call operators constitute sequence points, and therefore guarantee a particular order of evaluation for their operands. ... (The comma operator in a function call is not the same as the sequential-evaluation operator and does not provide any such guarantee.) 直译：运算符 ,、&amp;&amp;、||、? :、()（指函数调用，function_name(arguments)）拥有 sequence point，从而保证了特定的求值顺序。（函数参数列表中的逗号与逗号表达式中的逗号运算符是两回事，前者并没有序列点。） ISO/IEC 9899:201x, C11, 6.5.14 Logical OR operator 1 2 3 4 Unlike the bitwise | operator, the || operator guarantees left-to-right evaluation; if the second operand is evaluated, there is a sequence point between the evaluations of the first and second operands. If the first operand compares unequal to 0, the second operand is not evaluated. 其实就是给 || 明确规定了从左到右的执行顺序，并且遵守短路规则。其它特别的运算符诸如 &amp;&amp; 肯定也有明确的序列点定义。 ISO/IEC 9899:201x, C11, 6.5.2.2 Function calls 1 2 3 4 EXAMPLE In the function call (*pf[f1()]) (f2(), f3() + f4()) the functions f1, f2, f3, and f4 may be called in any order. All side effects have to be completed before the function pointed to by pf[f1()] is called. 1 2 3 4 5 There is a sequence point after the evaluations of the function designator and the actual arguments but before the actual call. Every evaluation in the calling function (including other function calls) that is not otherwise specifically sequenced before or after the execution of the body of the called function is indeterminately sequenced with respect to the execution of the called function.94) 函数指示符（函数名，也可以是一个函数指针）和函数参数的执行顺序是 unsequenced，所以上例中 f1()、 f2()、f3()、f4() 的调用顺序由编译器自由决定。 在“函数指示符和函数参数的求值”和“实际调用的发生”之间，存在一个序列点，即标准明确规定在函数调用前，函数指示符和函数参数的求值必须全部完成，包括所有 value computations 和 side effects。在上例中，一定是 f1()、 f2()、f3()、f4() 都执行完，(*pf[f1()]) 值计算完后才会调用函数 pf[f1()]（即 (*pf[f1()])，* 可加可不加）。 调用函数中相对于被调函数体的执行没有被明确指定顺序的 evaluation(including function calls) 相对于被调函数体的执行是 indeterminately sequenced。这条比较抽象，以例说明。 例： 1 2 3 4 void func(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); } 调用函数就是 func()，被调函数就是任意一个 printf()。上面三个 printf() 的调用是 unsequenced，编译器可以自由选择先调用谁。被调用的 printf() 的函数体一定会完整地执行完才能去调用另一个 printf() 并完整地执行其函数体，不可以并发执行。执行有顺序，方向不确定，即 indeterminately sequenced。 C Sequence Points - Microsoft Learn 上述链接总结了很多 sequence points，其描述相对于C标准文档通俗很多，故记录链接于此。 回到最初的问题 问题1：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 编译器将保留程序员手动添加的分组（括号），然后根据优先级和结合性进一步分组（分组可以被视作一个整体），结果如下： 1 ((printf(&quot;%c&quot;, &#39;a&#39;) + 1) + 1) + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 子表达式的执行顺序是 unsequenced 的，所以上面三个 printf() 被以什么顺序调用都不足为奇，根本就没有固定答案，只是一般来说编译器从左往右执行，所以可能会得到 abc 的结果。本例中表达式的执行顺序未知且会影响打印结果。 问题2：`(2 + 3)` 和 `(5 + 6)` 谁先执行？ 1 1 + (2 + 3) + 4 + (5 + 6); 编译器保留手动添加的分组，然后根据优先级和结合性进一步分组，分组可以被视作一个整体，结果如下： 1 ((1 + (2 + 3)) + 4) + (5 + 6); 到此为止了，子表达式的执行顺序是 unsequenced 的，所以 (2 + 3) 和 (5 + 6) 谁先执行不知道，但这不影响最终结果。 问题3：下面的表达式是怎么执行的？ 1 1 + 2 + 3 + 4; 编译器根据优先级和结合性分组，结果如下： 1 ((1 + 2) + 3) + 4; 子表达式的执行顺序是 unsequenced 的，编译器可以先确定 4 的值就是 4，也可以先去求 ((1 + 2) + 3) 的值，顺序未知，不过也不重要，这并不影响最终结果。 问题4：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 编译器保留手动添加的分组，然后根据优先级进一步分组，函数调用运算符 () 的优先级最高，结果如下： 1 (printf(&quot;%c&quot;, &#39;a&#39;)) || (printf(&quot;%c&quot;, &#39;b&#39;)); 运算符 || 被规定了明确的执行顺序，并遵守短路规则。所以，一定是先执行左边的表达式，输出 a，然后函数返回 1，触发短路规则，整个表达式直接执行结束，右边的表达式不会再执行。打印结果是明确的，为 a。 感想： 写到这里，我似乎突然明白为什么国外有些“优先级结合性一览表”中，括号的释义仅仅只有“Function call”而没有“Parentheses”了。“一览表”本身是用来确定分组的，而我们平时添加的括号就是用来手动指定分组的，比起运算符，我更愿意叫它分组标识符，所以它有时不被列进“一览表”也无伤大雅。 最后，不要写逆天表达式。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"你真的搞懂优先级和结合性了吗？","dateModified":"2025-11-12T16:44:00+08:00","@context":"https://schema.org"}</script>
+{"headline":"你真的搞懂优先级和结合性了吗？","dateModified":"2025-11-12T16:44:00+08:00","datePublished":"2025-11-12T16:44:00+08:00","url":"http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"颠覆认知 我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。 绝大多数教程都是告诉你： 优先级高的运算符先执行。 当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。 其实按照上面的说法，将有诸多无法解释的现象，比如： 1 2 3 4 5 int main(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); return 0; } 括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project) 15.2.0 编译后，在 windows 平台下输出结果是 abc。是不是很疑惑？难道括号没起作用吗？ 我还能举出一些令你心虚的例子： 1 1 + (2 + 3) + 4 + (5 + 6) 请问上面的表达式中是 2 + 3 先执行还是 5 + 6 先执行？你也许会说：括号优先级最高，所以肯定先执行 2 + 3 或者 5 + 6，然后由于这两个括号优先级相同，所以接下来看结合性，又因为括号是左结合性，所以先执行 2 + 3。结合性真的是这样用的吗？请问它的“结合”体现在哪里了？ 再看一例： 1 1 + 2 + 3 + 4 这个表达式由于 + 优先级相同，所以看结合性，又由于是左结合性，所以在这三个连续的 + 中，应该先执行最左边的 +，即先结合最左边的加号及其操作数，变成 (1 + 2) + 3 + 4，再结合第二个加号及其操作数，变成 ((1 + 2) + 3) + 4。相信这个例子与上一例相比，你能够更加感性地体会到“结合”的概念，而在上一例中，你似乎只是单纯地确认了两个子表达式的执行顺序，并没有所谓“结合”的感受。你真的认为上面两例中所谓“结合性的运用”是一样的吗？这对吗？ 还有众所周知的逻辑运算符： 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 这个表达式显然在输出 a 后就结束了，因为 printf() 将返回写入的字符数，前半条件非零为真，直接触发短路，后续不再执行。但我们明明给后半条件加了括号，按照优先级那套说法，b 应该先输出才对。然而这套说法连你自己也不敢相信，因为这违背了短路规则。 上面的例子都在说明，日常所见的那套优先级和结合性的说法显然太过简陋，并且导致了不少误解。 直接说结论 结合性只作用于连续相邻的同优先级运算符。 优先级和结合性只能确定表达式的执行是怎么分组的，并不能确定子表达式之间或子表达式内部的执行顺序。子表达式之间或内部的执行顺序由编译器自行决定，这在多数情况下并不影响表达式最终的执行结果，而对于那些执行顺序影响执行结果的情况，应当竭力避免之。 sequence point 定义了一些特定的执行顺序。简言之，有些运算符被明确定义了子表达式（操作数）的执行顺序，如 &amp;&amp;、||。 理论分析 概念定义 首先了解一些概念定义。 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Value computation of operations The C++ standard uses the term value computation to mean the execution of operators in an expression to produce a value. The precedence and association rules determine the order in which value computation happens. For example, given the expression 4 + 2 * 3, due to the precedence rules this groups as 4 + (2 * 3). The value computation for (2 * 3) must happen first, so that the value computation for 4 + 6 can be completed. 1 2 3 4 5 6 Evaluation of operands The C++ standard (mostly) uses the term evaluation to refer to the evaluation of operands (not the evaluation of operators or expressions!). For example, given expression a + b, a will be evaluated to produce some value, and b will be evaluated to produce some value. These values can be then used as operands to operator+ for value computation. ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 Accessing a volatile object, modifying an object, modifying a file, or calling a function that does any of those operations are all side effects,12) which are changes in the state of the execution environment. Evaluation of an expression in general includes both value computations and initiation of side effects. Value computation for an lvalue expression includes determining the identity of the designated object. 简单来说，就是表达式的 evaluation 过程包括了 value computations 和 side effects，前者就是常规的值计算过程，后者主要是“写”过程。 以表达式 a = (1 + 2) 为例，表达式 (1 + 2) 的 evaluation 过程仅包括了 value computation，即计算 (1 + 2) 得到 3；表达式 a = (1 + 2) 的 evaluation 过程包括了 value computation 和 side effects，前者包含计算表达式 (1 + 2) 的值为 3 的过程和计算表达式 a = 3 的值为 3 的过程，后者是把 3 赋值给 a 的过程。 ISO/IEC 9899:201x, C11, 5.1.2.3 Program execution 1 2 3 4 5 6 7 8 9 10 11 Sequenced before is an asymmetric, transitive, pair-wise relation between evaluations executed by a single thread, which induces a partial order among those evaluations. Given any two evaluations A and B, if A is sequenced before B, then the execution of A shall precede the execution of B. (Conversely, if A is sequenced before B, then B is sequenced after A.) If A is not sequenced before or after B, then A and B are unsequenced. Evaluations A and B are indeterminately sequenced when A is sequenced either before or after B, but it is unspecified which.13) The presence of a sequence point between the evaluation of expressions A and B implies that every value computation and side effect associated with A is sequenced before every value computation and side effect associated with B. (A summary of the sequence points is given in annex C.) 这一段主要定义了 sequenced、unsequenced、indeterminately sequenced 以及 sequence point 的概念。 sequenced：有顺序。标准明确规定了子表达式的执行顺序，编译器实现必须遵守。 unsequenced：无顺序。标准没有规定子表达式的执行顺序，编译器可以自由实现，甚至可以并发执行，合并执行子表达式。 indeterminately sequenced：不确定顺序。标准规定子表达式的执行要有顺序，但未规定方向，编译器可以自行选择一个方向实现。 论编译器实现自由度，unsequenced &gt; indeterminately sequenced &gt; sequenced。 sequence point： 表达式A与B之间存在 sequence point，意味着表达式A的 evaluation(value computation + side effects) 按顺序排列在表达式B的 evaluation 之前。 sequence point（DeepSeek）：序列点是程序执行中的一个特定位置，在此位置之前的所有表达式的求值（包括数值计算和副作用）都必须完成，并且不会影响在此之后的所有表达式的求值。 提取结论 6.1 — Operator precedence and associativity – Learn C++ 1 2 3 4 5 6 7 8 Operator precedence To assist with parsing a compound expression, all operators are assigned a level of precedence. Operators with a higher precedence level are grouped with operands first. You can see in the table below that multiplication and division (precedence level 5) have a higher precedence level than addition and subtraction (precedence level 6). Thus, multiplication and division will be grouped with operands before addition and subtraction. In other words, 4 + 2 * 3 will be grouped as 4 + (2 * 3). 1 2 3 4 5 6 7 8 9 10 11 Operator associativity Consider a compound expression like 7 - 4 - 1. Should this be grouped as (7 - 4) - 1 which evaluates to 2, or 7 - (4 - 1), which evaluates to 4? Since both subtraction operators have the same precedence level, the compiler can not use precedence alone to determine how this should be grouped. If two operators with the same precedence level are adjacent to each other in an expression, the operator’s associativity tells the compiler whether to evaluate the operators (not the operands!) from left to right or from right to left. Subtraction has precedence level 6, and the operators in precedence level 6 have an associativity of left to right. So this expression is grouped from left to right: (7 - 4) - 1. 1 2 In most cases, the order of evaluation for operands and function arguments is unspecified, meaning they may be evaluated in any order. 上述资料的重点可以被总结为三句话： 拥有高优先级的运算符优先与它的操作数一起被分组。 对于拥有相同优先级的相邻两个运算符，由结合性决定哪个运算符先被分组。 操作数（子表达式）和函数参数的求值（执行）顺序没有被明确指定。 ISO/IEC 9899:201x, C11, 6.5 Expressions 1 2 3 The grouping of operators and operands is indicated by the syntax.85) Except as specified later, side effects and value computations of subexpressions are unsequenced.86) 除非特别指定，子表达式的 side effects 和 value computations 是 unsequenced 的。 1 2 3 4 5 If a side effect on a scalar object is unsequenced relative to either a different side effect on the same scalar object or a value computation using the value of the same scalar object, the behavior is undefined. If there are multiple allowable orderings of the subexpressions of an expression, the behavior is undefined if such an unsequenced side effect occurs in any of the orderings.84) 翻译（DeepSeek）： 如果一个标量对象的副作用，相对于同一个标量对象的另一个副作用，或者相对于使用同一个标量对象的值的值计算是未排序的，那么其行为是未定义的。 如果一个表达式的子表达式存在多种允许的执行顺序，那么在任何一种顺序中，如果出现了这种未排序的副作用，其行为都是未定义的。 其实有第一条就差不多了，第二条主要是强调：只要有一种顺序会产生歧义，即使有某些顺序没有歧义，依旧算未定义行为。 这段话属实晦涩，仅以例子作简单说明。 例1： 1 1 + (a = 2) + 3 + (a = 4) + 5; 不知道 (a = 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，两个 side effects（赋值）没有被规定顺序，先执行 (a = 2) 与先执行 (a = 4) 将使变量 a 的最终结果不同。情况符合第一条的描述，是未定义行为。 例2： 1 2 a = 1; 1 + (a + 2) + 3 + (a = 4) + 5; 不知道 (a + 2) 先执行还是 (a = 4) 先执行，它们是 unsequenced 的，side effects（赋值）与 value computations（加2） 没有被规定顺序，先执行 (a + 2) 与先执行 (a = 4) 将使整个表达式的最终结果不同。情况符合第一条的描述，是未定义行为。先执行 (a = 4) 再执行 (a + 2)，也就是彻底写完了以后读，这看起来没有歧义；若先执行 (a + 2) 再执行 (a = 4)，也就是先读再写，按DeepSeek的意思，这与先前的读产生冲突，导致歧义；两种顺序有一种有歧义，情况符合第二条的描述，是未定义行为。我个人认为把本例往第二条上靠似乎有点牵强，但这不重要，有第一条足够了。 例3： 1 i = ++i + 1; 分组完毕后是 i = ((++i) + 1)。子表达式内部的执行顺序是 unsequenced 的。(++i) 可以只返回表达式的值，先不给 i 加1，然后该表达式的值与1相加，和赋值给 i，最后再执行 (++i) 的加1，这是一种顺序；(++i) 返回表达式的值并给 i 加1，然后该表达式的值与1相加，和赋值给 i，覆盖掉其当前值，这是一种顺序。情况符合第一条的描述，是未定义行为。 Precedence and order of evaluation -Microsoft Learn 1 2 3 4 5 6 Only the sequential-evaluation (,), logical-AND (&amp;&amp;), logical-OR (||), conditional-expression (? :), and function-call operators constitute sequence points, and therefore guarantee a particular order of evaluation for their operands. ... (The comma operator in a function call is not the same as the sequential-evaluation operator and does not provide any such guarantee.) 直译：运算符 ,、&amp;&amp;、||、? :、()（指函数调用，function_name(arguments)）拥有 sequence point，从而保证了特定的求值顺序。（函数参数列表中的逗号与逗号表达式中的逗号运算符是两回事，前者并没有序列点。） ISO/IEC 9899:201x, C11, 6.5.14 Logical OR operator 1 2 3 4 Unlike the bitwise | operator, the || operator guarantees left-to-right evaluation; if the second operand is evaluated, there is a sequence point between the evaluations of the first and second operands. If the first operand compares unequal to 0, the second operand is not evaluated. 其实就是给 || 明确规定了从左到右的执行顺序，并且遵守短路规则。其它特别的运算符诸如 &amp;&amp; 肯定也有明确的序列点定义。 ISO/IEC 9899:201x, C11, 6.5.2.2 Function calls 1 2 3 4 EXAMPLE In the function call (*pf[f1()]) (f2(), f3() + f4()) the functions f1, f2, f3, and f4 may be called in any order. All side effects have to be completed before the function pointed to by pf[f1()] is called. 1 2 3 4 5 There is a sequence point after the evaluations of the function designator and the actual arguments but before the actual call. Every evaluation in the calling function (including other function calls) that is not otherwise specifically sequenced before or after the execution of the body of the called function is indeterminately sequenced with respect to the execution of the called function.94) 函数指示符（函数名，也可以是一个函数指针）和函数参数的执行顺序是 unsequenced，所以上例中 f1()、 f2()、f3()、f4() 的调用顺序由编译器自由决定。 在“函数指示符和函数参数的求值”和“实际调用的发生”之间，存在一个序列点，即标准明确规定在函数调用前，函数指示符和函数参数的求值必须全部完成，包括所有 value computations 和 side effects。在上例中，一定是 f1()、 f2()、f3()、f4() 都执行完，(*pf[f1()]) 值计算完后才会调用函数 pf[f1()]（即 (*pf[f1()])，* 可加可不加）。 调用函数中相对于被调函数体的执行没有被明确指定顺序的 evaluation(including function calls) 相对于被调函数体的执行是 indeterminately sequenced。这条比较抽象，以例说明。 例： 1 2 3 4 void func(void) { printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); } 调用函数就是 func()，被调函数就是任意一个 printf()。上面三个 printf() 的调用是 unsequenced，编译器可以自由选择先调用谁。被调用的 printf() 的函数体一定会完整地执行完才能去调用另一个 printf() 并完整地执行其函数体，不可以并发执行。执行有顺序，方向不确定，即 indeterminately sequenced。 C Sequence Points - Microsoft Learn 上述链接总结了很多 sequence points，其描述相对于C标准文档通俗很多，故记录链接于此。 回到最初的问题 问题1：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) + 1 + 1 + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 编译器将保留程序员手动添加的分组（括号），然后根据优先级和结合性进一步分组（分组可以被视作一个整体），结果如下： 1 ((printf(&quot;%c&quot;, &#39;a&#39;) + 1) + 1) + (printf(&quot;%c&quot;, &#39;b&#39;) + printf(&quot;%c&quot;, &#39;c&#39;)); 子表达式的执行顺序是 unsequenced 的，所以上面三个 printf() 被以什么顺序调用都不足为奇，根本就没有固定答案，只是一般来说编译器从左往右执行，所以可能会得到 abc 的结果。本例中表达式的执行顺序未知且会影响打印结果。 问题2：`(2 + 3)` 和 `(5 + 6)` 谁先执行？ 1 1 + (2 + 3) + 4 + (5 + 6); 编译器保留手动添加的分组，然后根据优先级和结合性进一步分组，分组可以被视作一个整体，结果如下： 1 ((1 + (2 + 3)) + 4) + (5 + 6); 到此为止了，子表达式的执行顺序是 unsequenced 的，所以 (2 + 3) 和 (5 + 6) 谁先执行不知道，但这不影响最终结果。 问题3：下面的表达式是怎么执行的？ 1 1 + 2 + 3 + 4; 编译器根据优先级和结合性分组，结果如下： 1 ((1 + 2) + 3) + 4; 子表达式的执行顺序是 unsequenced 的，编译器可以先确定 4 的值就是 4，也可以先去求 ((1 + 2) + 3) 的值，顺序未知，不过也不重要，这并不影响最终结果。 问题4：下面表达式的打印结果是什么？ 1 printf(&quot;%c&quot;, &#39;a&#39;) || (printf(&quot;%c&quot;, &#39;b&#39;)); 编译器保留手动添加的分组，然后根据优先级进一步分组，函数调用运算符 () 的优先级最高，结果如下： 1 (printf(&quot;%c&quot;, &#39;a&#39;)) || (printf(&quot;%c&quot;, &#39;b&#39;)); 运算符 || 被规定了明确的执行顺序，并遵守短路规则。所以，一定是先执行左边的表达式，输出 a，然后函数返回 1，触发短路规则，整个表达式直接执行结束，右边的表达式不会再执行。打印结果是明确的，为 a。 感想： 写到这里，我似乎突然明白为什么国外有些“优先级结合性一览表”中，括号的释义仅仅只有“Function call”而没有“Parentheses”了。“一览表”本身是用来确定分组的，而我们平时添加的括号就是用来手动指定分组的，比起运算符，我更愿意叫它分组标识符，所以它有时不被列进“一览表”也无伤大雅。 最后，不要写逆天表达式。","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -1255,15 +1255,6 @@ respect to the execution of the called function.94)
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
   
     
     
@@ -1278,6 +1269,43 @@ respect to the execution of the called function.94)
     
     
     
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1298,6 +1326,55 @@ respect to the execution of the called function.94)
     
     
     
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
     
   
     
@@ -1333,10 +1410,16 @@ respect to the execution of the called function.94)
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
+      <a class="post-tag" href="/tags/bash/">bash</a>
+    
+      
       <a class="post-tag" href="/tags/git/">git</a>
     
       
       <a class="post-tag" href="/tags/kdb/">kdb</a>
+    
+      
+      <a class="post-tag" href="/tags/shell/">shell</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
@@ -1393,6 +1476,19 @@ respect to the execution of the called function.94)
 
 
 
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
 
   
@@ -1628,43 +1724,6 @@ respect to the execution of the called function.94)
       
       
       <div class="card">
-        <a href="/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%8C%87%E9%92%88%E5%BC%BA%E8%BD%AC%E5%AF%BC%E8%87%B4%E8%84%8F%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E9%97%AE%E9%A2%98/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1669434000"
-    
-    >
-  2022-11-26
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>记一次指针强转导致脏数据写入问题</h3>
-            <div class="text-muted small">
-              <p>
-                
-
-
-
-
-
-                交接项目的时候遇到的一个问题，涉及指针、字节序、结构体内存对齐相关知识，三大知识包含规则的共同作用导致了这一问题。
-
-问题描述
-
-时间有些久远了，结合下图来讲，总之，就是变量 vsys_id 莫名其妙地被更改了。当时检查了可能出现问题的相关函数，以及函数传参过程，均没有发现问题所在，甚至在这些地方连 vsys_id 变量名都没有出现，以至于一直没能定位问题。最后发现 vsys_id 被脏数据...
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
-      
-      
-      <div class="card">
         <a href="/posts/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82/">
           <div class="card-body">
             <!--
@@ -1758,6 +1817,47 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
         </a>
       </div>
     
+      
+      
+      <div class="card">
+        <a href="/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1745503200"
+    
+    >
+  2025-04-24
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>gdb无-g调试实战记录</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                问题背景
+
+设备外发日志的内容错乱，甚至产生 core 文件。版本是正常编译的发行版本，没有附带 -g 加入的调试信息。
+
+我懒得加调试信息也不想加 -g 重新编译，二者在本人的开发环境中都十分麻烦。这种无 -g 调试的场景其实还蛮常见的，这次定位比较顺利，故记录之。
+
+定位过程
+
+从现象上看是日志内容错位了，但也不能排除是踩内存，出界内容被直接解析也能出现类似的现象。通过看代码，我高度怀疑...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
     </div> <!-- .card-deck -->
   </div> <!-- #related-posts -->
 
@@ -1777,10 +1877,10 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
   
 
   
-  <span class="btn btn-outline-primary disabled"
+  <a href="/posts/Linux%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/" class="btn btn-outline-primary"
     prompt="下一篇">
-    <p>-</p>
-  </span>
+    <p>Linux环境配置加载分析</p>
+  </a>
   
 
 </div>
@@ -1862,15 +1962,6 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
     
     
     
-      
-        
-        
-
-  
-    
-    
-    
-    
   
     
     
@@ -1885,6 +1976,43 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
     
     
     
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
   
     
     
@@ -1905,6 +2033,55 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
     
     
     
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
     
   
     
@@ -1940,10 +2117,16 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
       <a class="post-tag" href="/tags/gdb/">gdb</a>
     
       
+      <a class="post-tag" href="/tags/bash/">bash</a>
+    
+      
       <a class="post-tag" href="/tags/git/">git</a>
     
       
       <a class="post-tag" href="/tags/kdb/">kdb</a>
+    
+      
+      <a class="post-tag" href="/tags/shell/">shell</a>
     
       
       <a class="post-tag" href="/tags/tls/">tls</a>
