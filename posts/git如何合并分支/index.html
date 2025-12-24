@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"headline":"git如何合并分支","dateModified":"2022-01-26T13:49:37+08:00","datePublished":"2022-01-26T13:49:37+08:00","url":"http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。 参考资料：Git 分支 - 分支的新建与合并 合并过程 快进(fast-forward) 现在要将hotfix分支合并到master分支。 1 2 3 4 5 6 $ git checkout master $ git merge hotfix Updating f42c576..3a0874c Fast-forward index.html | 2 ++ 1 file changed, 2 insertions(+) 合并后如下图： 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。 随后可以删除hotfix分支。 1 $ git branch -d hotfix 三方合并 现在要将iss53分支合并到master分支。 1 2 3 4 5 6 $ git checkout master Switched to branch &#39;master&#39; $ git merge iss53 Merge made by the &#39;recursive&#39; strategy. index.html | 1 + 1 file changed, 1 insertion(+) 合并后如下图： 在这种情况下，你的开发历史从一个更早的地方开始分叉开来（diverged）。 因为，master 分支所在提交并不是 iss53 分支所在提交的直接祖先，Git 不得不做一些额外的工作。 出现这种情况的时候，Git 会使用两个分支的末端所指的快照（C4 和 C5）以及这两个分支的公共祖先（C2），做一个简单的三方合并。 Git 将此次三方合并的结果做了一个新的快照并且自动创建一个新的提交指向它。 这个被称作一次合并提交，它的特别之处在于他有不止一个父提交。 随后可以删除iss53分支。 1 $ git branch -d iss53 合并冲突 如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们，即会产生合并冲突。 fast-forward 一定不会产生合并冲突。 三方合并可能产生合并冲突。 合并冲突的发生有点玄学，不必过于纠结，按照第一段话理解即可。具体会不会发生冲突，老老实实听git的就行，它说冲突那就是冲突了。 附上一些实测例子： git版本：git version 2.34.1.windows.1 例一 直接fast-forward 例二 1 2 3 4 5 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt Merge made by the &#39;ort&#39; strategy. merge.txt | 2 +- 1 file changed, 1 insertion(+), 1 deletion(-) 我的理解： master对第一行做了修改，但hotfix没有对第一行做修改，无冲突；两分支都没有对第二行做修改，无冲突；master没有对第三行做修改，但hotfix对第三行做了修改，无冲突。最后合并成功，没有冲突。 例三 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 8 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe222 qwe ======= qwe qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix qwe 我的理解： 这个居然会发生冲突，我是没有想到的。原本应该像例二一样理解，第一行只有master改了，第二行只有hotfix改了，第三行两个分支都没改，应该不会出现冲突。然而却出现了冲突，说明冲突的判定没有想象得那么简单，与git的具体实现有关。这里贴出了git插入的冲突标记。按我的理解，根据冲突标记，git认为两个分支对merge.txt的红框处做了不同修改，产生了冲突；蓝框处两者都没有修改，无冲突；所以最终发生了合并冲突。 例四 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 8 qwe &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe222 qwe ======= qwe qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix 同例三。 例五 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe666 ======= qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix qwe333 qwe555 我的理解： 这个好理解。两个分支对第二行、第三行做了相同的修改，没有冲突；两个分支分别对第一行做了不同的修改，有冲突；最终发生合并冲突。 例六 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 qwe444 qwe333 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe ======= qwe555 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix 我的理解： 我迷惑了。。。按照之前的理解，两分支对第一行、第二行做了相同的修改，不冲突；master分支没有对第三行做出修改，hotfix分支对第三行做了修改，不冲突；最终应该不冲突才是。假如将这里master分支对第三行的修改看成是“不变的修改”，那么确实可以说两个分支对第三行做了不同的修改，进而发生冲突。但是这样的说法在例二中就站不住脚，按照这个“不变的修改”的假设，例二应该发生冲突才是。想想也是，这个想法是我凭空想象出来的，多半不可能。 总结 关于合并冲突的判定没有搞懂，不过我认为继续纠结这个问题没有更多的意义了，除非阅读git实现的源码。 总而言之，git官方文档的book中有如下描述：Git 分支 - 分支的新建与合并 如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们。 以这句话为标准即可，具体看git的合并结果就行。","@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/"},"datePublished":"2022-01-26T13:49:37+08:00","url":"http://0.0.0.0:4000/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/","description":"复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。 参考资料：Git 分支 - 分支的新建与合并 合并过程 快进(fast-forward) 现在要将hotfix分支合并到master分支。 1 2 3 4 5 6 $ git checkout master $ git merge hotfix Updating f42c576..3a0874c Fast-forward index.html | 2 ++ 1 file changed, 2 insertions(+) 合并后如下图： 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。 随后可以删除hotfix分支。 1 $ git branch -d hotfix 三方合并 现在要将iss53分支合并到master分支。 1 2 3 4 5 6 $ git checkout master Switched to branch &#39;master&#39; $ git merge iss53 Merge made by the &#39;recursive&#39; strategy. index.html | 1 + 1 file changed, 1 insertion(+) 合并后如下图： 在这种情况下，你的开发历史从一个更早的地方开始分叉开来（diverged）。 因为，master 分支所在提交并不是 iss53 分支所在提交的直接祖先，Git 不得不做一些额外的工作。 出现这种情况的时候，Git 会使用两个分支的末端所指的快照（C4 和 C5）以及这两个分支的公共祖先（C2），做一个简单的三方合并。 Git 将此次三方合并的结果做了一个新的快照并且自动创建一个新的提交指向它。 这个被称作一次合并提交，它的特别之处在于他有不止一个父提交。 随后可以删除iss53分支。 1 $ git branch -d iss53 合并冲突 如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们，即会产生合并冲突。 fast-forward 一定不会产生合并冲突。 三方合并可能产生合并冲突。 合并冲突的发生有点玄学，不必过于纠结，按照第一段话理解即可。具体会不会发生冲突，老老实实听git的就行，它说冲突那就是冲突了。 附上一些实测例子： git版本：git version 2.34.1.windows.1 例一 直接fast-forward 例二 1 2 3 4 5 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt Merge made by the &#39;ort&#39; strategy. merge.txt | 2 +- 1 file changed, 1 insertion(+), 1 deletion(-) 我的理解： master对第一行做了修改，但hotfix没有对第一行做修改，无冲突；两分支都没有对第二行做修改，无冲突；master没有对第三行做修改，但hotfix对第三行做了修改，无冲突。最后合并成功，没有冲突。 例三 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 8 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe222 qwe ======= qwe qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix qwe 我的理解： 这个居然会发生冲突，我是没有想到的。原本应该像例二一样理解，第一行只有master改了，第二行只有hotfix改了，第三行两个分支都没改，应该不会出现冲突。然而却出现了冲突，说明冲突的判定没有想象得那么简单，与git的具体实现有关。这里贴出了git插入的冲突标记。按我的理解，根据冲突标记，git认为两个分支对merge.txt的红框处做了不同修改，产生了冲突；蓝框处两者都没有修改，无冲突；所以最终发生了合并冲突。 例四 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 8 qwe &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe222 qwe ======= qwe qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix 同例三。 例五 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe666 ======= qwe444 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix qwe333 qwe555 我的理解： 这个好理解。两个分支对第二行、第三行做了相同的修改，没有冲突；两个分支分别对第一行做了不同的修改，有冲突；最终发生合并冲突。 例六 1 2 3 4 PS E:\\2.学习\\test&gt; git merge hotfix Auto-merging merge.txt CONFLICT (content): Merge conflict in merge.txt Automatic merge failed; fix conflicts and then commit the result. 1 2 3 4 5 6 7 qwe444 qwe333 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD qwe ======= qwe555 &gt;&gt;&gt;&gt;&gt;&gt;&gt; hotfix 我的理解： 我迷惑了。。。按照之前的理解，两分支对第一行、第二行做了相同的修改，不冲突；master分支没有对第三行做出修改，hotfix分支对第三行做了修改，不冲突；最终应该不冲突才是。假如将这里master分支对第三行的修改看成是“不变的修改”，那么确实可以说两个分支对第三行做了不同的修改，进而发生冲突。但是这样的说法在例二中就站不住脚，按照这个“不变的修改”的假设，例二应该发生冲突才是。想想也是，这个想法是我凭空想象出来的，多半不可能。 总结 关于合并冲突的判定没有搞懂，不过我认为继续纠结这个问题没有更多的意义了，除非阅读git实现的源码。 总而言之，git官方文档的book中有如下描述：Git 分支 - 分支的新建与合并 如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们。 以这句话为标准即可，具体看git的合并结果就行。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"git如何合并分支","dateModified":"2022-01-26T13:49:37+08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -2393,24 +2393,27 @@ ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布�
 
 
 
-                总览
-
-一些自创的名词定义：
+                概念定义
 
 
-  
-    在内存中实际存储的值称为内存值。
-  
-  
-    内存值经过字节序转换后，以无符号形式写成的数值，称为内存数值。内存数值用来直观纯粹地反映内存值的样貌。
 
-    用二进制表示的内存数值称为内存二进制。
+&amp;gt; 真值
 
-    用十六进制表示的内存数值称为内存十六进制。
+实际意义上的值，比如代码里直接书写的值。
 
-    用八进制表示的内存数值称为内存八进制。
+&amp;gt; 内存值
 
-    用无符号十进制表示的内存...
+这个词是笔者自己造的，用于特指存储在内存中的值。笔者对这个概念还有如下规定或结论：
+
+
+  内存值都是无符号的。
+  习惯称“n进制内存值”为“内存n进制”，比如称“二进制内存值”为“内存二进制”。
+  内存值与其对应的无符号真值是相等的。
+
+
+&amp;gt; 内存值分布
+
+这个词是笔者自己造的，用于...
               </p>
             </div>
           </div>

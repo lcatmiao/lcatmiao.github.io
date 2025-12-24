@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"headline":"C语言标准发展历史","dateModified":"2024-02-24T16:53:37+08:00","datePublished":"2024-02-24T16:53:37+08:00","url":"http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"对各种 C 标准进行简述。 参考资料：Standards (Using the GNU Compiler Collection (GCC)) ANSI C，ISO C89/90 ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。 1990 年晚些时候，该标准成为了 ISO C89/90 标准。 这两个标准之间没有技术上的差异，可以当作就是一个标准。 C94/95 是这一标准的修订版本。 ISO C99 1999 年，ISO 发布了新的 C 标准，即 ISO C99。 ISO C11，ISO C17 2011 年，ISO 发布了新的 C 标准，即 ISO C11。 2017 年，ISO 编制了一个修正版本，并于 2018 年发布，该版本成为了新的 C 标准，即 ISO C17。 在 gcc 中，可通过 -std=c11 或 -std=iso9899:2011 指定 C11 标准； 通过 -std=c17 或 -std=iso9899:2017 指定 C17 标准。 若通过 -std=c11 指定 C11 标准，也会应用 C17 中的修正，只不过 __STDC_VERSION__ 的值为 C11 对应的值，除此以外和 C17 没有区别。 GNU Extensions 标准是标准，实现是实现。gcc 在实现上述标准的同时也添加了一些自己的扩展功能。把带 GNU 扩展的 C 标准直接当作 GNU C 标准，问题也不大。 例如可以指定 -std=gnu90 (for C90 with GNU extensions)、-std=gnu99 (for C99 with GNU extensions)、-std=gnu11 (for C11 with GNU extensions)。 gcc 将一些 C99 中的特性作为 C90 模式的扩展，将一些 C11 中的特性作为 C90 和 C99 模式的扩展。这个按我的理解，大概可以这么看：只有经过了广泛的实践和时间检验的特性才能被写入标准。gcc 扩展就像是先行者，在经过广泛检验后，被接受为新标准的一部分。","@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/"},"datePublished":"2024-02-24T16:53:37+08:00","url":"http://0.0.0.0:4000/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/","description":"对各种 C 标准进行简述。 参考资料：Standards (Using the GNU Compiler Collection (GCC)) ANSI C，ISO C89/90 ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。 1990 年晚些时候，该标准成为了 ISO C89/90 标准。 这两个标准之间没有技术上的差异，可以当作就是一个标准。 C94/95 是这一标准的修订版本。 ISO C99 1999 年，ISO 发布了新的 C 标准，即 ISO C99。 ISO C11，ISO C17 2011 年，ISO 发布了新的 C 标准，即 ISO C11。 2017 年，ISO 编制了一个修正版本，并于 2018 年发布，该版本成为了新的 C 标准，即 ISO C17。 在 gcc 中，可通过 -std=c11 或 -std=iso9899:2011 指定 C11 标准； 通过 -std=c17 或 -std=iso9899:2017 指定 C17 标准。 若通过 -std=c11 指定 C11 标准，也会应用 C17 中的修正，只不过 __STDC_VERSION__ 的值为 C11 对应的值，除此以外和 C17 没有区别。 GNU Extensions 标准是标准，实现是实现。gcc 在实现上述标准的同时也添加了一些自己的扩展功能。把带 GNU 扩展的 C 标准直接当作 GNU C 标准，问题也不大。 例如可以指定 -std=gnu90 (for C90 with GNU extensions)、-std=gnu99 (for C99 with GNU extensions)、-std=gnu11 (for C11 with GNU extensions)。 gcc 将一些 C99 中的特性作为 C90 模式的扩展，将一些 C11 中的特性作为 C90 和 C99 模式的扩展。这个按我的理解，大概可以这么看：只有经过了广泛的实践和时间检验的特性才能被写入标准。gcc 扩展就像是先行者，在经过广泛检验后，被接受为新标准的一部分。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"C语言标准发展历史","dateModified":"2024-02-24T16:53:37+08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -1279,6 +1279,59 @@ func1(i...
       
       
       <div class="card">
+        <a href="/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1711792680"
+    
+    >
+  2024-03-30
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>真值与内存的相互转换</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                概念定义
+
+
+
+&amp;gt; 真值
+
+实际意义上的值，比如代码里直接书写的值。
+
+&amp;gt; 内存值
+
+这个词是笔者自己造的，用于特指存储在内存中的值。笔者对这个概念还有如下规定或结论：
+
+
+  内存值都是无符号的。
+  习惯称“n进制内存值”为“内存n进制”，比如称“二进制内存值”为“内存二进制”。
+  内存值与其对应的无符号真值是相等的。
+
+
+&amp;gt; 内存值分布
+
+这个词是笔者自己造的，用于...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
         <a href="/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/">
           <div class="card-body">
             <!--
@@ -1311,58 +1364,6 @@ func1(i...
 定位过程
 
 从现象上看是日志内容错位了，但也不能排除是踩内存，出界内容被直接解析也能出现类似的现象。通过看代码，我高度怀疑...
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
-      
-      
-      <div class="card">
-        <a href="/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1748094900"
-    
-    >
-  2025-05-24
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>用户态源码反汇编定位方法记录</h3>
-            <div class="text-muted small">
-              <p>
-                
-
-
-
-
-
-                前言
-
-问题背景就是进程崩溃，产生了 core 文件。其实这次定位非常简单，bt, disassemble 就能直接看出来了。既然简单，就利用这次机会尝试了一下源码反汇编的定位方法。此前在别人的帮助下，运用该方法定位过内核态的问题，但都事发紧急，事后没能复盘，留下了遗憾。尽管存在差异，还是决定在用户态“模拟”一下。
-
-定位过程
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-1...
               </p>
             </div>
           </div>
