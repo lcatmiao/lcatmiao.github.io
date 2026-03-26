@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2025-12-24T14:04:37+08:00</updated>
+  <updated>2026-03-26T20:24:58+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -13,7 +13,7 @@
   <link rel="alternate" type="text/html" hreflang="zh-CN"
     href="http://0.0.0.0:4000/"/>
   <generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator>
-  <rights> © 2025 小黑猫 </rights>
+  <rights> © 2026 小黑猫 </rights>
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
