@@ -23,26 +23,34 @@
 
   
 
+    
+
+    
+
+  
+
   <!-- Begin Jekyll SEO tag v2.7.1 -->
 <meta name="generator" content="Jekyll v4.2.1" />
-<meta property="og:title" content="About" />
+<meta property="og:title" content="结构体字节对齐规则" />
+<meta name="author" content="小黑猫" />
 <meta property="og:locale" content="zh_CN" />
-<meta name="description" content="我接受白天的忙碌，却不甘溺于平庸。" />
-<meta property="og:description" content="我接受白天的忙碌，却不甘溺于平庸。" />
-<link rel="canonical" href="http://0.0.0.0:4000/about/" />
-<meta property="og:url" content="http://0.0.0.0:4000/about/" />
+<meta name="description" content="对齐的含义 不仅是结构体会对齐，其它很多地方也会遇到“对齐”，如下是一个总的理解： 自身对齐：偏移量为自身对齐要求的整数倍。 整体对齐：总大小为某个对齐要求的整数倍。 &gt; 对齐的意义 （deepseek）对齐让CPU能像“拿整本书”而不是“拼凑碎片”一样工作。 结构体对齐规则 基本数据类型：对齐要求即为自身字节数。 嵌套结构体： 嵌套结构体自身内部要对齐。 将嵌套结构体看作一个整体，但其对齐要求是内部最大的对齐要求。 数组：看作一个整体，其对齐要求是元素类型的对齐要求。 最后整体对齐，对齐要求是内部最大的对齐要求。 &gt; 如何使结构体最小 按对齐要求从小到大（或从大到小）排列成员，从小到大或从大到小是一样的（知乎此帖有明确回答：https://www.zhihu.com/question/400968651）。注意不是按成员大小排列。 1 2 3 4 5 6 7 8 9 10 11 12 /* * 按成员大小，从小到大：120。 * 按成员大小，从大到小：120。 * 按对齐要求，从小到大：112。 * 按对齐要求，从大到小：112。 */ struct Test { char buf[100]; int i; double d; };" />
+<meta property="og:description" content="对齐的含义 不仅是结构体会对齐，其它很多地方也会遇到“对齐”，如下是一个总的理解： 自身对齐：偏移量为自身对齐要求的整数倍。 整体对齐：总大小为某个对齐要求的整数倍。 &gt; 对齐的意义 （deepseek）对齐让CPU能像“拿整本书”而不是“拼凑碎片”一样工作。 结构体对齐规则 基本数据类型：对齐要求即为自身字节数。 嵌套结构体： 嵌套结构体自身内部要对齐。 将嵌套结构体看作一个整体，但其对齐要求是内部最大的对齐要求。 数组：看作一个整体，其对齐要求是元素类型的对齐要求。 最后整体对齐，对齐要求是内部最大的对齐要求。 &gt; 如何使结构体最小 按对齐要求从小到大（或从大到小）排列成员，从小到大或从大到小是一样的（知乎此帖有明确回答：https://www.zhihu.com/question/400968651）。注意不是按成员大小排列。 1 2 3 4 5 6 7 8 9 10 11 12 /* * 按成员大小，从小到大：120。 * 按成员大小，从大到小：120。 * 按对齐要求，从小到大：112。 * 按对齐要求，从大到小：112。 */ struct Test { char buf[100]; int i; double d; };" />
+<link rel="canonical" href="http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/" />
+<meta property="og:url" content="http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/" />
 <meta property="og:site_name" content="小黑猫" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2026-04-05T16:24:00+08:00" />
+<meta property="article:published_time" content="2026-04-05T16:00:00+08:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="About" />
+<meta property="twitter:title" content="结构体字节对齐规则" />
 <meta name="twitter:site" content="@twitter_username" />
+<meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"datePublished":"2026-04-05T16:24:00+08:00","url":"http://0.0.0.0:4000/about/","description":"我接受白天的忙碌，却不甘溺于平庸。","@type":"WebSite","headline":"About","dateModified":"2026-04-05T16:24:00+08:00","name":"小黑猫","sameAs":["https://github.com/lcatmiao","https://twitter.com/username","https://github.com/username"],"@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/"},"datePublished":"2026-04-05T16:00:00+08:00","url":"http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/","description":"对齐的含义 不仅是结构体会对齐，其它很多地方也会遇到“对齐”，如下是一个总的理解： 自身对齐：偏移量为自身对齐要求的整数倍。 整体对齐：总大小为某个对齐要求的整数倍。 &gt; 对齐的意义 （deepseek）对齐让CPU能像“拿整本书”而不是“拼凑碎片”一样工作。 结构体对齐规则 基本数据类型：对齐要求即为自身字节数。 嵌套结构体： 嵌套结构体自身内部要对齐。 将嵌套结构体看作一个整体，但其对齐要求是内部最大的对齐要求。 数组：看作一个整体，其对齐要求是元素类型的对齐要求。 最后整体对齐，对齐要求是内部最大的对齐要求。 &gt; 如何使结构体最小 按对齐要求从小到大（或从大到小）排列成员，从小到大或从大到小是一样的（知乎此帖有明确回答：https://www.zhihu.com/question/400968651）。注意不是按成员大小排列。 1 2 3 4 5 6 7 8 9 10 11 12 /* * 按成员大小，从小到大：120。 * 按成员大小，从大到小：120。 * 按对齐要求，从小到大：112。 * 按对齐要求，从大到小：112。 */ struct Test { char buf[100]; int i; double d; };","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"结构体字节对齐规则","dateModified":"2026-04-05T16:00:00+08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
-  <title>About | 小黑猫
+  <title>结构体字节对齐规则 | 小黑猫
   </title>
 
   <!--
@@ -87,6 +95,9 @@
 
 <link rel="stylesheet" href="/assets/css/style.css">
 
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css">
 
 
 
@@ -297,7 +308,7 @@
       </a>
     </li> <!-- .nav-item -->
     
-    <li class="nav-item active">
+    <li class="nav-item">
       <a href="/about/" class="nav-link">
         <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i>
         
@@ -396,8 +407,12 @@
 
         
 
+      
+
+        
+
           
-            <span>关于</span>
+            <span>结构体字节对齐规则</span>
           
 
         
@@ -411,7 +426,7 @@
     <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i>
 
     <div id="topbar-title">
-      关于
+      文章
     </div>
 
     <i id="search-trigger" class="fas fa-search fa-fw"></i>
@@ -444,11 +459,6 @@
 
     
       
-      <h1 class="dynamic-title">
-        About
-      </h1>
-      <div class="post-content">
-        
       
         <!--
   Refactor the HTML structure.
@@ -524,19 +534,233 @@
 
 <!-- return -->
 
-<p>我接受白天的忙碌，却不甘溺于平庸。</p>
 
-<p>我享受夜晚的宁静，却不敢面对漆黑。</p>
 
-<p>我忍受失败的苦痛，却不能挣脱枷锁。</p>
 
-<p>我喜欢做梦，却成了小丑。</p>
 
+
+
+<h1 data-toc-skip>结构体字节对齐规则</h1>
+
+<div class="post-meta text-muted">
+
+  <!-- author -->
+  <div>
+    
+    
+
+    
+
+    作者
+    <em>
+      
+        <a href="https://github.com/lcatmiao">小黑猫</a>
+      
+    </em>
+  </div>
+
+  <div class="d-flex">
+    <div>
+      <!-- published date -->
+      <span>
+        发表于
+        <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago"
+    data-ts="1775376000"
+    
+      data-toggle="tooltip" data-placement="bottom" data-tooltip-df="llll"
+    
+    >
+  2026-04-05
+</em>
+
+      </span>
+
+      <!-- lastmod date -->
+      
+
+      <!-- read time -->
+      <!--
+  Calculate the post's reading time, and display the word count in tooltip
+ -->
+
+
+
+<!-- words per minute  -->
+
+
+
+
+
+
+
+
+
+
+<!-- return element -->
+<span class="readtime" data-toggle="tooltip" data-placement="bottom"
+  title="373 字">
+  <em>2 分钟</em>阅读</span>
+
+
+      <!-- page views -->
+      
+    </div>
+
+  </div> <!-- .d-flex -->
+
+</div> <!-- .post-meta -->
+
+<div class="post-content">
+  <h1 id="对齐的含义">对齐的含义</h1>
+
+<p>不仅是结构体会对齐，其它很多地方也会遇到“对齐”，如下是一个总的理解：</p>
+
+<ol>
+  <li>自身对齐：偏移量为自身对齐要求的整数倍。</li>
+  <li>整体对齐：总大小为某个对齐要求的整数倍。</li>
+</ol>
+
+<p><br /></p>
+
+<p><strong>&gt; 对齐的意义</strong></p>
+
+<p>（deepseek）对齐让CPU能像“拿整本书”而不是“拼凑碎片”一样工作。</p>
+
+<h1 id="结构体对齐规则">结构体对齐规则</h1>
+
+<ol>
+  <li>基本数据类型：对齐要求即为自身字节数。</li>
+  <li>嵌套结构体：
+    <ol>
+      <li>嵌套结构体自身内部要对齐。</li>
+      <li>将嵌套结构体看作一个整体，但其对齐要求是内部最大的对齐要求。</li>
+    </ol>
+  </li>
+  <li>数组：看作一个整体，其对齐要求是元素类型的对齐要求。</li>
+  <li>最后整体对齐，对齐要求是内部最大的对齐要求。</li>
+</ol>
+
+<p><br /></p>
+
+<p><strong>&gt; 如何使结构体最小</strong></p>
+
+<p>按<strong>对齐要求</strong>从小到大（或从大到小）排列成员，从小到大或从大到小是一样的（知乎此帖有明确回答：<a href="https://www.zhihu.com/question/400968651">https://www.zhihu.com/question/400968651</a>）。<strong>注意不是按成员大小排列。</strong></p>
+
+<div class="language-c highlighter-rouge"><div class="code-header">
+        <span data-label-text="C"><i class="fas fa-code small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="cm">/*
+ * 按成员大小，从小到大：120。
+ * 按成员大小，从大到小：120。
+ * 按对齐要求，从小到大：112。
+ * 按对齐要求，从大到小：112。
+ */</span>
+<span class="k">struct</span> <span class="n">Test</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">d</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+
+</div>
+
+<div class="post-tail-wrapper text-muted">
+
+  <!-- categories -->
+  
+  <div class="post-meta mb-3">
+    <i class="far fa-folder-open fa-fw mr-1"></i>
+    
+      <a href='/categories/tech/'>Tech</a>,
+      <a href='/categories/c/'>C</a>
+  </div>
+  
+
+  <!-- tags -->
+  
+
+  <div class="post-tail-bottom
+    d-flex justify-content-between align-items-center mt-3 pt-5 pb-2">
+    <div class="license-wrapper">
+
+      
+
+        
+
+        本文由作者按照 
+        <a href="https://creativecommons.org/licenses/by/4.0/">
+          CC BY 4.0
+        </a>
+         进行授权
+
+      
+    </div>
+
+    <!--
+ Post sharing snippet
+-->
+
+<div class="share-wrapper">
+  <span class="share-label text-muted mr-1">分享</span>
+  <span class="share-icons">
+    
+    
+
+    
+      
+        <a href="https://twitter.com/intent/tweet?text=结构体字节对齐规则 - 小黑猫&amp;url=http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/" data-toggle="tooltip" data-placement="top"
+          title="Twitter" target="_blank" rel="noopener" aria-label="Twitter">
+          <i class="fa-fw fab fa-twitter"></i>
+        </a>
+    
+      
+        <a href="https://www.facebook.com/sharer/sharer.php?title=结构体字节对齐规则 - 小黑猫&amp;u=http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/" data-toggle="tooltip" data-placement="top"
+          title="Facebook" target="_blank" rel="noopener" aria-label="Facebook">
+          <i class="fa-fw fab fa-facebook-square"></i>
+        </a>
+    
+      
+        <a href="https://t.me/share/url?url=http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/&amp;text=结构体字节对齐规则 - 小黑猫" data-toggle="tooltip" data-placement="top"
+          title="Telegram" target="_blank" rel="noopener" aria-label="Telegram">
+          <i class="fa-fw fab fa-telegram"></i>
+        </a>
+    
+
+    <i id="copy-link" class="fa-fw fas fa-link small"
+        data-toggle="tooltip" data-placement="top"
+        title="分享链接"
+        data-title-succeed="链接已复制！">
+    </i>
+
+  </span>
+</div>
+
+
+  </div><!-- .post-tail-bottom -->
+
+</div><!-- div.post-tail-wrapper -->
 
 
       
     
-      </div>
     
 
     </div>
@@ -744,11 +968,474 @@
     </div>
 
     
+      
+      
+
+
+
+
+    
   </div>
 
 </div>
 
 <!-- tail -->
+
+<div class="row">
+  <div class="col-12 col-lg-11 col-xl-8">
+    <div id="tail-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4">
+      
+        
+        <!--
+ Recommend the other 3 posts according to the tags and categories of the current post,
+ if the number is not enough, use the other latest posts to supplement.
+-->
+
+<!-- The total size of related posts  -->
+
+
+<!-- An random integer that bigger than 0  -->
+
+
+<!-- Equals to TAG_SCORE / {max_categories_hierarchy}  -->
+
+
+
+
+
+
+
+
+  
+
+  
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+
+
+<!-- Fill with the other newlest posts  -->
+
+
+
+
+
+
+  <div id="related-posts" class="mt-5 mb-2 mb-sm-4">
+    <h3 class="pt-2 mt-1 mb-4 ml-1"
+      data-toc-skip>相关文章</h3>
+    <div class="card-deck mb-4">
+    
+      
+      
+      <div class="card">
+        <a href="/posts/C%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1708764817"
+    
+    >
+  2024-02-24
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>C语言标准发展历史</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                对各种 C 标准进行简述。
+
+参考资料：Standards (Using the GNU Compiler Collection (GCC))
+
+ANSI C，ISO C89/90
+
+ANSI C 是最初的 C 语言标准，在 1989 年获得批准，1990 年发布。
+
+1990 年晚些时候，该标准成为了 ISO C89/90 标准。
+
+这两个标准之间没有技术上的差异，可以当作就是一个标准。
+...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1711792680"
+    
+    >
+  2024-03-30
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>真值与内存的相互转换</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                概念定义
+
+
+
+&amp;gt; 真值
+
+实际意义上的值，比如代码里直接书写的值。
+
+&amp;gt; 内存值
+
+这个词是笔者自己造的，用于特指存储在内存中的值。笔者对这个概念还有如下规定或结论：
+
+
+  内存值都是无符号的。
+  习惯称“n进制内存值”为“内存n进制”，比如称“二进制内存值”为“内存二进制”。
+  内存值与其对应的无符号真值是相等的。
+
+
+&amp;gt; 内存值分布
+
+这个词是笔者自己造的，用于...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+      
+      
+      <div class="card">
+        <a href="/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1745503200"
+    
+    >
+  2025-04-24
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>gdb无-g调试实战记录</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                问题背景
+
+设备外发日志的内容错乱，甚至产生 core 文件。版本是正常编译的发行版本，没有附带 -g 加入的调试信息。
+
+我懒得加调试信息也不想加 -g 重新编译，二者在本人的开发环境中都十分麻烦。这种无 -g 调试的场景其实还蛮常见的，这次定位比较顺利，故记录之。
+
+定位过程
+
+从现象上看是日志内容错位了，但也不能排除是踩内存，出界内容被直接解析也能出现类似的现象。通过看代码，我高度怀疑...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    
+    </div> <!-- .card-deck -->
+  </div> <!-- #related-posts -->
+
+
+      
+        
+        <!--
+  Navigation buttons at the bottom of the post.
+-->
+
+<div class="post-navigation d-flex justify-content-between">
+  
+  <a href="/posts/Linux%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/" class="btn btn-outline-primary"
+    prompt="上一篇">
+    <p>Linux环境配置加载分析</p>
+  </a>
+  
+
+  
+  <span class="btn btn-outline-primary disabled"
+    prompt="下一篇">
+    <p>-</p>
+  </span>
+  
+
+</div>
+
+      
+        
+        <!--  The comments switcher -->
+
+
+      
+    </div>
+  </div>
+</div> <!-- .row -->
 
 
 
@@ -1053,6 +1740,8 @@ SimpleJekyllSearch({
 <!-- layout specified -->
 
 
+  
+
 
 
   <!-- image lazy-loading & popup -->
@@ -1061,10 +1750,15 @@ SimpleJekyllSearch({
 
 
 
+  
+
+  <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1,npm/dayjs@1/locale/zh.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script>
 
 
 
-<script defer src="/assets/js/dist/page.min.js"></script>
+
+
+<script defer src="/assets/js/dist/post.min.js"></script>
 
 
 

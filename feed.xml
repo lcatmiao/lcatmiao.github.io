@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2026-03-26T20:24:58+08:00</updated>
+  <updated>2026-04-05T16:24:00+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,75 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>结构体字节对齐规则</title>
+    <link href="http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/" rel="alternate" type="text/html" title="结构体字节对齐规则" />
+    <published>2026-04-05T16:00:00+08:00</published>
+  
+    <updated>2026-04-05T16:00:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/</id>
+    <content src="http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="C" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      对齐的含义
+
+不仅是结构体会对齐，其它很多地方也会遇到“对齐”，如下是一个总的理解：
+
+
+  自身对齐：偏移量为自身对齐要求的整数倍。
+  整体对齐：总大小为某个对齐要求的整数倍。
+
+
+
+
+&amp;gt; 对齐的意义
+
+（deepseek）对齐让CPU能像“拿整本书”而不是“拼凑碎片”一样工作。
+
+结构体对齐规则
+
+
+  基本数据类型：对齐要求即为自身字节数。
+  嵌套结构体：
+    
+      嵌套结构体自身内部要对齐。
+      将嵌套结构体看作一个整体，但其对齐要求是内部最大的对齐要求。
+    
+  
+  数组：看作一个整体，其对齐要求是元素类型的对齐要求。
+  最后整体对齐，对齐要求是内部最大的对齐要求。
+
+
+
+
+&amp;gt; 如何使结构体最小
+
+按对齐要求从小到大（或从大到小）排列成员，从小到大或从大到小是一样的（知乎此帖有明确回答：https://www.zhihu.com...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -245,56 +314,6 @@ Stack traceback for pid 693
 [15792.666500]  ffff88042d6bb818 0000000000000018 ffffffff818604c0 ffff88042d6bb858
 [15792.755452]  ffffffff8109f38e ffff88042d6bb848 ffffffff817a6588 000000000040adbd
 [15792.844406] ...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>用户态源码反汇编定位方法记录</title>
-    <link href="http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html" title="用户态源码反汇编定位方法记录" />
-    <published>2025-05-24T21:55:00+08:00</published>
-  
-    <updated>2025-05-24T21:55:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/</id>
-    <content src="http://0.0.0.0:4000/posts/%E7%94%A8%E6%88%B7%E6%80%81%E6%BA%90%E7%A0%81%E5%8F%8D%E6%B1%87%E7%BC%96%E5%AE%9A%E4%BD%8D%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="Tech" />
-    
-    <category term="C" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      前言
-
-问题背景就是进程崩溃，产生了 core 文件。其实这次定位非常简单，bt, disassemble 就能直接看出来了。既然简单，就利用这次机会尝试了一下源码反汇编的定位方法。此前在别人的帮助下，运用该方法定位过内核态的问题，但都事发紧急，事后没能复盘，留下了遗憾。尽管存在差异，还是决定在用户态“模拟”一下。
-
-定位过程
-
-Program terminated with signal SIGSEGV, Segmentation fault.
-#0  0x00007fcff9ad157a in check ()
-   from ....so
-(gdb) bt
-#0  0x00007fcff9ad157a in check ()
-   from ....so
-#1  0x00007fcff9ad27c1 in func ()
-   from ....so
-#2  0x00007fc...
     </summary>
   
 

@@ -1697,6 +1697,19 @@
   
 
   
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+  
     
   
 
@@ -1927,9 +1940,6 @@
   
     
     
-  
-    
-    
       
       
         
@@ -1945,6 +1955,60 @@
     <h3 class="pt-2 mt-1 mb-4 ml-1"
       data-toc-skip>相关文章</h3>
     <div class="card-deck mb-4">
+    
+      
+      
+      <div class="card">
+        <a href="/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/">
+          <div class="card-body">
+            <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/timeago.js
+-->
+
+<em class="timeago small"
+    data-ts="1775376000"
+    
+    >
+  2026-04-05
+</em>
+
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>结构体字节对齐规则</h3>
+            <div class="text-muted small">
+              <p>
+                
+
+
+
+
+
+                对齐的含义
+
+不仅是结构体会对齐，其它很多地方也会遇到“对齐”，如下是一个总的理解：
+
+
+  自身对齐：偏移量为自身对齐要求的整数倍。
+  整体对齐：总大小为某个对齐要求的整数倍。
+
+
+
+
+&amp;gt; 对齐的意义
+
+（deepseek）对齐让CPU能像“拿整本书”而不是“拼凑碎片”一样工作。
+
+结构体对齐规则
+
+
+  基本数据类型：对齐要求即为自身字节数。
+  嵌套结构体：
+    
+    ...
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
     
       
       
@@ -2039,45 +2103,6 @@ ba...
 int main(void)
 {
     printf(&quot;%c...
-              </p>
-            </div>
-          </div>
-        </a>
-      </div>
-    
-      
-      
-      <div class="card">
-        <a href="/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/">
-          <div class="card-body">
-            <!--
-  Date format snippet
-  See: ${JS_ROOT}/utils/timeago.js
--->
-
-<em class="timeago small"
-    data-ts="1748781000"
-    
-    >
-  2025-06-01
-</em>
-
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>死机定位-内存不足死在vmalloc</h3>
-            <div class="text-muted small">
-              <p>
-                
-
-
-
-
-
-                定位过程
-
-死机调用栈如下，推栈结果与 bt 结果大差不差。由一个终端程序一路调用到 vmalloc，最后死在其内部。注意到函数 out_of_memory，这表明可能是系统内存快耗尽了。
-
-[0]kdb&amp;gt; bt
-Stack traceback for pid 693
-0xffff880362416740      693        1  1    0   R  0xffff880...
               </p>
             </div>
           </div>
