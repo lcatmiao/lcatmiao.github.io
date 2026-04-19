@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫</title>
   <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2026-04-05T16:24:00+08:00</updated>
+  <updated>2026-04-19T20:46:52+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,69 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>函数调用汇编试读</title>
+    <link href="http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%B1%87%E7%BC%96%E8%AF%95%E8%AF%BB/" rel="alternate" type="text/html" title="函数调用汇编试读" />
+    <published>2026-04-19T20:39:00+08:00</published>
+  
+    <updated>2026-04-19T20:39:00+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%B1%87%E7%BC%96%E8%AF%95%E8%AF%BB/</id>
+    <content src="http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%B1%87%E7%BC%96%E8%AF%95%E8%AF%BB/" />
+    <author>
+      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="ASM" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      Linux
+
+源码
+
+#include &amp;lt;stdio.h&amp;gt;
+#include &amp;lt;inttypes.h&amp;gt;
+
+static int32_t test(int32_t a, int8_t b);
+static int32_t sum(int32_t a, int32_t b);
+
+int main(void)
+{
+    int8_t x = 5;
+    int32_t y = 10, z = 0;
+    int32_t q = 20;
+    int32_t w = 30;
+
+    z = test(y, x);
+    printf("%" PRId32 "\n", z);
+
+    return 0;
+}
+
+static int32_t test(int32_t a, int8_t b)
+{
+    int32_t c = 10;
+
+    return...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -269,51 +332,6 @@ int main(void)
 
   统筹账户也叫统筹基金。
   个人账户里的钱都是自己的，至于能...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>死机定位-内存不足死在vmalloc</title>
-    <link href="http://0.0.0.0:4000/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/" rel="alternate" type="text/html" title="死机定位-内存不足死在vmalloc" />
-    <published>2025-06-01T20:30:00+08:00</published>
-  
-    <updated>2025-06-01T20:30:00+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/</id>
-    <content src="http://0.0.0.0:4000/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/" />
-    <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
-    </author>
-
-  
-    
-    <category term="Tech" />
-    
-    <category term="Linux" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      定位过程
-
-死机调用栈如下，推栈结果与 bt 结果大差不差。由一个终端程序一路调用到 vmalloc，最后死在其内部。注意到函数 out_of_memory，这表明可能是系统内存快耗尽了。
-
-[0]kdb&amp;gt; bt
-Stack traceback for pid 693
-0xffff880362416740      693        1  1    0   R  0xffff8803624171c0 *vtysh
-[15792.666500]  ffff88042d6bb818 0000000000000018 ffffffff818604c0 ffff88042d6bb858
-[15792.755452]  ffffffff8109f38e ffff88042d6bb848 ffffffff817a6588 000000000040adbd
-[15792.844406] ...
     </summary>
   
 
