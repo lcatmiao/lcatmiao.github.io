@@ -78,7 +78,7 @@
   {
     "title": "死机定位-内存不足死在vmalloc",
     "url": "/posts/%E6%AD%BB%E6%9C%BA%E5%AE%9A%E4%BD%8D-%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E6%AD%BB%E5%9C%A8vmalloc/",
-    "categories": "Tech, Linux",
+    "categories": "Tech, AdvancedProgramming",
     "tags": "kdb",
     "date": "2025-06-01 20:30:00 +0800",
     
@@ -211,21 +211,6 @@
   },
   
   {
-    "title": "MySQL数据类型转换",
-    "url": "/posts/MySQL%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/",
-    "categories": "Tech, SQL",
-    "tags": "",
-    "date": "2022-02-11 21:35:00 +0800",
-    
-
-
-
-
-
-    "snippet": "关于MySQL的数据类型转换问题大概两年前就研究过了，只是那时候没有发博客的习惯，笔记记得也很简单。最近又遇到了这个问题，打开以往的笔记发现记得太简单了，自己看完了还是有好多疑问😭，故有了这篇文章。  参考资料：  MySQL :: MySQL 8.0 Reference Manual :: 12.11 Cast Functions and Operators  MySQL :: MySQL 8.0 Reference Manual :: 12.3 Type Conversion in Expression Evaluation  mysql 类型自动化转换问题 - whendream - 博客园  谈谈MySQL隐式类型转换 - 知乎  测试版本：  MySQL 8.0.18显式转换cast()CAST(expr AS type [ARRAY])使用该函数可以进行强制类型转换。type：  signed：signed bigint类型  char：varchar类型  float  double# 将53.4转换为整数mysql&amp;gt; select cast(53.4 as signed);+----------------------+| cast(53.4 as signed) |+----------------------+|                   53 |+----------------------+1 row in set (0.00 sec)# 将53.6转换为整数mysql&amp;gt; select cast(53.6 as signed);+----------------------+| cast(53.6 as signed) |+----------------------+|                   54 |+----------------------+1 row in set (0.00 sec)# 将-53.4转换为整数mysql&amp;gt; select cast(-53.4 as signed);+-----------------------+| cast(-53.4 as signed) |+-----------------------+|                   -53 |+-----------------------+1 row in set (0.00 sec)# 将-53.6转换为整数mysql&amp;gt; select cast(-53.6 as signed);+-----------------------+| cast(-53.6 as signed) |+-----------------------+|                   -54 |+-----------------------+1 row in set (0.00 sec)# 将53.4转换为字符串mysql&amp;gt; select cast(53.4 as char);+--------------------+| cast(53.4 as char) |+--------------------+| 53.4               |+--------------------+1 row in set (0.00 sec)字符串转换为数字的规则      不以数字开头的字符串会被转换为0        以数字开头的字符串会被转换成开头的那些数字  此规则也适用于隐式转换。# 将字符串qwe456转换为整数mysql&amp;gt; select cast(&#39;qwe456&#39; as signed);+--------------------------+| cast(&#39;qwe456&#39; as signed) |+--------------------------+|                        0 |+--------------------------+1 row in set, 1 warning (0.00 sec)# 将字符串123qwe456转换为整数mysql&amp;gt; select cast(&#39;123qwe456&#39; as signed);+-----------------------------+| cast(&#39;123qwe456&#39; as signed) |+-----------------------------+|                         123 |+-----------------------------+1 row in set, 1 warning (0.00 sec)# 将字符串123.66qwe456转换为整数mysql&amp;gt; select cast(&#39;123.66qwe456&#39; as signed);+--------------------------------+| cast(&#39;123.66qwe456&#39; as signed) |+--------------------------------+|                            123 |+--------------------------------+1 row in set, 1 warning (0.00 sec)# 将字符串123.66qwe456转换为浮点数mysql&amp;gt; select cast(&#39;123.66qwe456&#39; as float);+-------------------------------+| cast(&#39;123.66qwe456&#39; as float) |+-------------------------------+|                        123.66 |+-------------------------------+1 row in set, 1 warning (0.00 sec)隐式转换数字与字符串的相互转换MySQL会在必要的时候将数字转换为字符串，或将字符串转换为数字。# 数字转换为字符串mysql&amp;gt; select concat(2, &#39;test&#39;);+-------------------+| concat(2, &#39;test&#39;) |+-------------------+| 2test             |+-------------------+1 row in set (0.00 sec)# 字符串转换为数字mysql&amp;gt; select 1 + &#39;1&#39;;+---------+| 1 + &#39;1&#39; |+---------+|       2 |+---------+1 row in set (0.00 sec)# 字符串转换为数字mysql&amp;gt; select 6 &amp;gt; &#39;3qwe&#39;;+------------+| 6 &amp;gt; &#39;3qwe&#39; |+------------+|          1 |+------------+1 row in set, 1 warning (0.00 sec)# 字符串转换为数字mysql&amp;gt; select 0 = &#39;qwe345&#39;;+--------------+| 0 = &#39;qwe345&#39; |+--------------+|            1 |+--------------+1 row in set, 1 warning (0.00 sec)第一例，concat() 需要的参数为字符串，先将数字 2 转换为字符串 &#39;2&#39; ，再将 &#39;2&#39; 与 &#39;test&#39; 进行拼接得到 &#39;2test&#39; 。第二例，加法运算，先将字符串 &#39;1&#39; 转换为数字 1 ，再做加法得到 2 。第三例，比较运算，先将 &#39;3qwe&#39; 转换为数字 3 ，然后 6 &amp;gt; 3 为真，返回1。第四例，比较运算，先将 &#39;qwe345&#39; 转换为数字 0 ，然后 0 = 0 为真，返回1。下面是第五例的情景：# 有表如下mysql&amp;gt; select * from test1;+-------+-------+-------+| no    | name  | grade |+-------+-------+-------+| 23    | admin |    50 || 24    | admin |    43 || 25    | qwe   |    54 || 25asd | qwe   |    54 |+-------+-------+-------+4 rows in set (0.00 sec)# 表结构如下mysql&amp;gt; desc test1;+-------+-------------+------+-----+---------+-------+| Field | Type        | Null | Key | Default | Extra |+-------+-------------+------+-----+---------+-------+| no    | varchar(50) | NO   | PRI | NULL    |       || name  | varchar(50) | YES  |     | NULL    |       || grade | smallint(6) | YES  |     | NULL    |       |+-------+-------------+------+-----+---------+-------+3 rows in set (0.00 sec)# 执行查询如下mysql&amp;gt; select * from test1 where no = 25;+-------+------+-------+| no    | name | grade |+-------+------+-------+| 25    | qwe  |    54 || 25asd | qwe  |    54 |+-------+------+-------+2 rows in set, 1 warning (0.00 sec)上面的情景中，执行 where no = 25 时，先看第一行，将字符串 &#39;23&#39; 转换为数字 23 ， 23 = 25 为假，不选该行；然后一样， 24 = 25 为假，不选该行；第三行，将字符串 &#39;25&#39; 转换为数字 25 ， 25 = 25 为真，选中该行；第四行，将字符串 25asd 转换为数字 25 ， 25 = 25 为真，选中该行；最后得到上面的查询结果。总转换规则下面的规则更详细精确，是来自官方文档的描述。The following rules describe how conversion occurs for comparison operations:      If one or both arguments are NULL, the result of the comparison is NULL, except for the NULL-safe &amp;lt;=&amp;gt; equality comparison operator. For NULL &amp;lt;=&amp;gt; NULL, the result is true. No conversion is needed.        If both arguments in a comparison operation are strings, they are compared as strings.        If both arguments are integers, they are compared as integers.        Hexadecimal values are treated as binary strings if not compared to a number.        If one of the arguments is a TIMESTAMP or DATETIME column and the other argument is a constant, the constant is converted to a timestamp before the comparison is performed. This is done to be more ODBC-friendly. This is not done for the arguments to IN(). To be safe, always use complete datetime, date, or time strings when doing comparisons. For example, to achieve best results when using BETWEEN with date or time values, use CAST() to explicitly convert the values to the desired data type.    A single-row subquery from a table or tables is not considered a constant. For example, if a subquery returns an integer to be compared to a DATETIME value, the comparison is done as two integers. The integer is not converted to a temporal value. To compare the operands as DATETIME values, use CAST() to explicitly convert the subquery value to DATETIME.        If one of the arguments is a decimal value, comparison depends on the other argument. The arguments are compared as decimal values if the other argument is a decimal or integer value, or as floating-point values if the other argument is a floating-point value.        In all other cases, the arguments are compared as floating-point (double-precision) numbers. For example, a comparison of string and numeric operands takes place as a comparison of floating-point numbers.  复制自 mysql 类型自动化转换问题 - whendream - 博客园 的翻译：比较运算时的类型转换规则：  如果一个或两个参数都是NULL，比较的结果是NULL，除了NULL安全的&amp;lt;=&amp;gt;相等比较运算符。对于NULL &amp;lt;=&amp;gt; NULL，结果为true。不需要转换。  如果比较操作中的两个参数都是字符串，则将它们作为字符串进行比较。  如果两个参数都是整数，则将它们作为整数进行比较。  如果不与数字进行比较，则将十六进制值视为二进制字符串。  如果其中一个参数是十进制值，则比较取决于另一个参数。 如果另一个参数是十进制或整数值，则将参数与十进制值进行比较，如果另一个参数是浮点值，则将参数与浮点值进行比较。  如果其中一个参数是TIMESTAMP或DATETIME列，另一个参数是常量，则在执行比较之前将常量转换为时间戳。  我的翻译：在所有其它情况下，参数作为浮点数（双精度）进行比较。例如，字符串和数字的比较就作为浮点数进行比较。"
-  },
-  
-  {
     "title": "jekyll-chirpy-theme-github搭建个人博客",
     "url": "/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/",
     "categories": "Tech, Misc",
@@ -243,7 +228,7 @@
   {
     "title": "关于域名的各种名词叫法",
     "url": "/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/",
-    "categories": "Tech, Misc",
+    "categories": "Tech, Network",
     "tags": "",
     "date": "2022-01-29 17:31:10 +0800",
     
@@ -258,7 +243,7 @@
   {
     "title": "git如何合并分支",
     "url": "/posts/git%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF/",
-    "categories": "Tech, Nuggets",
+    "categories": "Tech, Tools",
     "tags": "git",
     "date": "2022-01-26 13:49:37 +0800",
     
@@ -268,21 +253,6 @@
 
 
     "snippet": "复制了官网文档中对git合并过程的描述，提取了有必要记录的部分；自己测试了一些关于合并冲突的例子，做一个简要总结。  参考资料：Git 分支 - 分支的新建与合并合并过程快进(fast-forward)现在要将hotfix分支合并到master分支。$ git checkout master$ git merge hotfixUpdating f42c576..3a0874cFast-forward index.html | 2 ++ 1 file changed, 2 insertions(+)合并后如下图：当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。随后可以删除hotfix分支。$ git branch -d hotfix三方合并现在要将iss53分支合并到master分支。$ git checkout masterSwitched to branch &#39;master&#39;$ git merge iss53Merge made by the &#39;recursive&#39; strategy.index.html |    1 +1 file changed, 1 insertion(+)合并后如下图：在这种情况下，你的开发历史从一个更早的地方开始分叉开来（diverged）。 因为，master 分支所在提交并不是 iss53 分支所在提交的直接祖先，Git 不得不做一些额外的工作。 出现这种情况的时候，Git 会使用两个分支的末端所指的快照（C4 和 C5）以及这两个分支的公共祖先（C2），做一个简单的三方合并。Git 将此次三方合并的结果做了一个新的快照并且自动创建一个新的提交指向它。 这个被称作一次合并提交，它的特别之处在于他有不止一个父提交。随后可以删除iss53分支。$ git branch -d iss53合并冲突如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们，即会产生合并冲突。  fast-forward 一定不会产生合并冲突。  三方合并可能产生合并冲突。合并冲突的发生有点玄学，不必过于纠结，按照第一段话理解即可。具体会不会发生冲突，老老实实听git的就行，它说冲突那就是冲突了。附上一些实测例子：  git版本：git version 2.34.1.windows.1例一直接fast-forward例二PS E:\\2.学习\\test&amp;gt; git merge hotfixAuto-merging merge.txtMerge made by the &#39;ort&#39; strategy. merge.txt | 2 +- 1 file changed, 1 insertion(+), 1 deletion(-)我的理解：master对第一行做了修改，但hotfix没有对第一行做修改，无冲突；两分支都没有对第二行做修改，无冲突；master没有对第三行做修改，但hotfix对第三行做了修改，无冲突。最后合并成功，没有冲突。例三PS E:\\2.学习\\test&amp;gt; git merge hotfixAuto-merging merge.txtCONFLICT (content): Merge conflict in merge.txtAutomatic merge failed; fix conflicts and then commit the result.&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt; HEADqwe222qwe=======qweqwe444&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; hotfixqwe我的理解：这个居然会发生冲突，我是没有想到的。原本应该像例二一样理解，第一行只有master改了，第二行只有hotfix改了，第三行两个分支都没改，应该不会出现冲突。然而却出现了冲突，说明冲突的判定没有想象得那么简单，与git的具体实现有关。这里贴出了git插入的冲突标记。按我的理解，根据冲突标记，git认为两个分支对merge.txt的红框处做了不同修改，产生了冲突；蓝框处两者都没有修改，无冲突；所以最终发生了合并冲突。例四PS E:\\2.学习\\test&amp;gt; git merge hotfixAuto-merging merge.txtCONFLICT (content): Merge conflict in merge.txtAutomatic merge failed; fix conflicts and then commit the result.qwe&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt; HEADqwe222qwe=======qweqwe444&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; hotfix同例三。例五PS E:\\2.学习\\test&amp;gt; git merge hotfixAuto-merging merge.txtCONFLICT (content): Merge conflict in merge.txtAutomatic merge failed; fix conflicts and then commit the result.&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt; HEADqwe666=======qwe444&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; hotfixqwe333qwe555我的理解：这个好理解。两个分支对第二行、第三行做了相同的修改，没有冲突；两个分支分别对第一行做了不同的修改，有冲突；最终发生合并冲突。例六PS E:\\2.学习\\test&amp;gt; git merge hotfixAuto-merging merge.txtCONFLICT (content): Merge conflict in merge.txtAutomatic merge failed; fix conflicts and then commit the result.qwe444qwe333&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt; HEADqwe=======qwe555&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; hotfix我的理解：我迷惑了。。。按照之前的理解，两分支对第一行、第二行做了相同的修改，不冲突；master分支没有对第三行做出修改，hotfix分支对第三行做了修改，不冲突；最终应该不冲突才是。假如将这里master分支对第三行的修改看成是“不变的修改”，那么确实可以说两个分支对第三行做了不同的修改，进而发生冲突。但是这样的说法在例二中就站不住脚，按照这个“不变的修改”的假设，例二应该发生冲突才是。想想也是，这个想法是我凭空想象出来的，多半不可能。总结关于合并冲突的判定没有搞懂，不过我认为继续纠结这个问题没有更多的意义了，除非阅读git实现的源码。总而言之，git官方文档的book中有如下描述：Git 分支 - 分支的新建与合并如果你在两个不同的分支中，对同一个文件的同一个部分进行了不同的修改，Git 就没法干净的合并它们。以这句话为标准即可，具体看git的合并结果就行。"
-  },
-  
-  {
-    "title": "原码-反码-补码范围及特殊情况",
-    "url": "/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/",
-    "categories": "Tech, Misc",
-    "tags": "",
-    "date": "2021-08-24 15:40:00 +0800",
-    
-
-
-
-
-
-    "snippet": "这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。一个字节：原码：$-127 \\sim -0, +0 \\sim +127$$-\\frac{127}{128} \\sim -\\frac{0}{128}, +\\frac{0}{128} \\sim +\\frac{127}{128}$$-(1 - 2^{-7}) \\sim -0.000, +0.000 \\sim +(1 - 2^{-7})$$-0.127 \\sim -0.000, +0.000 \\sim +0.127$反码：$-127 \\sim -0, +0 \\sim +127$$-\\frac{127}{128} \\sim -\\frac{0}{128}, +\\frac{0}{128} \\sim +\\frac{127}{128}$$-(1 - 2^{-7}) \\sim -0.000, +0.000 \\sim +(1 - 2^{-7})$$-0.127 \\sim -0.000, +0.000 \\sim +0.127$补码：$-128 \\sim 0 \\sim +127$$-1.0 \\sim 0.000 \\sim +\\frac{127}{128}$$-1.0 \\sim 0.000 \\sim +(1 - 2^{-7})$$-0.128 \\sim 0 \\sim +0.127$原码反码区分±0，±0.0$[+0]_补=[-0]_补=0,000\\ 0000$$[+0.0]_补=[-0.0]_补=0.000\\ 0000$$[-128]_补=1,000\\ 0000$$[-1.0]_补=1.000\\ 0000$      $[+0]_补 \\ \\&amp;amp;\\  [-0]_补$    $[+0]_原=0,000\\ 0000$    $[+0]_补=0,000\\ 0000$    $[-0]_原=1,000\\ 0000$    $[-0]_反=1,111\\ 1111$    $[-0]_补=10,000\\ 0000 \\xlongequal{溢出丢弃}0,000\\ 0000$    $[+0]_补=[-0]_补=0,000\\ 0000$        $[+0.0]_补 \\ \\&amp;amp;\\ [-0.0]_补$    $[+0.0]_原=0.000\\ 0000$    $[+0.0]_补=0.000\\ 0000$    $[-0.0]_原=1.000\\ 0000$    $[-0.0]_反=1.111\\ 1111$    $[-0.0]_补=10.000\\ 0000 \\xlongequal{溢出丢弃}0.000\\ 0000$    $[+0.0]_补=[-0.0]_补=0.000\\ 0000$        $[-128]_补$    $[-128]_{伪原}=1,1000\\ 0000$    $[-128]_{伪反}=1,0111\\ 1111$    $[-128]_补=1,1000\\ 0000 \\xlongequal{溢出丢弃}1,000\\ 0000$        $[-1.0]_补$    $-1.0\\rightarrow-0.128$    $[-1.0]_{伪原}=1.1000\\ 0000$    $[-1.0]_{伪反}=1.0111\\ 1111$    $[-1.0]_补=1.1000\\ 0000 \\xlongequal{溢出丢弃}1.000\\ 0000$  "
   },
   
   {

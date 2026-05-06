@@ -46,7 +46,7 @@
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/"},"datePublished":"2022-01-29T17:31:10+08:00","url":"http://0.0.0.0:4000/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/","description":"关于域名有一些名词，比如域名、顶级域名、二级域名、三级域名、子域名、主机名等。自己总是搞不清这些名词具体指代什么，因为网上的资料总是有各种差别，同一个名词在不同的资料里有不同的解释，属实是迷惑。在查阅了很多资料后，决定做一个总结，尽可能涵盖各种说法，做一个自己理解的标准，以期在遇到这些说法时心里有底。 资料 基本概念 (aliyun.com) Domain name - Wikipedia What’s in a Domain Name? All About Domain Levels - Hover Blog 下面贴两段我认为有帮助的描述 阿里云产品文档 基本概念 (aliyun.com) 互联网名称与数字地址分配机构（ICANN）负责管理和协调国际互联网络域名系统。根据ICANN的定义，一个完整的域名至少有两个部分，各部分之间用“.”来分隔，最后一个“.”的右边部分称为顶级域名，也称为一级域名；最后一个“.”的左边部分称为二级域名；二级域名的左边部分称为三级域名，以此类推，每一级的域名控制它下一级域名的分配。下图以www.example.com.cn为例，为您介绍域名的级别。 注册域名过程中，可自定义的内容在域名后缀的左侧部分。根据注册局规则，可供用户选择的后缀，可能是顶级域名（如“.cn”），也可能是二级域名（如“.com.cn/.net.cn/.org.cn”）。 域名解析设置是针对已经完成注册的域名或已注册域名的左侧部分（即域名后缀左侧的左侧）进行解析设置。 所以在解析场景下，对用户解析内容设置的到底是第几个左侧的解释会存在困难。因此，解析场景里，用户注册的完整域名被定义为“一级域名”（不是顶级域名），完整域名的左侧第一个（即一级域名的子域名）是二级域名，以此类推。 以注册一个后缀为“.org.cn”、完整域名为“sample.org.cn”的域名为例，对各定义进行如下说明。 域名后缀：“.org.cn”为注册局提供的可注册的域名后缀。 一级域名：“sample.org.cn”为用户注册的完整域名，即解析场景下的一级域名。 二级域名：“abc.sample.org.cn”为“sample.org.cn”的子域名，即解析场景下的二级域名。 维基百科 Domain name - Wikipedia 在Purpose的第一段有： Individual Internet host computers use domain names as host identifiers, also called hostnames. The term hostname is also used for the leaf labels in the domain name system, usually without further subordinate domain name space. Hostnames appear as a component in Uniform Resource Locators (URLs) for Internet resources such as websites (e.g., en.wikipedia.org). 在Second-level and lower level domains的第三段有： Second-level (or lower-level, depending on the established parent hierarchy) domain names are often created based on the name of a company (e.g., bbc.co.uk), product or service (e.g. hotmail.com). Below these levels, the next domain name component has been used to designate a particular host server. Therefore, ftp.example.com might be an FTP server, www.example.com would be a World Wide Web server, and mail.example.com could be an email server, each intended to perform only the implied function. 总结 https://www.example.com.cn/detail/index.html?id=6 以上面这个链接为例， https是协议 ，/detail/index.html是路径，id=6是参数。 www.example.com.cn这一整个是域名，也是主机名；cn是顶级域名（一级域名）；com是二级域名，也可以说com.cn是二级域名；example是三级域名，也可以说example.com.cn是三级域名；www是四级域名，也可以说www.example.com.cn是四级域名。 com是cn的子域名，example是com的子域名，example是com.cn的子域名，www是example.com.cn的子域名，www.example.com.cn是example.com.cn的子域名，这里说法比较随意，子域名是一个相对概念，想象一下树结构就行。 example.com.cn是花钱买的部分，是用户注册的部分，买来以后可以设置子域名，比如www。www是自定义的名字，是服务名，可用于指明服务器提供的服务，例如www、ftp、mail；还可以叫它主机名，不过这个叫法与上面提到的“整个域名也是主机名”是两回事。本例中，www也是四级域名。 我们平时看到的域名大都以com、cn、org单个结尾，类似下面这样： www.baidu.com www.360.cn www.kali.org 但也有以com.cn、net.cn、org.cn两个结尾的，如： yz.chsi.com.cn www.yto.net.cn www.cnvd.org.cn 本例www.example.com.cn便是以com.cn两个结尾的。com.cn、net.cn、org.cn这种看作二级域名，而不是作为整体看作顶级域名（一级域名）。域名后缀可以是顶级域名（一级域名），也可以是二级域名，前三个例子中，com、cn、org是域名后缀，后三个例子中，com.cn、net.cn、org.cn是域名后缀。本例www.example.com.cn中com.cn是域名后缀。 关于一级域名、二级域名等还有另一种说法。 以www.example.com.cn为例。 将用户注册的完整域名叫做一级域名（不能叫顶级域名），随后逐级下降。example.com.cn是一级域名；www是二级域名，也可以说www.example.com.cn是二级域名。","author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","headline":"关于域名的各种名词叫法","dateModified":"2022-01-29T17:31:10+08:00","@context":"https://schema.org"}</script>
+{"headline":"关于域名的各种名词叫法","dateModified":"2022-01-29T17:31:10+08:00","datePublished":"2022-01-29T17:31:10+08:00","url":"http://0.0.0.0:4000/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/%E5%85%B3%E4%BA%8E%E5%9F%9F%E5%90%8D%E7%9A%84%E5%90%84%E7%A7%8D%E5%90%8D%E8%AF%8D%E5%8F%AB%E6%B3%95/"},"author":{"@type":"Person","name":"小黑猫"},"@type":"BlogPosting","description":"关于域名有一些名词，比如域名、顶级域名、二级域名、三级域名、子域名、主机名等。自己总是搞不清这些名词具体指代什么，因为网上的资料总是有各种差别，同一个名词在不同的资料里有不同的解释，属实是迷惑。在查阅了很多资料后，决定做一个总结，尽可能涵盖各种说法，做一个自己理解的标准，以期在遇到这些说法时心里有底。 资料 基本概念 (aliyun.com) Domain name - Wikipedia What’s in a Domain Name? All About Domain Levels - Hover Blog 下面贴两段我认为有帮助的描述 阿里云产品文档 基本概念 (aliyun.com) 互联网名称与数字地址分配机构（ICANN）负责管理和协调国际互联网络域名系统。根据ICANN的定义，一个完整的域名至少有两个部分，各部分之间用“.”来分隔，最后一个“.”的右边部分称为顶级域名，也称为一级域名；最后一个“.”的左边部分称为二级域名；二级域名的左边部分称为三级域名，以此类推，每一级的域名控制它下一级域名的分配。下图以www.example.com.cn为例，为您介绍域名的级别。 注册域名过程中，可自定义的内容在域名后缀的左侧部分。根据注册局规则，可供用户选择的后缀，可能是顶级域名（如“.cn”），也可能是二级域名（如“.com.cn/.net.cn/.org.cn”）。 域名解析设置是针对已经完成注册的域名或已注册域名的左侧部分（即域名后缀左侧的左侧）进行解析设置。 所以在解析场景下，对用户解析内容设置的到底是第几个左侧的解释会存在困难。因此，解析场景里，用户注册的完整域名被定义为“一级域名”（不是顶级域名），完整域名的左侧第一个（即一级域名的子域名）是二级域名，以此类推。 以注册一个后缀为“.org.cn”、完整域名为“sample.org.cn”的域名为例，对各定义进行如下说明。 域名后缀：“.org.cn”为注册局提供的可注册的域名后缀。 一级域名：“sample.org.cn”为用户注册的完整域名，即解析场景下的一级域名。 二级域名：“abc.sample.org.cn”为“sample.org.cn”的子域名，即解析场景下的二级域名。 维基百科 Domain name - Wikipedia 在Purpose的第一段有： Individual Internet host computers use domain names as host identifiers, also called hostnames. The term hostname is also used for the leaf labels in the domain name system, usually without further subordinate domain name space. Hostnames appear as a component in Uniform Resource Locators (URLs) for Internet resources such as websites (e.g., en.wikipedia.org). 在Second-level and lower level domains的第三段有： Second-level (or lower-level, depending on the established parent hierarchy) domain names are often created based on the name of a company (e.g., bbc.co.uk), product or service (e.g. hotmail.com). Below these levels, the next domain name component has been used to designate a particular host server. Therefore, ftp.example.com might be an FTP server, www.example.com would be a World Wide Web server, and mail.example.com could be an email server, each intended to perform only the implied function. 总结 https://www.example.com.cn/detail/index.html?id=6 以上面这个链接为例， https是协议 ，/detail/index.html是路径，id=6是参数。 www.example.com.cn这一整个是域名，也是主机名；cn是顶级域名（一级域名）；com是二级域名，也可以说com.cn是二级域名；example是三级域名，也可以说example.com.cn是三级域名；www是四级域名，也可以说www.example.com.cn是四级域名。 com是cn的子域名，example是com的子域名，example是com.cn的子域名，www是example.com.cn的子域名，www.example.com.cn是example.com.cn的子域名，这里说法比较随意，子域名是一个相对概念，想象一下树结构就行。 example.com.cn是花钱买的部分，是用户注册的部分，买来以后可以设置子域名，比如www。www是自定义的名字，是服务名，可用于指明服务器提供的服务，例如www、ftp、mail；还可以叫它主机名，不过这个叫法与上面提到的“整个域名也是主机名”是两回事。本例中，www也是四级域名。 我们平时看到的域名大都以com、cn、org单个结尾，类似下面这样： www.baidu.com www.360.cn www.kali.org 但也有以com.cn、net.cn、org.cn两个结尾的，如： yz.chsi.com.cn www.yto.net.cn www.cnvd.org.cn 本例www.example.com.cn便是以com.cn两个结尾的。com.cn、net.cn、org.cn这种看作二级域名，而不是作为整体看作顶级域名（一级域名）。域名后缀可以是顶级域名（一级域名），也可以是二级域名，前三个例子中，com、cn、org是域名后缀，后三个例子中，com.cn、net.cn、org.cn是域名后缀。本例www.example.com.cn中com.cn是域名后缀。 关于一级域名、二级域名等还有另一种说法。 以www.example.com.cn为例。 将用户注册的完整域名叫做一级域名（不能叫顶级域名），随后逐级下降。example.com.cn是一级域名；www是二级域名，也可以说www.example.com.cn是二级域名。","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -815,7 +815,7 @@
     <i class="far fa-folder-open fa-fw mr-1"></i>
     
       <a href='/categories/tech/'>Tech</a>,
-      <a href='/categories/misc/'>Misc</a>
+      <a href='/categories/network/'>Network</a>
   </div>
   
 
@@ -1337,33 +1337,7 @@
   
 
   
-
-  
-
-  
-
-  
-
-  
-
-
-  
-
-  
     
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
   
 
   
@@ -1411,7 +1385,7 @@
       
       
       <div class="card">
-        <a href="/posts/%E6%89%8B%E5%8A%A8%E6%90%AD%E5%BB%BAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83/">
+        <a href="/posts/%E7%AE%80%E6%9E%90HTTPS/">
           <div class="card-body">
             <!--
   Date format snippet
@@ -1419,13 +1393,13 @@
 -->
 
 <em class="timeago small"
-    data-ts="1595665800"
+    data-ts="1744714200"
     
     >
-  2020-07-25
+  2025-04-15
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>手动搭建Web服务器环境</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>简析HTTPS</h3>
             <div class="text-muted small">
               <p>
                 
@@ -1434,13 +1408,11 @@
 
 
 
-                看网上的教程大都是使用PHPStudy等集成包一键搭建的Web环境，使用集成包搭建是能省不少事，但是也少看见了很多东西，这样就不能自己安排，不喜欢这种感觉。我这里是在VM虚拟机的Win7下进行的，其它Windows系统大同小异，其实在Windows Server之类的系统上搭建应该更好。
+                写在前面
 
+阅读《图解HTTP》，大致理解了 SSL/TLS 的握手过程和思想原理。然而作为入门书，它没有介绍基于 DH 算法的 TLS 握手过程，也没有介绍证书链相关的知识😡。我 Google 了不少资料，着重啃了几篇文章，结合抓包分析，本想“差不多得了”，却没料到入了大坑，疑问不减反增。
 
-  本文采用Apache+PHP+MySQL进行配置，版本如下：
-
-  Apache 2.4.43
-...
+一筹莫展之际，AI 技术大火，救我狗命。受此鼓舞，借助 AI 解惑，又打起精神啃读了多个 RFC ...
               </p>
             </div>
           </div>
@@ -1450,7 +1422,7 @@
       
       
       <div class="card">
-        <a href="/posts/%E5%8E%9F%E7%A0%81-%E5%8F%8D%E7%A0%81-%E8%A1%A5%E7%A0%81%E8%8C%83%E5%9B%B4%E5%8F%8A%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5/">
+        <a href="/posts/%E7%9C%9F%E5%80%BC%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/">
           <div class="card-body">
             <!--
   Date format snippet
@@ -1458,13 +1430,13 @@
 -->
 
 <em class="timeago small"
-    data-ts="1629790800"
+    data-ts="1711792680"
     
     >
-  2021-08-24
+  2024-03-30
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>原码-反码-补码范围及特殊情况</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>真值与内存的相互转换</h3>
             <div class="text-muted small">
               <p>
                 
@@ -1473,15 +1445,27 @@
 
 
 
-                这篇简单的笔记是考研复习期间写的。尽管考不上了，这篇笔记还是有点价值，记录了几个特殊情况和一些个性化的理解。网上资料较为零散，这里把它们集中说了一下，不过格式比较随意，一些推导方式并不正确但是能帮助理解记忆。
+                概念定义
 
-一个字节：
 
-原码：
 
-$-127 \sim -0, +0 \sim +127$
+&amp;gt; 真值
 
-$-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
+实际意义上的值，比如代码里直接书写的值。
+
+&amp;gt; 内存值
+
+这个词是笔者自己造的，用于特指存储在内存中的值。笔者对这个概念还有如下规定或结论：
+
+
+  内存值都是无符号的。
+  习惯称“n进制内存值”为“内存n进制”，比如称“二进制内存值”为“内存二进制”。
+  内存值与其对应的无符号真值是相等的。
+
+
+&amp;gt; 内存值分布
+
+这个词是笔者自己造的，用于...
               </p>
             </div>
           </div>
@@ -1491,7 +1475,7 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
       
       
       <div class="card">
-        <a href="/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">
+        <a href="/posts/gdb%E6%97%A0-g%E8%B0%83%E8%AF%95%E5%AE%9E%E6%88%98%E8%AE%B0%E5%BD%95/">
           <div class="card-body">
             <!--
   Date format snippet
@@ -1499,13 +1483,13 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
 -->
 
 <em class="timeago small"
-    data-ts="1644043380"
+    data-ts="1745503200"
     
     >
-  2022-02-05
+  2025-04-24
 </em>
 
-            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>jekyll-chirpy-theme-github搭建个人博客</h3>
+            <h3 class="pt-0 mt-1 mb-3" data-toc-skip>gdb无-g调试实战记录</h3>
             <div class="text-muted small">
               <p>
                 
@@ -1514,7 +1498,15 @@ $-\frac{127}{128} \sim -\frac{0}{128}, +\frac{0}{...
 
 
 
-                本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法...
+                问题背景
+
+设备外发日志的内容错乱，甚至产生 core 文件。版本是正常编译的发行版本，没有附带 -g 加入的调试信息。
+
+我懒得加调试信息也不想加 -g 重新编译，二者在本人的开发环境中都十分麻烦。这种无 -g 调试的场景其实还蛮常见的，这次定位比较顺利，故记录之。
+
+定位过程
+
+从现象上看是日志内容错位了，但也不能排除是踩内存，出界内容被直接解析也能出现类似的现象。通过看代码，我高度怀疑...
               </p>
             </div>
           </div>
