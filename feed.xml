@@ -2,9 +2,9 @@
 
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>http://0.0.0.0:4000/</id>
-  <title>小黑猫</title>
-  <subtitle>A minimal, portfolio, sidebar, bootstrap Jekyll theme with responsive web design and focuses on text presentation.</subtitle>
-  <updated>2026-05-06T12:56:57+08:00</updated>
+  <title>小黑猫的博客</title>
+  <subtitle>这里是小黑猫的博客，以技术文章为主，也会夹杂其它各类文章。</subtitle>
+  <updated>2026-08-26T17:41:39+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -12,7 +12,7 @@
   <link rel="self" type="application/atom+xml" href="http://0.0.0.0:4000/feed.xml"/>
   <link rel="alternate" type="text/html" hreflang="zh-CN"
     href="http://0.0.0.0:4000/"/>
-  <generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator>
   <rights> © 2026 小黑猫 </rights>
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
@@ -27,9 +27,9 @@
     <updated>2026-04-19T20:39:00+08:00</updated>
   
     <id>http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%B1%87%E7%BC%96%E8%AF%95%E8%AF%BB/</id>
-    <content src="http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%B1%87%E7%BC%96%E8%AF%95%E8%AF%BB/" />
+    <content type="text/html" src="http://0.0.0.0:4000/posts/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%B1%87%E7%BC%96%E8%AF%95%E8%AF%BB/" />
     <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+      <name>lcatmiao</name>
     </author>
 
   
@@ -40,44 +40,7 @@
     
   
 
-  
-    <summary>
-      
-
-
-
-
-
-      Linux
-
-源码
-
-#include &amp;lt;stdio.h&amp;gt;
-#include &amp;lt;inttypes.h&amp;gt;
-
-static int32_t test(int32_t a, int8_t b);
-static int32_t sum(int32_t a, int32_t b);
-
-int main(void)
-{
-    int8_t x = 5;
-    int32_t y = 10, z = 0;
-    int32_t q = 20;
-    int32_t w = 30;
-
-    z = test(y, x);
-    printf("%" PRId32 "\n", z);
-
-    return 0;
-}
-
-static int32_t test(int32_t a, int8_t b)
-{
-    int32_t c = 10;
-
-    return...
-    </summary>
-  
+  <summary>Linux  源码  #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;inttypes.h&amp;gt;  static int32_t test(int32_t a, int8_t b); static int32_t sum(int32_t a, int32_t b);  int main(void) {     int8_t x = 5;     int32_t y = 10, z = 0;     int32_t q = 20;     int32_t w = 30;      z = test(y, x);     printf("%" PRId32 "\n", z);      return 0; }  static int32_t test(int32_t a, int8_t b) {     int32_t c = 10;      return...</summary>
 
   </entry>
 
@@ -90,9 +53,9 @@ static int32_t test(int32_t a, int8_t b)
     <updated>2026-04-05T16:00:00+08:00</updated>
   
     <id>http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/</id>
-    <content src="http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/" />
+    <content type="text/html" src="http://0.0.0.0:4000/posts/%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E8%A7%84%E5%88%99/" />
     <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+      <name>lcatmiao</name>
     </author>
 
   
@@ -103,50 +66,7 @@ static int32_t test(int32_t a, int8_t b)
     
   
 
-  
-    <summary>
-      
-
-
-
-
-
-      对齐的含义
-
-不仅是结构体会对齐，其它很多地方也会遇到“对齐”，如下是一个总的理解：
-
-
-  自身对齐：偏移量为自身对齐要求的整数倍。
-  整体对齐：总大小为某个对齐要求的整数倍。
-
-
-
-
-&amp;gt; 对齐的意义
-
-（deepseek）对齐让CPU能像“拿整本书”而不是“拼凑碎片”一样工作。
-
-结构体对齐规则
-
-
-  基本数据类型：对齐要求即为自身字节数。
-  嵌套结构体：
-    
-      嵌套结构体自身内部要对齐。
-      将嵌套结构体看作一个整体，但其对齐要求是内部最大的对齐要求。
-    
-  
-  数组：看作一个整体，其对齐要求是元素类型的对齐要求。
-  最后整体对齐，对齐要求是内部最大的对齐要求。
-
-
-
-
-&amp;gt; 如何使结构体最小
-
-按对齐要求从小到大（或从大到小）排列成员，从小到大或从大到小是一样的（知乎此帖有明确回答：https://www.zhihu.com...
-    </summary>
-  
+  <summary>对齐的含义  不仅是结构体会对齐，其它很多地方也会遇到“对齐”，如下是一个总的理解：     自身对齐：偏移量为自身对齐要求的整数倍。   整体对齐：总大小为某个对齐要求的整数倍。     &amp;gt; 对齐的意义  （deepseek）对齐让CPU能像“拿整本书”而不是“拼凑碎片”一样工作。  结构体对齐规则     基本数据类型：对齐要求即为自身字节数。   嵌套结构体：            嵌套结构体自身内部要对齐。       将嵌套结构体看作一个整体，但其对齐要求是内部最大的对齐要求。           数组：看作一个整体，其对齐要求是元素类型的对齐要求。   最后整体对齐，对齐要求是内部最大的对齐要求。     &amp;gt; 如何使结构体最小  按对齐要求从小到大（或从大到小）排列成员，从小到大或从大到小是一样的（知乎此帖有明确回答：https://www.zhihu.com...</summary>
 
   </entry>
 
@@ -159,9 +79,9 @@ static int32_t test(int32_t a, int8_t b)
     <updated>2025-12-04T16:42:00+08:00</updated>
   
     <id>http://0.0.0.0:4000/posts/Linux%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/</id>
-    <content src="http://0.0.0.0:4000/posts/Linux%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/" />
+    <content type="text/html" src="http://0.0.0.0:4000/posts/Linux%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/" />
     <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+      <name>lcatmiao</name>
     </author>
 
   
@@ -172,33 +92,7 @@ static int32_t test(int32_t a, int8_t b)
     
   
 
-  
-    <summary>
-      
-
-
-
-
-
-      本文以 OS: Debian, Shell: bash 为环境写成，其它环境如 OS: RedHat; Shell: sh, zsh 可能与本文结论有所出入。
-
-Shell环境配置加载分析
-
-在研究shell环境配置文件加载流程前，需要先搞明白 Interactive Shell、Login Shell 的概念。
-
-Interactive Shell
-
-定义
-
-man 说明如下：
-
-bash [options] [command_string | file]
-
-
-An interactive shell is one started without non-option arguments (unless -s is 
-specified) and without the -c option, whose standard input and error are both conne...
-    </summary>
-  
+  <summary>本文以 OS: Debian, Shell: bash 为环境写成，其它环境如 OS: RedHat; Shell: sh, zsh 可能与本文结论有所出入。  Shell环境配置加载分析  在研究shell环境配置文件加载流程前，需要先搞明白 Interactive Shell、Login Shell 的概念。  Interactive Shell  定义  man 说明如下：  bash [options] [command_string | file]   An interactive shell is one started without non-option arguments (unless -s is  specified) and without the -c option, whose standard input and error are both conne...</summary>
 
   </entry>
 
@@ -211,9 +105,9 @@ specified) and without the -c option, whose standard input and error are both co
     <updated>2025-11-12T16:44:00+08:00</updated>
   
     <id>http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/</id>
-    <content src="http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/" />
+    <content type="text/html" src="http://0.0.0.0:4000/posts/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%BB%93%E5%90%88%E6%80%A7/" />
     <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+      <name>lcatmiao</name>
     </author>
 
   
@@ -224,37 +118,7 @@ specified) and without the -c option, whose standard input and error are both co
     
   
 
-  
-    <summary>
-      
-
-
-
-
-
-      颠覆认知
-
-我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。
-
-绝大多数教程都是告诉你：
-
-
-  优先级高的运算符先执行。
-  当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。
-
-
-其实按照上面的说法，将有诸多无法解释的现象，比如：
-
-int main(void)
-{
-    printf("%c", 'a') + 1 + 1 + (printf("%c", 'b') + printf("%c", 'c'));
-    return 0;
-}
-
-
-括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project...
-    </summary>
-  
+  <summary>颠覆认知  我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。  绝大多数教程都是告诉你：     优先级高的运算符先执行。   当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。   其实按照上面的说法，将有诸多无法解释的现象，比如：  int main(void) {     printf("%c", 'a') + 1 + 1 + (printf("%c", 'b') + printf("%c", 'c'));     return 0; }   括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project...</summary>
 
   </entry>
 
@@ -267,9 +131,9 @@ int main(void)
     <updated>2025-08-25T10:53:00+08:00</updated>
   
     <id>http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/</id>
-    <content src="http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/" />
+    <content type="text/html" src="http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/" />
     <author>
-      <name>{"name"=>"小黑猫", "link"=>"https://github.com/lcatmiao"}</name>
+      <name>lcatmiao</name>
     </author>
 
   
@@ -278,62 +142,7 @@ int main(void)
     
   
 
-  
-    <summary>
-      
-
-
-
-
-
-      前言
-
-本文正好成文于 2025 年社保新规前，所以有些内容可能刚整理出来就过时了。文中大多数内容均以浙江省政策为例。政策是会变化的，且各地政策不同，本文仅供学习参考。
-
-五险
-
-
-  
-    
-      类别
-      缴纳
-      账户
-    
-  
-  
-    
-      养老（职工保险）
-      个人 + 单位
-      个人 + 统筹
-    
-    
-      医疗（职工医保）
-      个人 + 单位
-      个人 + 统筹
-    
-    
-      失业
-      个人 + 单位
-      统筹
-    
-    
-      工伤
-      单位
-      统筹
-    
-    
-      生育
-      单位
-      统筹
-    
-  
-
-
-
-  统筹账户也叫统筹基金。
-  个人账户里的钱都是自己的，至于能...
-    </summary>
-  
+  <summary>前言  本文正好成文于 2025 年社保新规前，所以有些内容可能刚整理出来就过时了。文中大多数内容均以浙江省政策为例。政策是会变化的，且各地政策不同，本文仅供学习参考。  五险                 类别       缴纳       账户                       养老（职工保险）       个人 + 单位       个人 + 统筹                 医疗（职工医保）       个人 + 单位       个人 + 统筹                 失业       个人 + 单位       统筹                 工伤       单位       统筹                 生育       单位       统筹              统筹账户也叫统筹基金。   个人账户里的钱都是自己的，至于能...</summary>
 
   </entry>
 
