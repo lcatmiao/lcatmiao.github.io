@@ -37,13 +37,13 @@
 <meta property="og:site_name" content="小黑猫的博客" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2022-02-05T14:43:00+08:00" />
-<meta property="article:modified_time" content="2022-02-05T14:43:00+08:00" />
+<meta property="article:modified_time" content="2026-08-28T14:29:05+08:00" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="jekyll-chirpy-theme-github搭建个人博客" />
 <meta name="twitter:site" content="@twitter_username" />
 <meta name="twitter:creator" content="@小黑猫" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"小黑猫","url":"https://github.com/lcatmiao/"},"dateModified":"2022-02-05T14:43:00+08:00","datePublished":"2022-02-05T14:43:00+08:00","description":"本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法，说不定以后就有了。 安装博客生成器 由于kali环境齐全，所以直接在kali下安装本地博客 1 2 3 4 5 6 7 8 9 # 安装jekyll sudo gem install jekyll # 安装chirpy主题 git clone git@github.com:cotes2020/jekyll-theme-chirpy.git # 在jekyll-theme-chirpy目录下安装依赖 # 不需要sudo，命令会在需要时自动调用sudo bundle install jekyll-theme-chirpy文件夹就是一个博客生成器，接下来生成本地初始博客。 生成初始博客 生成博客 1 2 3 4 5 # 在jekyll-theme-chirpy目录下生成博客，站点取名为lcatmiao.github.io，这里我取的名与后面要创建的 # 远程库的名字一致，其实也可以不一致。 # jekyll serve命令自动生成名为_site的站点。-d指定生成路径，同时可以重命名站点文件夹名字。 sudo jekyll serve -d lcatmiao.github.io # 然后Ctrl + C关闭服务 可以看到已经生成了初始博客lcatmiao.github.io 1 2 3 4 5 6 7 # 再次执行jekyll serve命令，这次我们看一下初始博客的样子再关闭服务。 # 下面的命令会再一次生成lcatmiao.github.io文件夹，覆盖现有的，反正我们没做什么更改，覆盖 # 就覆盖，无妨。 # 默认情况下，只有本机才能访问jekyll服务，同一局域网下的其它主机访问不了。 # 加上--host 0.0.0.0后同一局域网下的其它主机就可以访问服务了。这里我的kali是虚拟机， # 与本机之间是NAT模式。执行下面的命令后，可以在本机的浏览器中访问kali的网页。 sudo jekyll serve -d lcatmiao.github.io --host 0.0.0.0 本机浏览器中输入虚拟机IP，端口号4000，可以浏览到初始博客的样子。 关闭服务。 创建远程库 关于github不多赘述。 登录github，创建空仓库，为公开库，名字必须为username.github.io，username为github的用户名。 推送初始博客 1 2 3 4 5 6 7 8 9 10 11 12…","headline":"jekyll-chirpy-theme-github搭建个人博客","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"},"url":"http://0.0.0.0:4000/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"小黑猫","url":"https://github.com/lcatmiao/"},"dateModified":"2026-08-28T14:29:05+08:00","datePublished":"2022-02-05T14:43:00+08:00","description":"本地写了不少markdown笔记，一直想自己建一个网站。最初的想法是完完全全自己写一个个人网站，全部自定义，不仅可以有技术笔记栏目还可以有其它记录感想，发表观点，发布工具的栏目。然而时间并不总是能自定义，总有些更优先的事项排在前面，加之自己技术水平还没成长到这个程度，于是退而求其次，选择已有框架搭建一个个人博客，先用之，毕竟都要毕业了，连个像样的博客都没有，实在说不过去。我并未放弃建站的想法，说不定以后就有了。 安装博客生成器 由于kali环境齐全，所以直接在kali下安装本地博客 1 2 3 4 5 6 7 8 9 # 安装jekyll sudo gem install jekyll # 安装chirpy主题 git clone git@github.com:cotes2020/jekyll-theme-chirpy.git # 在jekyll-theme-chirpy目录下安装依赖 # 不需要sudo，命令会在需要时自动调用sudo bundle install jekyll-theme-chirpy文件夹就是一个博客生成器，接下来生成本地初始博客。 生成初始博客 生成博客 1 2 3 4 5 # 在jekyll-theme-chirpy目录下生成博客，站点取名为lcatmiao.github.io，这里我取的名与后面要创建的 # 远程库的名字一致，其实也可以不一致。 # jekyll serve命令自动生成名为_site的站点。-d指定生成路径，同时可以重命名站点文件夹名字。 sudo jekyll serve -d lcatmiao.github.io # 然后Ctrl + C关闭服务 可以看到已经生成了初始博客lcatmiao.github.io 1 2 3 4 5 6 7 # 再次执行jekyll serve命令，这次我们看一下初始博客的样子再关闭服务。 # 下面的命令会再一次生成lcatmiao.github.io文件夹，覆盖现有的，反正我们没做什么更改，覆盖 # 就覆盖，无妨。 # 默认情况下，只有本机才能访问jekyll服务，同一局域网下的其它主机访问不了。 # 加上--host 0.0.0.0后同一局域网下的其它主机就可以访问服务了。这里我的kali是虚拟机， # 与本机之间是NAT模式。执行下面的命令后，可以在本机的浏览器中访问kali的网页。 sudo jekyll serve -d lcatmiao.github.io --host 0.0.0.0 本机浏览器中输入虚拟机IP，端口号4000，可以浏览到初始博客的样子。 关闭服务。 创建远程库 关于github不多赘述。 登录github，创建空仓库，为公开库，名字必须为username.github.io，username为github的用户名。 推送初始博客 1 2 3 4 5 6 7 8 9 10 11 12…","headline":"jekyll-chirpy-theme-github搭建个人博客","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"},"url":"http://0.0.0.0:4000/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -809,6 +809,17 @@
 
       
     
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
 
     
   
@@ -983,6 +994,29 @@
 
       <!-- lastmod date -->
       
+        <span>
+          更新于
+          <!--
+  Date format snippet
+  See: ${JS_ROOT}/modules/components/locale-datetime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1787898545"
+  data-df="YYYY/MM/DD"
+  
+    data-bs-toggle="tooltip" data-bs-placement="bottom"
+  
+>
+  2026/08/28
+</time>
+
+        </span>
+      
 
       
 
@@ -1028,9 +1062,9 @@
   class="readtime"
   data-bs-toggle="tooltip"
   data-bs-placement="bottom"
-  title="1590 字"
+  title="2528 字"
 >
-  <em>8 分钟</em>阅读</span>
+  <em>14 分钟</em>阅读</span>
 
         </div>
       </div>
@@ -1188,7 +1222,7 @@ bundle <span class="nb">install</span>
 
 <p>刷新远程库，可以看见初始博客已经被推送上来，访问username.github.io就能访问到自己的初始博客页面。</p>
 
-<h2 id="修改配置"><span class="me-2">修改配置</span><a href="#修改配置" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+<h2 id="修改配置"><span class="me-2"><span id="modify-config">修改配置</span></span><a href="#修改配置" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
 
 <h3 id="改_configyml"><span class="me-2">改_config.yml</span><a href="#改_configyml" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
 
@@ -1203,6 +1237,15 @@ bundle <span class="nb">install</span>
 <p>准备好图片，然后在<a href="https://realfavicongenerator.net/">https://realfavicongenerator.net/</a>生成，下载后解压，在解压后的文件夹中删除browserconfig.xml和site.webmanifest，然后将剩下的东西复制到jekyll-theme-chirpy/assets/img/favicons/</p>
 
 <h3 id="删除最近更新栏"><span class="me-2">删除最近更新栏</span><a href="#删除最近更新栏" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+
+<p>（2026.08.28）</p>
+
+<p>不用删了，<strong>这个玩意是基于git提交来工作的</strong>，所以放入 <code class="language-plaintext highlighter-rouge">_posts</code> 的文章必须在博客生成器这个项目中提交。如果修改了某个文件后再次提交，它就会被最近更新栏识别。</p>
+
+<p><br />
+<br /></p>
+
+<hr />
 
 <p>最近更新栏似乎没有正常工作，查了很多资料也测试了很久，不知道问题出哪了，我决定删除它。</p>
 
@@ -1360,6 +1403,192 @@ jekyll serve <span class="nt">--port</span> 4001
 jekyll serve <span class="nt">--detach</span>
 </pre></td></tr></tbody></table></code></div></div>
 
+<hr />
+
+<h2 id="更新博客20260828"><span class="me-2">更新博客（2026.08.28）</span><a href="#更新博客20260828" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+
+<p><strong>1&gt;</strong> 附上Linux临时代理设置方法。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre># 临时设置代理
+~ 仅当前shell生效
+
+~ 设置代理
+export http_proxy="http://192.168.10.128:7897"
+export https_proxy="http://192.168.10.128:7897"
+export ftp_proxy="http://192.168.10.128:7897"
+export no_proxy="localhost,127.0.0.1,::1,192.168.10.0/24"
+
+~ 测试是否生效
+curl -I https://www.google.com
+
+~ 若使用sudo，需这样执行：
+sudo -E apt update
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>2&gt;</strong> 下载博客生成器。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>git clone git@github.com:cotes2020/jekyll-theme-chirpy.git
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>3&gt;</strong> 建一个 <code class="language-plaintext highlighter-rouge">jekyll-blog-patch</code> 目录，用于接下来存储一些必要的文件。</p>
+
+<p><strong>4&gt;</strong> 将 <code class="language-plaintext highlighter-rouge">_posts</code> 中的示例md放到 <code class="language-plaintext highlighter-rouge">jekyll-blog-patch</code> 中，因为后续执行的脚本将会删除它们。</p>
+
+<p><strong>5&gt;</strong> 安装 <code class="language-plaintext highlighter-rouge">ruby, gem, bundle</code>。</p>
+
+<blockquote>
+  <p>这波安装后，原有的bundle的完整性似乎损坏了，不知道为啥。</p>
+</blockquote>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>sudo apt install ruby-full build-essential
+sudo apt install ruby-dev
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>gem包一般进行用户级安装，从而不污染系统核心的包。然 <code class="language-plaintext highlighter-rouge">bundle</code> 随着ruby的下载已被同时下载了，它本来就是个核心的包，既如此，我们<strong>直接使用系统核心</strong>的 <code class="language-plaintext highlighter-rouge">bundle</code>。另附用户级安装方法：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre># 用户级安装bundler
+~ 安装至~/.local/share/gem/
+gem3.3 install --user-install bundler
+
+# （zsh）在.zprofile中配置环境变量
+# set environment variable
+export PATH="$HOME/.local/share/gem/ruby/3.3.0/bin:$PATH"
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>6&gt;</strong> Rubygems改源。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre># Rubygems改源
+~ https://mirrors.ustc.edu.cn/help/rubygems.html
+gem3.3 sources ~ 列出默认源
+gem3.3 sources --remove https://rubygems.org/ ~ 移除默认源
+gem3.3 sources -a https://mirrors.ustc.edu.cn/rubygems/ ~ 添加科大源
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>7&gt;</strong> 去官网下载nodejs，这次下载的是nvm+npm+nodejs。然后对npm改源。</p>
+
+<p>腾讯源：<a href="https://mirrors.cloud.tencent.com/">https://mirrors.cloud.tencent.com/</a></p>
+
+<p><strong>8&gt;</strong> 进入项目目录，跑脚本。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>---
+里面好像会执行git和npm操作，虽然改了npm源，但
+git操作可能仍需设置代理，否则会很慢。
+---
+bash tools/init.sh
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>9&gt;</strong> <strong>进入项目目录</strong>，下载项目的gem依赖。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre># 项目级gem改源
+~ https://mirrors.ustc.edu.cn/help/rubygems.html
+bundle3.3 config mirror.https://rubygems.org https://mirrors.ustc.edu.cn/rubygems/
+
+# 设置gem包应被下载到何处
+bundle3.3 config set path gem
+
+# 安装项目依赖的gem包
+---
+在这一步，会有一个叫sass-embedded-1.103.1-x86_64-linux.gem的包下载失败，
+进而导致包括jekyll在内的其它包也不被下载。先不管，这里先执行命令，后面将解决
+这个问题。
+---
+bundle3.3 install
+</pre></td></tr></tbody></table></code></div></div>
+
+<p><strong>10&gt;</strong> 解决 <code class="language-plaintext highlighter-rouge">sass-embedded-1.103.1-x86_64-linux.gem</code> 下载失败的问题：</p>
+
+<p>看起来可能是包的名字错了，总之，直接去官方https://rubygems.org/下载离线的包，这里下载的是 <code class="language-plaintext highlighter-rouge">sass-embedded-1.103.1-x86_64-linux-gnu.gem</code>，先将其放入 <code class="language-plaintext highlighter-rouge">jekyll-blog-patch</code> 中存一下，然后将其置于 <code class="language-plaintext highlighter-rouge">/jekyll-theme-chirpy/gem/ruby/3.3.0/cache/</code> 中，重命名为 <code class="language-plaintext highlighter-rouge">sass-embedded-1.103.1-x86_64-linux.gem</code>，然后重新执行 <code class="language-plaintext highlighter-rouge">bundle3.3 install</code>。</p>
+
+<p>之后，<code class="language-plaintext highlighter-rouge">sass-embedded</code> 和包括 <code class="language-plaintext highlighter-rouge">jekyll</code> 在内的其它包都将被成功下载。</p>
+
+<p><strong>11&gt;</strong> 改博客生成器的配置。</p>
+
+<p>参考<a href="#modify-config">上面的内容</a>修改配置，另有一些新的修改，记录如下：</p>
+
+<ol>
+  <li>在 <code class="language-plaintext highlighter-rouge">.gitignore</code> 中添加 <code class="language-plaintext highlighter-rouge">/gem/, /lcatmiao.github.io/</code>。</li>
+  <li>在 <code class="language-plaintext highlighter-rouge">_config.yml</code> 的 <code class="language-plaintext highlighter-rouge">exclude</code> 中添加 <code class="language-plaintext highlighter-rouge">.git, .github, .vscode, node_modules, .bundle, gem</code>。</li>
+  <li>在 <code class="language-plaintext highlighter-rouge">_data/authors.yml</code> 中添加作者 <code class="language-plaintext highlighter-rouge">lcatmiao</code>，如此，md文件front matter中的 <code class="language-plaintext highlighter-rouge">author</code> 字段才能正常工作。</li>
+</ol>
+
+<p>配置修改完成后，将 <code class="language-plaintext highlighter-rouge">.gitignore, _config.yml, _data/authors.yml, favicon.zip</code> 放入 <code class="language-plaintext highlighter-rouge">jekyll-blog-patch</code> 保存。</p>
+
+<p><strong>12&gt;</strong> 写“关于”。</p>
+
+<p>写一下 <code class="language-plaintext highlighter-rouge">_tabs/about.md</code>，然后将其置于 <code class="language-plaintext highlighter-rouge">jekyll-blog-patch</code> 保存。</p>
+
+<p><strong>13&gt;</strong> 可以放入自己的文章到 <code class="language-plaintext highlighter-rouge">_posts</code> 了。这里把博客生成器自带的示例文章也放入之，重命名，开头加个 <code class="language-plaintext highlighter-rouge">#</code>，这样它们就不会被解析。</p>
+
+<p><strong>14&gt;</strong> 生成博客：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="code-header">
+        <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>bundle3.3 exec jekyll serve -d lcatmiao.github.io --host 0.0.0.0
+</pre></td></tr></tbody></table></code></div></div>
+
 
   </div>
 
@@ -1491,6 +1720,13 @@ jekyll serve <span class="nt">--detach</span>
         
         
         <li class="text-truncate lh-lg">
+          <a href="/posts/jekyll-chirpy-theme-github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">jekyll-chirpy-theme-github搭建个人博客</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
           <a href="/posts/Shell%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8A%A0%E8%BD%BD%E5%88%86%E6%9E%90/">Shell启动配置加载分析</a>
         </li>
       
@@ -1513,13 +1749,6 @@ jekyll serve <span class="nt">--detach</span>
         
         <li class="text-truncate lh-lg">
           <a href="/posts/C-Cpp%E4%B8%AD%E7%9A%84const%E5%85%B3%E9%94%AE%E5%AD%97/">C-Cpp中的const关键字</a>
-        </li>
-      
-        
-        
-        
-        <li class="text-truncate lh-lg">
-          <a href="/posts/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%B1%87%E7%BC%96%E8%AF%95%E8%AF%BB/">函数调用汇编试读</a>
         </li>
       
     </ul>
