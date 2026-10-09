@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>小黑猫的博客</title>
   <subtitle>这里是小黑猫的博客，以技术文章为主，也会夹杂其它各类文章。</subtitle>
-  <updated>2026-08-28T14:29:13+08:00</updated>
+  <updated>2026-10-09T20:51:47+08:00</updated>
   <author>
     <name>小黑猫</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,32 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>虚拟地址空间布局</title>
+    <link href="http://0.0.0.0:4000/posts/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80/" rel="alternate" type="text/html" title="虚拟地址空间布局" />
+    <published>2026-10-09T20:35:00+08:00</published>
+  
+    <updated>2026-10-09T20:51:39+08:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80/</id>
+    <content type="text/html" src="http://0.0.0.0:4000/posts/%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80/" />
+    <author>
+      <name>lcatmiao</name>
+    </author>
+
+  
+    
+    <category term="Tech" />
+    
+    <category term="AdvancedProgramming" />
+    
+  
+
+  <summary>一直对内存布局只有模糊印象，虽然平时也够用，但疑惑的时候也是真的疑惑。这回直接学习整理了一波，虽说依旧不敢说“懂了”，但也够详细了。  经过近百轮追问和打磨（97次AI对话），无数次查阅对比参考资料，本文遂成。  图  原创图  图片为原创手绘图，非AI生图。  图片主要是依据AI对话整理绘制而成，此外，还参考了如下文档：  30.2. Memory Management — The Linux Kernel documentation（官方文档）  Kernel Address Space - Linux Kernel Internals  图片只求形成大致布局，省略了诸多细节，譬如空洞。    虚拟地址空间大观：      x86-32进程虚拟地址空间：      x86-64进程虚拟地址空间：    第三方图  来源：Reading/linux/Linux内核虚拟地址空间.md...</summary>
+
+  </entry>
 
   
   <entry>
@@ -119,30 +145,6 @@
   
 
   <summary>颠覆认知  我们依据运算符的优先级和结合性来判断一个表达式的运算过程，但我们对于优先级和结合性的理解其实存在着广泛误解。  绝大多数教程都是告诉你：     优先级高的运算符先执行。   当出现多个优先级相同的运算符时，依据结合性判断运算符的执行顺序。   其实按照上面的说法，将有诸多无法解释的现象，比如：  int main(void) {     printf("%c", 'a') + 1 + 1 + (printf("%c", 'b') + printf("%c", 'c'));     return 0; }   括号的优先级最高，所以上面的代码应该先打印 b 或者 c，另外，你也无法回答是 b 先被打印还是 c 先被打印。现在揭晓“答案”，上述代码经过 gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-Builds project...</summary>
-
-  </entry>
-
-  
-  <entry>
-    <title>五险一金超详细整理</title>
-    <link href="http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/" rel="alternate" type="text/html" title="五险一金超详细整理" />
-    <published>2025-08-25T10:53:00+08:00</published>
-  
-    <updated>2026-08-26T20:10:14+08:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/</id>
-    <content type="text/html" src="http://0.0.0.0:4000/posts/%E4%BA%94%E9%99%A9%E4%B8%80%E9%87%91%E8%B6%85%E8%AF%A6%E7%BB%86%E6%95%B4%E7%90%86/" />
-    <author>
-      <name>lcatmiao</name>
-    </author>
-
-  
-    
-    <category term="Society" />
-    
-  
-
-  <summary>前言  本文正好成文于 2025 年社保新规前，所以有些内容可能刚整理出来就过时了。文中大多数内容均以浙江省政策为例。政策是会变化的，且各地政策不同，本文仅供学习参考。  五险                 类别       缴纳       账户                       养老（职工保险）       个人 + 单位       个人 + 统筹                 医疗（职工医保）       个人 + 单位       个人 + 统筹                 失业       个人 + 单位       统筹                 工伤       单位       统筹                 生育       单位       统筹              统筹账户也叫统筹基金。   个人账户里的钱都是自己的，至于能...</summary>
 
   </entry>
 
